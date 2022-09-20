@@ -2,13 +2,12 @@
 
 ### Scripts and files associated with ROH inference testing manuscript, currently available on [bioRxiv](link goes in these parentheses) and submitted for peer-review.
 
-#### /empirical/
-##### /bash/
+#### /empirical/bash/
 * 
 
 * 
 
-##### /R/
+#### /empirical/R/
 * 
 
 *
