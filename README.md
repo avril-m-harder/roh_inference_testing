@@ -1,6 +1,6 @@
 # roh_inference_testing
 
-### Scripts and files associated with ROH inference testing manuscript, currently available on [bioRxiv](link goes in these parentheses) and submitted for peer-review.
+### Scripts and files associated with ROH inference testing manuscript, currently available on [bioRxiv](biorxiv.com) and submitted for peer-review.
 
 #### Empirical data - bash scripts
 * *01a_download_and_qc.sh*: Download read files from SRA, check quality with FastQC, and clean with TrimGalore
