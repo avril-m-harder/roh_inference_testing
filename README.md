@@ -33,8 +33,8 @@
 * 
 
 #### Sensitivity analysis - R scripts
-*
-*
+* *01_plink_output_to_summary.R*: For one iteration of PLINK setting combinations, reads in all results and writes input for sensitivity analysis
+* *02_sensitivity_analysis.R*
 
 
 #### Files
