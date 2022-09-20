@@ -3,22 +3,21 @@
 ### Scripts and files associated with ROH inference testing manuscript, currently available on [bioRxiv](link goes in these parentheses) and submitted for peer-review.
 
 #### Empirical - bash scripts
-* tasdev_vcf_sample_depths.sh
-* 01a_download_and_qc.sh
-* 01b_assem_indexing.sh
-* 02a_read_mapping_indivsamples.sh
-* 02b_downsampling.sh
-* 03a_preBQSR_snp_calling_fullcovg.sh
-* 03a_preBQSR_snp_calling.sh
-* 03b_noBQSR_genomicsdb_chrom_batches_fullcovg.sh
-* 03b_noBQSR_genomicsdb_chrom_batches.sh
-* 04a_bcftoolsROH.sh
-* 05b_plink_empirical_round1.sh
-* depth_check.sh
-* indiv_samp_script_gen.sh
-* qualimap.sh
-* simulated_output_copy.sh
-* 
+* 01a_download_and_qc.sh: Download read files from SRA, check quality with FastQC, and clean with TrimGalore
+* 01b_assem_indexing.sh: Download and index reference assembly
+* 02a_read_mapping_indivsamples.sh: Map.... reads. With BWA-MEM
+* 02b_downsampling.sh: Downsample full coverage set to 5X, 10X, 15X, and 30X coverage levels with SAMtools
+* 03a_preBQSR_snp_calling_fullcovg.sh: Prep BAM files for HaplotypeCaller and run 
+* 03a_preBQSR_snp_calling.sh: Same as 03a_preBQSR_snp_calling_fullcovg.sh but for 5X-30X coverage levels
+* 03b_noBQSR_genomicsdb_chrom_batches_fullcovg.sh: Genotype GVCFs and apply hard filtering in GATK and VCFtools
+* 03b_noBQSR_genomicsdb_chrom_batches.sh: Same as 03b_noBQSR_genomicsdb_chrom_batches_fullcovg.sh but for 5X-30X coverage levels
+* 04a_bcftoolsROH.sh: Run BCFtools/RoH in Likelihoods and Genotypes modes
+* 05b_plink_empirical_round1.sh: Run PLINK with a defined set of parameter settings. PLINK parameters section was edited in subsequent iterations
+* depth_check.sh: Check coverage in BAM files using samtools
+* indiv_samp_script_gen.sh: Generate and submit 03a_preBQSR_snp_calling_\*.sh scripts for separate samples
+* qualimap.sh: Run Qualimap at various BAM processing stages
+* tasdev_vcf_sample_depths.sh: Check read depths at final sets of filtered SNPs
+ 
 #### Empirical data - R scripts
 * 
 
@@ -39,6 +38,6 @@
 
 
 #### Files
-* \*_sra_list.txt: Accession numbers for SRA read downloads.
+* 15_samples.txt: Accession numbers for SRA read downloads.
 
 * 
