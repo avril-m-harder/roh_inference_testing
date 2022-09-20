@@ -24,8 +24,8 @@
 * *02_indiv_fROH_calcs.R*: Reads in result summaries from all 3 methods and coverage levels and calculates individual *F*<sub>ROH</sub> values for reading in with 03_manuscript_figures_and_statistics_empirical.R
 * *03_manuscript_figures_and_statistics_empirical.R*: Reads in results for all 3 methods and coverage levels and conducts all downstream analyses and produces all figures for the manuscript
 
-#### Simulated data scripts
-* 
+#### Simulated data - R scripts
+*SLiM and bash scripts for simulated data analyses can be found in kennethb22/roh_parameter_project_kk/(https://github.com/kennethb22/roh_parameter_project_kk)*
 
 * 
 
