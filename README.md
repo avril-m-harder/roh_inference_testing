@@ -25,17 +25,15 @@
 * *03_manuscript_figures_and_statistics_empirical.R*: Reads in results for all 3 methods and coverage levels and conducts all downstream analyses and produces all figures for the manuscript
 
 #### Simulated data - R scripts
-*\*Note: SLiM and bash scripts for simulated data analyses can be found in kennethb22/roh_parameter_project_kk/(https://github.com/kennethb22/roh_parameter_project_kk)*
-
+*\*Note: SLiM and bash scripts for simulated data generation and analyses can be found in kennethb22/roh_parameter_project_kk/(https://github.com/kennethb22/roh_parameter_project_kk)*
+* 
+* 
+* 
 * 
 
-* 
-
-* 
-
-* 
-
- 
+#### Sensitivity analysis - R scripts
+*
+*
 
 
 #### Files
