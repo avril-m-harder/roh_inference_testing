@@ -36,10 +36,8 @@
 
 #### Sensitivity analysis - R scripts
 * *01_plink_output_to_summary.R*: For one iteration of PLINK setting combinations, reads in all results and writes input for sensitivity analysis
-* *02_sensitivity_analysis.R*
+* *02_sensitivity_analysis.R*: Conducts sensitivity analysis and produces diagnostic plots
 
 
 #### Files
-* *15_samples.txt*: Accession numbers for SRA read downloads.
-
-* 
+* *15_samples.txt*: Accession numbers for SRA read downloads
