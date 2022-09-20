@@ -41,3 +41,4 @@
 
 #### Files
 * *15_samples.txt*: Accession numbers for SRA read downloads
+* *individual_froh_results_SA.csv*: Example of input formatting for 02_sensitivity_analysis.R
