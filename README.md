@@ -22,7 +22,7 @@
 * *01a_summarize_bcftools_outputs.R*: Reads in all of the output from BCFtools Genotypes and Likelihoods (i.e., ROH coordinates) across all coverage levels and summarizes into a single file for reading in with 03_manuscript_figures_and_statistics_empirical.R
 * *01b_summarize_plink_output.R*: Reads in final set of PLINK results (i.e., ROH coordinates) for all coverage levels and summarizes for reading in with 03_manuscript_figures_and_statistics_empirical.R
 * *02_indiv_fROH_calcs.R*: Reads in result summaries from all 3 methods and coverage levels and calculates individual *F*<sub>ROH</sub> values for reading in with 03_manuscript_figures_and_statistics_empirical.R
-* *03_manuscript_figures_and_statistics_empirical.R*: Reads in results for all 3 methods and coverage levels and conducts all downstream analyses and produces all figures for the manuscript (plus a ton of.. bonus figures)
+* *03_manuscript_figures_and_statistics_empirical.R*: Reads in results for all 3 methods and coverage levels and conducts all downstream analyses and produces all figures for the manuscript
 
 #### Simulated data scripts
 * 
@@ -39,6 +39,6 @@
 
 
 #### Files
-* 15_samples.txt: Accession numbers for SRA read downloads.
+* *15_samples.txt*: Accession numbers for SRA read downloads.
 
 * 
