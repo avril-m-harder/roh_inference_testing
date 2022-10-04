@@ -467,11 +467,12 @@ bg.alph <- 0.25
 lwd <- 2
 offset <- 0.15
 err.width <- 0.05
-txt.size <- 1.25
+txt.size <- 1.5
+pt.cex <- 1.5
 
 k <- 1
 while(k == 1){
-  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/empirical/fROH_by_length_bins_indivlines.pdf'), width = 5, height = 6)
+  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/empirical/fROH_by_length_bins_indivlines.pdf'), width = 4.75, height = 6)
   par(mfrow = c(1,1), mar = c(5.1, 4.6, 4.1, 2.1))
   
   ## GT
@@ -534,8 +535,8 @@ while(k == 1){
   ## Bin 1 plot
   plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'Short ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = 1.25)
+       cex.axis = txt.size, cex.lab = txt.size)
+  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
   x <- 1
   for(i in unique(gt.frohs$id)){
     temp <- gt.frohs[gt.frohs$id == i,]
@@ -580,31 +581,31 @@ while(k == 1){
   
   ## 95% CIs
   lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
-  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19)
+  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)-offset, x1 = c(1:5)-offset, y0 = (OUT$gt.mean - OUT$gt.se*1.96),
          y1 = (OUT$gt.mean + OUT$gt.se*1.96),
          lwd = lwd, col = gt.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5), OUT$pl.mean, col = pl.col, lwd = lwd)
-  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19)
+  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5), x1 = c(1:5), y0 = (OUT$pl.mean - OUT$pl.se*1.96),
          y1 = (OUT$pl.mean + OUT$pl.se*1.96),
          lwd = lwd, col = pl.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5)+offset, OUT$plink.mean, col = plink.col, lwd = lwd)
-  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19)
+  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)+offset, x1 = c(1:5)+offset, y0 = (OUT$plink.mean - OUT$plink.se*1.96),
          y1 = (OUT$plink.mean + OUT$plink.se*1.96),
          lwd = lwd, col = plink.col, code=3, angle=90, length=err.width)
   
   legend('bottomleft', pch = 19, lwd = lwd, legend = c('BCFtools Genotypes','BCFtools Likelihoods','PLINK'), bty = 'n', inset = 0.02, 
-         col = c(gt.col, pl.col, plink.col), cex = txt.size)
+         col = c(gt.col, pl.col, plink.col), cex = txt.size, pt.cex = pt.cex)
   
   ## Bin 2 plot
   plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'Intermediate ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = 1.25)
+       cex.axis = txt.size, cex.lab = txt.size)
+  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
   x <- 1
   for(i in unique(gt.frohs$id)){
     temp <- gt.frohs[gt.frohs$id == i,]
@@ -649,19 +650,19 @@ while(k == 1){
   
   ## 95% CIs
   lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
-  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19)
+  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)-offset, x1 = c(1:5)-offset, y0 = (OUT$gt.mean - OUT$gt.se*1.96),
          y1 = (OUT$gt.mean + OUT$gt.se*1.96),
          lwd = lwd, col = gt.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5), OUT$pl.mean, col = pl.col, lwd = lwd)
-  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19)
+  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5), x1 = c(1:5), y0 = (OUT$pl.mean - OUT$pl.se*1.96),
          y1 = (OUT$pl.mean + OUT$pl.se*1.96),
          lwd = lwd, col = pl.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5)+offset, OUT$plink.mean, col = plink.col, lwd = lwd)
-  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19)
+  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)+offset, x1 = c(1:5)+offset, y0 = (OUT$plink.mean - OUT$plink.se*1.96),
          y1 = (OUT$plink.mean + OUT$plink.se*1.96),
          lwd = lwd, col = plink.col, code=3, angle=90, length=err.width)
@@ -669,8 +670,8 @@ while(k == 1){
   ## Bin 3 plot
   plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'Long ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = 1.25)
+       cex.axis = txt.size, cex.lab = txt.size)
+  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
   x <- 1
   for(i in unique(gt.frohs$id)){
     temp <- gt.frohs[gt.frohs$id == i,]
@@ -715,19 +716,19 @@ while(k == 1){
   
   ## 95% CIs
   lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
-  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19)
+  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)-offset, x1 = c(1:5)-offset, y0 = (OUT$gt.mean - OUT$gt.se*1.96),
          y1 = (OUT$gt.mean + OUT$gt.se*1.96),
          lwd = lwd, col = gt.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5), OUT$pl.mean, col = pl.col, lwd = lwd)
-  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19)
+  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5), x1 = c(1:5), y0 = (OUT$pl.mean - OUT$pl.se*1.96),
          y1 = (OUT$pl.mean + OUT$pl.se*1.96),
          lwd = lwd, col = pl.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5)+offset, OUT$plink.mean, col = plink.col, lwd = lwd)
-  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19)
+  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)+offset, x1 = c(1:5)+offset, y0 = (OUT$plink.mean - OUT$plink.se*1.96),
          y1 = (OUT$plink.mean + OUT$plink.se*1.96),
          lwd = lwd, col = plink.col, code=3, angle=90, length=err.width)
@@ -735,8 +736,8 @@ while(k == 1){
   ## Bin 4 plot
   plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'Very long ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = 1.25)
+       cex.axis = txt.size, cex.lab = txt.size)
+  axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
   x <- 1
   for(i in unique(gt.frohs$id)){
     temp <- gt.frohs[gt.frohs$id == i,]
@@ -781,19 +782,19 @@ while(k == 1){
   
   ## 95% CIs
   lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
-  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19)
+  points(c(1:5)-offset, OUT$gt.mean, col = gt.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)-offset, x1 = c(1:5)-offset, y0 = (OUT$gt.mean - OUT$gt.se*1.96),
          y1 = (OUT$gt.mean + OUT$gt.se*1.96),
          lwd = lwd, col = gt.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5), OUT$pl.mean, col = pl.col, lwd = lwd)
-  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19)
+  points(c(1:5), OUT$pl.mean, col = pl.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5), x1 = c(1:5), y0 = (OUT$pl.mean - OUT$pl.se*1.96),
          y1 = (OUT$pl.mean + OUT$pl.se*1.96),
          lwd = lwd, col = pl.col, code=3, angle=90, length=err.width)
   
   lines(c(1:5)+offset, OUT$plink.mean, col = plink.col, lwd = lwd)
-  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19)
+  points(c(1:5)+offset, OUT$plink.mean, col = plink.col, pch = 19, cex = pt.cex)
   arrows(x0 = c(1:5)+offset, x1 = c(1:5)+offset, y0 = (OUT$plink.mean - OUT$plink.se*1.96),
          y1 = (OUT$plink.mean + OUT$plink.se*1.96),
          lwd = lwd, col = plink.col, code=3, angle=90, length=err.width)
