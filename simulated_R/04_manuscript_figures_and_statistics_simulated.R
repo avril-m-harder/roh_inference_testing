@@ -1167,6 +1167,42 @@ while(i == 1){ ## a loop just to make all the separate plots write with 1 comman
   i <- i+1
 }
 
+##### >>> 3G. Organizing false neg/pos rates into table #####
+OUT <- NULL
+for(c in sort(unique(plink.true.v.called$covg))){
+  gt.median.pos <- median(gt.true.v.called[gt.true.v.called$covg == c, 'false.pos.rate'])
+  gt.mean.pos <- mean(gt.true.v.called[gt.true.v.called$covg == c, 'false.pos.rate'])
+  gt.sd.pos <- sd(gt.true.v.called[gt.true.v.called$covg == c, 'false.pos.rate'])
+  gt.cv.pos <- gt.sd.pos/gt.mean.pos*100
+  gt.median.neg <- median(gt.true.v.called[gt.true.v.called$covg == c, 'false.neg.rate'])
+  gt.mean.neg <- mean(gt.true.v.called[gt.true.v.called$covg == c, 'false.neg.rate'])
+  gt.sd.neg <- sd(gt.true.v.called[gt.true.v.called$covg == c, 'false.neg.rate'])
+  gt.cv.neg <- gt.sd.neg/gt.mean.neg*100
+  
+  pl.median.pos <- median(pl.true.v.called[pl.true.v.called$covg == c, 'false.pos.rate'])
+  pl.mean.pos <- mean(pl.true.v.called[pl.true.v.called$covg == c, 'false.pos.rate'])
+  pl.sd.pos <- sd(pl.true.v.called[pl.true.v.called$covg == c, 'false.pos.rate'])
+  pl.cv.pos <- pl.sd.pos/pl.mean.pos*100
+  pl.median.neg <- median(pl.true.v.called[pl.true.v.called$covg == c, 'false.neg.rate'])
+  pl.mean.neg <- mean(pl.true.v.called[pl.true.v.called$covg == c, 'false.neg.rate'])
+  pl.sd.neg <- sd(pl.true.v.called[pl.true.v.called$covg == c, 'false.neg.rate'])
+  pl.cv.neg <- pl.sd.neg/pl.mean.neg*100
+  
+  plink.median.pos <- median(plink.true.v.called[plink.true.v.called$covg == c, 'false.pos.rate'])
+  plink.mean.pos <- mean(plink.true.v.called[plink.true.v.called$covg == c, 'false.pos.rate'])
+  plink.sd.pos <- sd(plink.true.v.called[plink.true.v.called$covg == c, 'false.pos.rate'])
+  plink.cv.pos <- plink.sd.pos/plink.mean.pos*100
+  plink.median.neg <- median(plink.true.v.called[plink.true.v.called$covg == c, 'false.neg.rate'])
+  plink.mean.neg <- mean(plink.true.v.called[plink.true.v.called$covg == c, 'false.neg.rate'])
+  plink.sd.neg <- sd(plink.true.v.called[plink.true.v.called$covg == c, 'false.neg.rate'])
+  plink.cv.neg <- plink.sd.neg/plink.mean.neg*100
+  
+  save <- rbind(c(c, 'Genotypes', gt.median.pos, gt.mean.pos, gt.sd.pos, gt.cv.pos, gt.median.neg, gt.mean.neg, gt.sd.neg, gt.cv.neg),
+                c(c, 'Likelihoods', pl.median.pos, pl.mean.pos, pl.sd.pos, pl.cv.pos, pl.median.neg, pl.mean.neg, pl.sd.neg, pl.cv.neg),
+                c(c, 'PLINK', plink.median.pos, plink.mean.pos, plink.sd.pos, plink.cv.pos, plink.median.neg, plink.mean.neg, plink.sd.neg, plink.cv.neg))
+  OUT <- rbind(OUT, save)
+}
+write.csv(OUT, '../manuscript/r_scripts_AMH/tables_output/false_neg_pos_rate_stats.csv')
 
 ##### 4. Plotting true vs. called f(ROH) values #####
 ## assign colors based on coverage level
@@ -1272,7 +1308,7 @@ k <- k+1
 
 new.dat <- data.frame(true.froh=c(sort(froh.stats$true.froh))) ## new data for prediction
 ## all on single plot for stats viz
-# pdf('/Users/Avril/Desktop/all_methods_true_vs_called_fROH.pdf', width = 7, height = 7)
+# pdf('../manuscript/r_scripts_AMH/figures_output/simulated/all_methods_true_vs_called_fROH.pdf', width = 7, height = 7)
 plot(c(froh.stats$true.froh, froh.stats$true.froh, froh.stats$true.froh), 
      c(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh), pch = 19, col = 'transparent', main = 'All methods', 
      xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size)
@@ -1327,7 +1363,7 @@ for(c in 1:4){
 }
 
 ## check assumptions and some stats
-pdf('/Users/Avril/Desktop/test.pdf', width = 10, height = 10)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/test.pdf', width = 10, height = 10)
 par(mfrow = c(2,2))
 OUT <- NULL ## for saving statsy info
 for(m in unique(dat$method)){
@@ -1374,13 +1410,13 @@ for(m in unique(dat$method)){
 }
 # dev.off()
 # colnames(OUT) <- c('method','covg','adj.r2','p.val','int.lo.lim','int','int.up.lim','slope.lo.lim','slope','slope.up.lim')
-# write.csv(OUT, '/Users/Avril/Desktop/true_v_callfROH_stats.csv', row.names = FALSE)
+# write.csv(OUT, '../manuscript/r_scripts_AMH/figures_output/simulated/true_v_callfROH_stats.csv', row.names = FALSE)
 
 ##### >>> 4B. Plotting true f(ROH) vs. called - true f(ROH) #####
 dat$diff <- dat$call.froh - dat$true.froh
 alph <- 0.5
 
-pdf('/Users/Avril/Desktop/true_vs_diff.pdf', width = 6, height = 5)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/true_vs_diff.pdf', width = 6, height = 5)
 
 ## PL 
 sub <- dat[dat$method == 'PL',]
@@ -2079,7 +2115,7 @@ k <- k+1
 gt.overlap$prop.true <- gt.overlap$true.len/gt.overlap$len
 pl.overlap$prop.true <- pl.overlap$true.len/pl.overlap$len
 
-pdf('/Users/Avril/Desktop/test.pdf', width = 12, height = 5)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/test.pdf', width = 12, height = 5)
 par(mfrow = c(1,2))
 for(c in sort(unique(gt.overlap$covg))){
   sub <- gt.overlap[gt.overlap$covg == c,]
@@ -2827,10 +2863,10 @@ k <- k+1
 ## --- 95% CIs are comically small, may need to calculate a different way?
 k <- 1
 while(k == 1){
-  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/simulated/fROH_by_length_bins_indivlines_',n,'_relative_vals_separate_method_plots_95CIs.pdf'), width = 8, height = 5)
+  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/simulated/fROH_by_length_bins_indivlines_',n,'_relative_vals_separate_method_plots_95CIs.pdf'), width = 8, height = 5.5)
   
   ymin <- -0.15
-  ymax <- 0.20
+  ymax <- 0.25
   ln.alph <- 0.5
   pt.alph <- 1
   diff <- 0.15
@@ -2838,12 +2874,16 @@ while(k == 1){
   xmax <- 5.25
   offsets <- c(-0.2, -0.1, 0, 0.1, 0.2)
   orig.xs <- c(2:5)
+  text.size <- 1.75
+  pt.cex <- 1.25
+  lwd <- 2
   
   ## GT
   plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'Genotypes', xlab = 'ROH length bin', ylab = 'called f(ROH) - true f(ROH)',
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = 1.25)
+       cex.axis = text.size, cex.lab = text.size, yaxt = 'n')
+  axis(2, at = c(-0.1, 0, 0.1, 0.2), cex.axis = text.size)
+  axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = text.size)
   abline(h = 0, lty = 2)
   
   col <- 1
@@ -2857,8 +2897,8 @@ while(k == 1){
     
     xs <- orig.xs + offsets[col]
     columns <- c(18, 19, 20, 21)
-    lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], ln.alph))
-    points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], pt.alph), pch = 19)
+    lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], ln.alph), lwd = lwd)
+    points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], pt.alph), pch = 19, cex = pt.cex)
     for(l in c(1:4)){
       column <- columns[l]
       ## 95% CIs (inappropriate for large sample sizes)
@@ -2872,13 +2912,14 @@ while(k == 1){
     }    
     col <- col+1
   }
-  legend('topleft', legend = c('5X','10X','15X','30X','50X'), col = gt.cols, pch = 19, bty = 'n', cex = text.size)
+  legend('top', legend = c('5X','10X','15X','30X','50X'), col = gt.cols, pch = 19, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
   
   ## PL
   plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'Likelihoods', xlab = 'ROH length bin', ylab = 'called f(ROH) - true f(ROH)',
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = 1.25)
+       cex.axis = text.size, cex.lab = text.size, yaxt  = 'n')
+  axis(2, at = c(-0.1, 0, 0.1, 0.2), cex.axis = text.size)
+  axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = text.size)
   abline(h = 0, lty = 2)
   
   col <- 1
@@ -2892,8 +2933,8 @@ while(k == 1){
     
     xs <- orig.xs + offsets[col]
     columns <- c(18, 19, 20, 21)
-    lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], ln.alph))
-    points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], pt.alph), pch = 19)
+    lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], ln.alph), lwd = lwd)
+    points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], pt.alph), pch = 19, cex = pt.cex)
     for(l in c(1:4)){
       column <- columns[l]
       arrows(x0 = xs[l], x1 = xs[l], y0 = quantile(temp[,column], probs = c(0.025,0.975))[1],
@@ -2902,13 +2943,14 @@ while(k == 1){
     }    
     col <- col+1
   }
-  legend('topleft', legend = c('5X','10X','15X','30X','50X'), col = pl.cols, pch = 19, bty = 'n', cex = text.size)
+  legend('top', legend = c('5X','10X','15X','30X','50X'), col = pl.cols, pch = 19, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
   
   ## PLINK
   plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
        xaxt = 'n', main = 'PLINK', xlab = 'ROH length bin', ylab = 'called f(ROH) - true f(ROH)',
-       cex.axis = 1.25, cex.lab = 1.25)
-  axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = 1.25)
+       cex.axis = text.size, cex.lab = text.size, yaxt = 'n')
+  axis(2, at = c(-0.1, 0, 0.1, 0.2), cex.axis = text.size)
+  axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = text.size)
   abline(h = 0, lty = 2)
   
   col <- 1
@@ -2922,8 +2964,8 @@ while(k == 1){
     
     xs <- orig.xs + offsets[col]
     columns <- c(18, 19, 20, 21)
-    lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], ln.alph))
-    points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], pt.alph), pch = 19)
+    lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], ln.alph), lwd = lwd)
+    points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], pt.alph), pch = 19, cex = pt.cex)
     for(l in c(1:4)){
       column <- columns[l]
       arrows(x0 = xs[l], x1 = xs[l], y0 = quantile(temp[,column], probs = c(0.025,0.975))[1],
@@ -2932,14 +2974,14 @@ while(k == 1){
     }    
     col <- col+1
   }
-  legend('topleft', legend = c('5X','10X','15X','30X','50X'), col = plink.cols, pch = 19, bty = 'n', cex = text.size)
+  legend('top', legend = c('5X','10X','15X','30X','50X'), col = plink.cols, pch = 19, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
   
   dev.off()
   k <- k+1 
 }
 
 ### Create true f(ROH) bin distributions
-pdf('/Users/Avril/Desktop/dists.pdf', width = 4, height = 4)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/dists.pdf', width = 4, height = 4)
 plot(density(true.roh.bins$true.b1), xlab = 'True f(ROH) - bin 1', xlim = c(-0.02, 0.25), xaxt = 'n')
   polygon(density(true.roh.bins$true.b1), col = 'grey')
   axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.07)
@@ -2968,7 +3010,7 @@ max.bin.col <- ghibli_palette('LaputaDark')[2]
 bin.pal <- colorRampPalette(c(min.bin.col, max.bin.col))
 bin.cols <- bin.pal(4)
 alph <- 0.6
-pdf('/Users/Avril/Desktop/dists_single_plot.pdf', width = 8, height = 5)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/dists_single_plot.pdf', width = 8, height = 5)
 plot(density(true.roh.bins$true.b3), xlab = 'True f(ROH)', xlim = c(-0.02, 0.25), col = 'transparent', cex.axis = text.size, cex.lab = text.size)
   polygon(density(true.roh.bins$true.b4), col = alpha(bin.cols[4], alph), border = NA)
   lines(density(true.roh.bins$true.b4), col = bin.cols[4])
@@ -3011,35 +3053,49 @@ axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*2, line = 0.7, lwd = 0)
 abline(v = mean(true.roh.bins$true.b4), lty = 2, lwd = 3)
 dev.off()
 
-pdf('/Users/Avril/Desktop/hists.pdf', width = 6, height = 6)
-par(mar = c(5.1, 5.1, 4.1, 2.1))
-hist((true.roh.bins$true.b1), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5)
-  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04)
-  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 1.5, lwd = 0)
-  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07)
-  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.7, lwd = 0)
-  abline(v = mean(true.roh.bins$true.b1), lty = 2, lwd = 3)
-hist((true.roh.bins$true.b2), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5)
-  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04)
-  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 1.5, lwd = 0)
-  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07)
-  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.7, lwd = 0)
-  abline(v = mean(true.roh.bins$true.b2), lty = 2, lwd = 3)
-hist((true.roh.bins$true.b3), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5)
-  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04)
-  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 1.5, lwd = 0)
-  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07)
-  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.7, lwd = 0)
-  abline(v = mean(true.roh.bins$true.b3), lty = 2, lwd = 3)
-hist((true.roh.bins$true.b4), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5)
-  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04)
-  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 1.5, lwd = 0)
-  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07)
-  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.7, lwd = 0)
-  abline(v = mean(true.roh.bins$true.b4), lty = 2, lwd = 3)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/hists.pdf', width = 6, height = 6)
+par(mar = c(6.1, 6.1, 4.1, 2.1))
+hist((true.roh.bins$true.b1), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
+  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
+  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+  abline(v = mean(true.roh.bins$true.b1), lty = 2, lwd = 5)
+hist((true.roh.bins$true.b2), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
+  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
+  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+  abline(v = mean(true.roh.bins$true.b2), lty = 2, lwd = 5)
+hist((true.roh.bins$true.b3), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
+  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
+  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+  abline(v = mean(true.roh.bins$true.b3), lty = 2, lwd = 5)
+hist((true.roh.bins$true.b4), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
+  axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+  axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+  axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3) 
+  axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+  abline(v = mean(true.roh.bins$true.b4), lty = 2, lwd = 5)
 dev.off()
 
 
+# text.size <- 1.75
+# lwd <- 2
+# pdf('../manuscript/r_scripts_AMH/figures_output/simulated/combined_hists.pdf', width = 8, height = 5.5)
+# hist(true.roh.bins$true.b1, xlim = c(0, 0.2), ylim = c(0, 100), breaks = 10, cex.axis = text.size, cex.lab = text.size)
+#   hist(true.roh.bins$true.b2, add = TRUE, breaks = 10)
+#   hist(true.roh.bins$true.b3, add = TRUE, breaks = 10)
+#   hist(true.roh.bins$true.b4, add = TRUE, breaks = 10)
+#   
+# hist(true.roh.bins$true.b4, xlim = c(0, 0.2), ylim = c(0, 100), breaks = 10, cex.axis = text.size, cex.lab = text.size, col = alpha('grey20', 0.5))
+#   hist(true.roh.bins$true.b3, add = TRUE, breaks = 10, col = alpha('grey40', 0.5))
+#   hist(true.roh.bins$true.b2, add = TRUE, breaks = 10, col = alpha('grey60', 0.5))
+#   hist(true.roh.bins$true.b1, add = TRUE, breaks = 10, col = alpha('grey80', 0.5))
+# dev.off()
+  
 ##### 95. Plotting true ROH length vs. # of called ROHs overlapping #####
 alph <- 0.25
 y.max <- 9
@@ -3156,7 +3212,7 @@ c <- 5
 m <- 'PLINK'
 par(mfrow = c(2,2))
 ## model Poisson regression using glm()
-pdf('/Users/Avril/Desktop/test.pdf')
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/test.pdf')
 par(mfrow = c(2,2))
 for(c in unique(dat$covg)){
   for(m in unique(dat$method)){
@@ -3253,7 +3309,7 @@ pt.size <- 3
 k <- 1
 while(k == 1){
 
-pdf('/Users/Avril/Desktop/lumping_plots.pdf', width = 6, height = 6)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/lumping_plots.pdf', width = 6, height = 6)
 par(mar = c(5.1, 5.1, 4.1, 4.1))
 
 overlaps <- overlaps[overlaps$covg == 15,]
@@ -3343,6 +3399,7 @@ alph <- 0.05
 width <- 0.05
 pt.size <- 3
 mean.size <- 2
+text.size <- 1.5
 txt.exp <- 1
 lwd <- 2
 diffs <- c(-0.3, -0.15, 0, 0.15, 0.3)
@@ -3352,7 +3409,7 @@ outline.col <- 'black'
 k <- 1
 while(k == 1){
   
-pdf('/Users/Avril/Desktop/lumping_plots.pdf', width = 6, height = 4.5)
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/lumping_plots.pdf', width = 6.2, height = 4.5)
 par(mar = c(5.1, 5.1, 4.1, 4.1))
   
 b <- 1
@@ -3361,7 +3418,7 @@ tot <- nrow(temp)
 
 plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset), ylim = c(0.7, max(overlaps$num.true)+1.3), xlab = '', ylab = '',
      xaxt = 'n', cex.lab = text.size, cex.axis = text.size)
-  axis(1, at = c(1:3), label = rep('', 3), tck = -0.04)
+  axis(1, at = c(1:3), label = rep('', 3), tck = -0.00)
   axis(1, at = c(1:3), cex.axis = text.size*txt.exp, line = 1.2, lwd = 0, label = c('BCFtools\nGenotypes','BCFtools\nLikelihoods','PLINK\n'))
   x <- 1
   for(c in sort(unique(temp$covg))){
@@ -3390,8 +3447,8 @@ plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset)
     x <- x+1
   }
   legend('topright', pch = 19, col = plink.cols, pt.cex = pt.size, legend = c('5X','10X','15X','30X','50X'), cex = text.size, bty = 'n')
-  legend('topright', pch = 19, col = pl.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.15,0), bty = 'n')
-  legend('topright', pch = 19, col = gt.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.21,0), bty = 'n')
+  legend('topright', pch = 19, col = pl.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.17,0), bty = 'n')
+  legend('topright', pch = 19, col = gt.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.235,0), bty = 'n')
   
 b <- 2
 temp <- overlaps[overlaps$bin == b,]
@@ -3399,7 +3456,7 @@ tot <- nrow(temp)
 
 plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset), ylim = c(0.7, max(overlaps$num.true)+1.3), xlab = '', ylab = '',
      xaxt = 'n', cex.axis = text.size, cex.lab = text.size)
-  axis(1, at = c(1:3), label = rep('', 3), tck = -0.04)
+  axis(1, at = c(1:3), label = rep('', 3), tck = -0.0)
   axis(1, at = c(1:3), cex.axis = text.size*txt.exp, line = 1.2, lwd = 0, label = c('BCFtools\nGenotypes','BCFtools\nLikelihoods','PLINK\n'))
   x <- 1
   for(c in sort(unique(temp$covg))){
@@ -3434,7 +3491,7 @@ plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset)
   
   plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset), ylim = c(0.7, max(overlaps$num.true)+1.3), xlab = '', ylab = '',
        xaxt = 'n', cex.axis = text.size, cex.lab = text.size)
-  axis(1, at = c(1:3), label = rep('', 3), tck = -0.04)
+  axis(1, at = c(1:3), label = rep('', 3), tck = -0.0)
   axis(1, at = c(1:3), cex.axis = text.size*txt.exp, line = 1.2, lwd = 0, label = c('BCFtools\nGenotypes','BCFtools\nLikelihoods','PLINK\n'))
   x <- 1
   for(c in sort(unique(temp$covg))){
@@ -3469,7 +3526,7 @@ plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset)
   
   plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset), ylim = c(0.7, max(overlaps$num.true)+1.3), xlab = '', ylab = '',
        xaxt = 'n', cex.axis = text.size, cex.lab = text.size)
-  axis(1, at = c(1:3), label = rep('', 3), tck = -0.04)
+  axis(1, at = c(1:3), label = rep('', 3), tck = -0.0)
   axis(1, at = c(1:3), cex.axis = text.size*txt.exp, line = 1.2, lwd = 0, label = c('BCFtools\nGenotypes','BCFtools\nLikelihoods','PLINK\n'))
   x <- 1
   for(c in sort(unique(temp$covg))){
@@ -3501,6 +3558,100 @@ plot(0, 0, col = 'transparent', main = b, xlim = c(1-xlim.offset, 3+xlim.offset)
   dev.off()
   k <- k+1
 }
+
+##### >>> 95E. Different lumping plot for SI showing info in different way #####
+head(overlaps)
+ymax <- 4.5
+txt.size <- 1.25
+ln.alph <- 0.8
+pt.size <- 3
+mean.size <- 1.5
+lwd <- 2
+outline.col <- 'black'
+pt.offset <- 0.015 ## changes inset of point overlays in legend (need to recal with dimension changes)
+
+k <- 1
+while(k == 1){
+## Genotypes
+pdf('../manuscript/r_scripts_AMH/figures_output/simulated/SI_lumping_figure_panels.pdf', width = 5, height = 5)
+plot(0,0, xlim = c(1,4), ylim = c(1, ymax), col = 'transparent', xaxt = 'n', ylab = '', xlab = '', main = 'Genotypes',
+     cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+  axis(1, at = c(1:4), cex.axis = txt.size, label = c('Short','Intermediate','Long','Very long'))
+  axis(2, at = c(1:4), cex.axis = txt.size)
+  x <- 5
+  for(c in sort(unique(overlaps$covg), decreasing = TRUE)){
+    sub <- overlaps[overlaps$covg == c & overlaps$method == 1,]
+    lines(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                            mean(sub[sub$bin == 2, 'num.true']),
+                            mean(sub[sub$bin == 3, 'num.true']),
+                            mean(sub[sub$bin == 4, 'num.true'])),
+          col = alpha(gt.cols[x], ln.alph))
+    points(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                             mean(sub[sub$bin == 2, 'num.true']),
+                             mean(sub[sub$bin == 3, 'num.true']),
+                             mean(sub[sub$bin == 4, 'num.true'])),
+           pch = 23, bg = gt.cols[x], col = outline.col, cex = mean.size, lwd = lwd)
+    x <- x-1
+  }
+  legend('topleft', pch = 23, pt.bg = gt.cols, col = gt.cols, cex = text.size, pt.cex = mean.size, lwd = 1, pt.lwd = lwd,
+         legend = c('5X','10X','15X','30X','50X'), bty = 'n')
+  legend('topleft', pch = 23, pt.bg = gt.cols, col = outline.col, cex = text.size, pt.cex = mean.size, pt.lwd = lwd,
+         legend = c('','','','',''), bty = 'n', inset = c(pt.offset, 0))
+  
+## Likelihoods
+plot(0,0, xlim = c(1,4), ylim = c(1, ymax), col = 'transparent', xaxt = 'n', ylab = '', xlab = '', main = 'Likelihoods',
+       cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+  axis(1, at = c(1:4), cex.axis = txt.size, label = c('Short','Intermediate','Long','Very long'))
+  axis(2, at = c(1:4), cex.axis = txt.size)
+  x <- 5
+  for(c in sort(unique(overlaps$covg), decreasing = TRUE)){
+    sub <- overlaps[overlaps$covg == c & overlaps$method == 2,]
+    lines(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                            mean(sub[sub$bin == 2, 'num.true']),
+                            mean(sub[sub$bin == 3, 'num.true']),
+                            mean(sub[sub$bin == 4, 'num.true'])),
+          col = alpha(pl.cols[x], ln.alph))
+    points(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                             mean(sub[sub$bin == 2, 'num.true']),
+                             mean(sub[sub$bin == 3, 'num.true']),
+                             mean(sub[sub$bin == 4, 'num.true'])),
+           pch = 23, bg = pl.cols[x], col = outline.col, cex = mean.size, lwd = lwd)
+    x <- x-1
+  }
+  legend('topleft', pch = 23, pt.bg = pl.cols, col = pl.cols, cex = text.size, pt.cex = mean.size, lwd = 1, pt.lwd = lwd,
+         legend = c('5X','10X','15X','30X','50X'), bty = 'n')
+  legend('topleft', pch = 23, pt.bg = pl.cols, col = outline.col, cex = text.size, pt.cex = mean.size, pt.lwd = lwd,
+         legend = c('','','','',''), bty = 'n', inset = c(pt.offset, 0))
+  
+## PLINK
+plot(0,0, xlim = c(1,4), ylim = c(1, ymax), col = 'transparent', xaxt = 'n', ylab = '', xlab = '', main = 'PLINK',
+       cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+  axis(1, at = c(1:4), cex.axis = txt.size, label = c('Short','Intermediate','Long','Very long'))
+  axis(2, at = c(1:4), cex.axis = txt.size)
+  x <- 5
+  for(c in sort(unique(overlaps$covg), decreasing = TRUE)){
+    sub <- overlaps[overlaps$covg == c & overlaps$method == 3,]
+    lines(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                            mean(sub[sub$bin == 2, 'num.true']),
+                            mean(sub[sub$bin == 3, 'num.true']),
+                            mean(sub[sub$bin == 4, 'num.true'])),
+          col = alpha(plink.cols[x], ln.alph))
+    points(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                             mean(sub[sub$bin == 2, 'num.true']),
+                             mean(sub[sub$bin == 3, 'num.true']),
+                             mean(sub[sub$bin == 4, 'num.true'])),
+           pch = 23, bg = plink.cols[x], col = outline.col, cex = mean.size, lwd = lwd)
+    x <- x-1
+  }
+  legend('topleft', pch = 23, pt.bg = plink.cols, col = plink.cols, cex = text.size, pt.cex = mean.size, lwd = 1, pt.lwd = lwd,
+         legend = c('5X','10X','15X','30X','50X'), bty = 'n')
+  legend('topleft', pch = 23, pt.bg = plink.cols, col = outline.col, cex = text.size, pt.cex = mean.size, pt.lwd = lwd,
+         legend = c('','','','',''), bty = 'n', inset = c(pt.offset, 0))
+  
+dev.off()
+k <- k+1
+}
+  
 
 ##### 96. Plotting true vs. called ROH lengths (scatterplot) #####
 alph <- 0.25
@@ -3703,6 +3854,73 @@ for(i in unique(bcf.pl.res$id)){
     mtext('PLINK', side = 2, line = 3, at = 14)
     mtext('BCFtools\nGenotypes', side = 2, line = 3, at = 9)
     mtext('BCFtools\nLikelihoods', side = 2, line = 3, at = 4)
+}
+dev.off()
+
+##### >>> 99A. Plotting individual true ROHs and called ROHs for all 3 analyses and coverage levels - specific individual and window #####
+wid <- 3 ## line widths in plot ~ or ~
+hit <- 0.1 ## polygon height
+xmin <- 1.5e7
+xmax <- 2.5e7
+id <- 104
+
+# pdf('../manuscript/r_scripts_AMH/figures_output/simulated/individual_true_and_called_ROHs_across_chromosome.pdf', width = 15, height = 7)
+par(mar = c(5.1, 5.1, 4.1, 2.1))
+for(i in id){
+  sub.pl <- bcf.pl.res[bcf.pl.res$id == i,]
+  sub.gt <- bcf.gt.res[bcf.gt.res$id == i,]
+  sub.pk <- plink.res[plink.res$id == i,]
+  sub.true <- true.rohs[true.rohs$id == i,]
+  plot(0,0, xlim = c(1, chrom.len), ylim = c(1, 16), col = 'transparent', yaxt = 'n', xlab = 'Chromosome position (bp)', ylab = '', main = i, 
+       xlim = c(xmin, xmax))
+  lines(x = c(-2e6, 40e6), y = c(1.5, 1.5), lty = 2)
+  lines(x = c(-2e6, 40e6), y = c(6.5, 6.5), lty = 2)
+  lines(x = c(-2e6, 40e6), y = c(11.5, 11.5), lty = 2)
+  axis(2, at = c(1:16), labels = c('True','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
+  for(r in 1:nrow(sub.true)){
+    # lines(x = c(sub.true$start[r], sub.true$end[r]), y = c(1, 1), col = 'black', lwd = wid)
+    polygon(x = c(sub.true$start[r], sub.true$end[r], sub.true$end[r], sub.true$start[r]), y = c(1, 1, 18, 18),
+            col = alpha('lightgrey', 0.3), border = NA)
+    polygon(x = c(sub.true$start[r], sub.true$end[r], sub.true$end[r], sub.true$start[r]), y = c(1-hit, 1-hit, 1+hit, 1+hit),
+            col = 'black', border = NA)
+  }
+  y <- 2
+  for(c in c(5, 10, 15, 30, 50)){
+    temp <- sub.pl[sub.pl$covg == c,]
+    if(nrow(temp) > 0){
+      for(r in 1:nrow(temp)){
+        # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = pl.col, lwd = wid)
+        polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+                col = pl.col, border = NA)
+      }
+    }
+    y <- y+1
+  }
+  for(c in c(5, 10, 15, 30, 50)){
+    temp <- sub.gt[sub.gt$covg == c,]
+    if(nrow(temp) > 0){
+      for(r in 1:nrow(temp)){
+        # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = gt.col, lwd = wid)
+        polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+                col = gt.col, border = NA)
+      }
+    }
+    y <- y+1
+  }
+  for(c in c(5, 10, 15, 30, 50)){
+    temp <- sub.pk[sub.pk$covg == c,]
+    if(nrow(temp) > 0){
+      for(r in 1:nrow(temp)){
+        # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = plink.col, lwd = wid)
+        polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+                col = plink.col, border = NA)
+      }
+    }
+    y <- y+1
+  }
+  mtext('PLINK', side = 2, line = 3, at = 14)
+  mtext('BCFtools\nGenotypes', side = 2, line = 3, at = 9)
+  mtext('BCFtools\nLikelihoods', side = 2, line = 3, at = 4)
 }
 dev.off()
 
