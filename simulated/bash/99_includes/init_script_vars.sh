@@ -15,14 +15,15 @@
 #              log file name
 
 ##  Set username
-USER=amh0254
+USER1=amh0254
+USER2=avrilh
 
 ## Set project name
-PROJECT=roh_inference_testing
+PROJECT=roh_param_project/roh_inference_testing
 
 ## Set base directories
-USER_HOME_DIR=/home/${USER}
-BASE_DIR=/scratch/${USER}
+USER_HOME_DIR=/home/${USER1}
+BASE_DIR=/scratch/${USER2}
 
 ## Set email address
 EMAIL=avrilharder@gmail.com
@@ -36,15 +37,15 @@ INIT_STEP=01_slim
 
 ## Create variable pointing to the base directory for this project and step
 
-HOME_STEP_DIR=${USER_HOME_DIR}/${PROJECT}/data/${STEP}/
+HOME_STEP_DIR=${USER_HOME_DIR}/${PROJECT}/simulated/data/${STEP}/
 BASE_STEP_DIR=${BASE_DIR}/${PROJECT}/data/${STEP}/
 
 ## Set the input directory, which is the output directory from the previous
 ## step
-INPUT_DIR=${BASE_DIR}/${PROJECT}/data/${PREV_STEP}/output
+INPUT_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${PREV_STEP}/output
 
 ## Create a working directory on /scratch
-WORK_DIR=${BASE_DIR}/${PROJECT}/data/${STEP}
+WORK_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${STEP}
 mkdir -p ${WORK_DIR}
 chmod -R 700 ${WORK_DIR}
 
@@ -69,9 +70,9 @@ FILE_LABELS=m${MUTATION_RATE}_r${RECOMB_RATE}_p${POP_SIZE}
 
 SLIM_OUT_DIR=slim_${FILE_LABELS}
 
-SLIM_PARAM_FILE=/home/${USER}/${PROJECT}/scripts/${STEP}/chrom_w_struct_and_evo.slim
+SLIM_PARAM_FILE=/home/${USER}/${PROJECT}/simulated/scripts/${STEP}/chrom_w_struct_and_evo.slim
 
-INIT_OUTPUT_DIR=${BASE_DIR}/${PROJECT}/data/${INIT_STEP}/output
+INIT_OUTPUT_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${INIT_STEP}/output
 
 # REF_GENOME_FILE_PATH=${INIT_OUTPUT_DIR}/${SLIM_OUT_DIR}
 REF_GENOME_FILE_PATH=${INIT_OUTPUT_DIR}
