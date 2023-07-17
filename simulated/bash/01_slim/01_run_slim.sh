@@ -35,7 +35,7 @@ SCRIPT=01_run_slim
 # Load variables and functions from settings file
 # -----------------------------------------------------------------------------
 
-source /home/aubkbk001/roh_param_project/scripts/99_includes/init_script_vars.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/init_script_vars.sh
 
 # -----------------------------------------------------------------------------
 # Load modules
@@ -71,7 +71,7 @@ stop_logging
 # -----------------------------------------------------------------------------
 
 module purge
-module load bcftools/1.13
+module load bcftools/1.17
 
 start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
 
@@ -133,4 +133,4 @@ stop_logging
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
 
-source /home/aubkbk001/roh_param_project/scripts/99_includes/backup_output.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/backup_output.sh

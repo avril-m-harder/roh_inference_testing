@@ -14,7 +14,7 @@
 # instance, if cvgX has 5 coverage levels, set --array=0-4. If cvgX has 4
 # coverage levels, set --array=0-3.
 #
-# --array=0-4 tells Slrum to create 5 instances of this job. Each job will have
+# --array=0-4 tells Slurm to create 5 instances of this job. Each job will have
 # a different array index from the set 0, 1, 2, 3, 4. The array index for each
 # instance of the job is stored in $SLURM_ARRAY_TASK_ID. In this script,
 # $SLURM_ARRAY_TASK_ID is used to look up the coverage level in cvgX in order

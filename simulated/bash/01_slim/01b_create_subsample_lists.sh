@@ -31,7 +31,7 @@ SCRIPT=$(echo "$(echo "$0" | sed -e "s/^\.\///")" | sed -e "s/\.sh//")
 # Load variables and functions from settings file
 # -----------------------------------------------------------------------------
 
-source /scratch/aubkbk001/roh_param_project/scripts/99_includes/init_script_vars.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/init_script_vars.sh
 
 # -----------------------------------------------------------------------------
 #

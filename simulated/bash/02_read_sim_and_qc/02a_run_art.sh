@@ -6,7 +6,7 @@
 #SBATCH -t 07:00:00
 #SBATCH --mem=4000
 #SBATCH --mail-type=begin,end,fail
-#SBATCH --mail-user=kbk0024@auburn.edu
+#SBATCH --mail-user=avrilharder@gmail.com
 
 #  This script must be made executable like this
 #    chmod +x my_script
@@ -24,7 +24,7 @@ SCRIPT=02a_run_art.sh
 # Load variables and functions from settings file
 # -----------------------------------------------------------------------------
 
-source /scratch/kbk0024/roh_param_project/scripts/99_includes/init_script_vars.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/init_script_vars.sh
 
 # -----------------------------------------------------------------------------
 # Load modules
@@ -70,10 +70,10 @@ while read -a line; do
 
 done <${SAMPLE_ID_LIST}
 
-# mail -s 'ART run finished' kirkseykb1@appstate.edu <<<'SLiM run finished'
+# mail -s 'ART run finished' avrilharder@gmail.com <<<'SLiM run finished'
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
 
-# source /home/aubkbk001/roh_param_project/scripts/99_includes/backup_output.sh
+# source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/backup_output.sh

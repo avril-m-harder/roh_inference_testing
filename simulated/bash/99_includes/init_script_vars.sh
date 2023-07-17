@@ -15,17 +15,17 @@
 #              log file name
 
 ##  Set username
-USER=kbk0024
+USER=amh0254
 
 ## Set project name
-PROJECT=roh_param_project
+PROJECT=roh_inference_testing
 
 ## Set base directories
 USER_HOME_DIR=/home/${USER}
 BASE_DIR=/scratch/${USER}
 
 ## Set email address
-EMAIL=kirkseykb1@appstate.edu
+EMAIL=avrilharder@gmail.com
 
 ## Set initial step name
 INIT_STEP=01_slim
@@ -122,7 +122,7 @@ declare -a popN=(100 50 30)
 popCnt=${#popN[@]}
 let popCnt-=1
 
-# SAMPLE_ID_LIST, set below, contains the list of the elemtents of the largest
+# SAMPLE_ID_LIST, set below, contains the list of the elements of the largest
 # subsample we extract from the base list. e.g. if we create subsamples of 100,
 # 50, and 30 individuals, SAMPLE_ID_LIST will point to the list of 100
 # individuals.
