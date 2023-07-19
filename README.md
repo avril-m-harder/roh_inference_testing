@@ -25,7 +25,7 @@
 * *03_manuscript_figures_and_statistics_empirical.R*: Reads in results for all 3 methods and 5 coverage levels and conducts all downstream analyses and produces all corresponding figures for the manuscript
 
 #### Simulated data - R scripts
-*\*Note: SLiM and bash scripts for simulated data generation and analyses can be found in [kennethb22/roh_parameter_project_kk/](https://github.com/kennethb22/roh_parameter_project_kk)*
+*\*Note: SLiM and bash scripts for simulated data generation and analyses can be found in [kennethb22/roh_parameter_project_kk/](https://github.com/kennethb22/roh_parameter_project_kk). Scripts originally written by Kenneth Kirksey, modified versions in this repo.*
 
 * *01_getting_true_roh_coords.R*: Summarize start and end coordinates of true ROHs
 * *02a_summarize_bcftoolsROH_output.R*: Reads in all of the output from BCFtools Genotypes and Likelihoods (i.e., ROH coordinates) across all coverage levels and summarizes into a single file for reading in with 04_manuscript_figures_and_statistics_simulated.R

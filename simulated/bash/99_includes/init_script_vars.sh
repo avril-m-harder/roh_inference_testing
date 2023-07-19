@@ -70,7 +70,7 @@ FILE_LABELS=m${MUTATION_RATE}_r${RECOMB_RATE}_p${POP_SIZE}
 
 SLIM_OUT_DIR=slim_${FILE_LABELS}
 
-SLIM_PARAM_FILE=/home/${USER}/${PROJECT}/simulated/scripts/${STEP}/chrom_w_struct_and_evo.slim
+SLIM_PARAM_FILE=/home/${USER}/${PROJECT}/simulated/bash/${STEP}/chrom_w_struct_and_evo.slim
 
 INIT_OUTPUT_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${INIT_STEP}/output
 

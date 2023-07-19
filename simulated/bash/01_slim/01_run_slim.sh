@@ -70,7 +70,6 @@ stop_logging
 # input directory in 02a_run_art.sh
 # -----------------------------------------------------------------------------
 
-module purge
 module load bcftools/1.17
 
 start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
@@ -127,7 +126,7 @@ done <${SAMPLE_ID_LIST}
 
 stop_logging
 
-# mail -s 'SLiM run finished - submit Rviz' ${EMAIL} <<<'SLiM run finished'
+mail -s 'SLiM run finished - submit Rviz' ${EMAIL} <<<'SLiM run finished'
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.
