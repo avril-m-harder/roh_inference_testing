@@ -1,30 +1,19 @@
 #!/bin/bash
-#
-#   +-----------------------+
-#   |  USE:                 |
-#   |    - MEDIUM queue     |
-#   |    - 1 CPU + 8 Gb     |
-#   +-----------------------+
-#
-#  Replace the USER name in this script with your username and
-#  call your project whatever you want
-#
-#  This script must be made executable like this
-#    chmod +x my_script
-#
-#  Submit this script to the queue with a command like this
-#    run_script my_script.sh
-#
-#  My preferred setup before running:
-#    -- script to be run in /home/projectdir/scripts
-#    -- project directory (of same name as script) in /home/
-#    -- /input/ and /output/ subdirs within project dir
+#SBATCH --job-name=run_r_viz
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -t 02:00:00
+#SBATCH --mem=8000
+#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-user=avrilharder@gmail.com
 
 
 ## --------------------------------
 ## Load R + run script 
-module load R/4.1.0
+module load R/4.2.3
 
-R CMD BATCH /home/aubkbk001/roh_param_project/01_slim/scripts/slim_output_roh_viz_ASC.R
+Rscript \
+/home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/01_slim/\
+slim_output_roh_viz_Easley.R
 
-mail -s 'R viz finished' kirkseykb1@appstate.edu <<< 'R viz finished'
+mail -s 'R viz finished' avrilharder@gmail.com <<< 'R viz finished'
