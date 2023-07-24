@@ -1,16 +1,14 @@
 #!/bin/bash
 
 #SBATCH --job-name=02_read_sim_and_qc
+#SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 2
 #SBATCH -t 07:00:00
 #SBATCH --mem=4000
-#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
-#  This script must be made executable like this
-#    chmod +x my_script
-#
 
 # -----------------------------------------------------------------------------
 # Set variables for this step

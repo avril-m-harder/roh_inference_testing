@@ -6,7 +6,7 @@
 #SBATCH -n 2
 #SBATCH -t 300:00:00
 #SBATCH --mem=6000
-#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
 
@@ -122,4 +122,4 @@ mail -s 'SLiM run finished - submit Rviz' ${EMAIL} <<<'SLiM run finished'
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
 
-source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/backup_output.sh
+# source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/backup_output.sh

@@ -1,10 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=run_r_viz
+#SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -t 02:00:00
 #SBATCH --mem=8000
-#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
 

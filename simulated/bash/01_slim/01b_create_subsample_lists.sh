@@ -1,5 +1,14 @@
 #!/bin/bash
-#
+
+#SBATCH --job-name=01b_subsamps
+#SBATCH --partition=jrw0107_std
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -t 300:00:00
+#SBATCH --mail-type=end,fail
+#SBATCH --mail-user=avrilharder@gmail.com
+
+
 #  This script takes the list of individual IDs that were created by SLiM and
 #  uses that list to create randomly selected subpopulations, using the
 #  population sizes specified in init_script_vars.sh. It first selects the
