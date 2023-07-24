@@ -1,28 +1,18 @@
 #!/bin/bash
-#
-#   +-----------------------+
-#   |  USE:                 |
-#   |    - MEDIUM queue     |
-#   |    - 2 CPU + 6 Gb     |
-#   +-----------------------+
-#
-#  Replace the USER name in this script with your username and
-#  call your project whatever you want
-#
-#  This script must be made executable like this
-#    chmod +x my_script
-#
-#  Submit this script to the queue with a command like this
-#    run_script my_script.sh
-#
-#  My preferred setup before running:
-#    -- script to be run in /home/scripts
-#    -- project directory (of same name as script) in /home/
-#    -- /input/ and /output/ subdirs within project dir
-#
+
+#SBATCH --job-name=01_run_slim
+#SBATCH --partition=jrw0107_std
+#SBATCH -N 1
+#SBATCH -n 2
+#SBATCH -t 300:00:00
+#SBATCH --mem=6000
+#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-user=avrilharder@gmail.com
+
+
 # IMPORTANT: before running this script, you must set SLiM parameters in
 # init_script_vars.sh
-#
+
 
 # -----------------------------------------------------------------------------
 # Set variables for this step
@@ -41,7 +31,7 @@ source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_i
 # Load modules
 # -----------------------------------------------------------------------------
 
-module load anaconda/3-2020.11
+module load slim/4.0.1
 
 # -----------------------------------------------------------------------------
 # Run SLiM - SLIM_OUT_DIR, parameters, and SLIM_PARAM_FILE are set in
