@@ -1,0 +1,5 @@
+mkdir: cannot create directory ‘/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/output/slim_m5e-07_r1e-8_p500/slim_output_fasta_files’: No such file or directory
+
+The following have been reloaded with a version change:
+  1) gcc/4.8.5 => gcc/9.3.0
+

@@ -5,7 +5,9 @@
 #SBATCH -N 1
 #SBATCH -n 2
 #SBATCH -t 300:00:00
-#SBATCH --mem=6000
+#SBATCH --mem=12000
+#SBATCH --output=01_slim-%j.out
+#SBATCH --error=01_slim_error-%j.err
 #SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
@@ -42,7 +44,7 @@ mkdir ${OUTPUT_DIR}/${SLIM_OUT_DIR}
 
 start_logging "Run SLiM - ${SLIM_OUT_DIR}"
 
-# models chromosome with coding and non-coding regions
+## models chromosome with coding and non-coding regions
 slim \
     -d POP_SIZE=${POP_SIZE} \
     -d MUTATION_RATE=${MUTATION_RATE} \
@@ -52,7 +54,7 @@ slim \
 
 stop_logging
 
-# mail -s 'SLiM run finished - Starting BCFtools' ${EMAIL} <<<'SLiM run finished - Starting BCFtools'
+mail -s 'SLiM run finished - Starting BCFtools' ${EMAIL} <<<'SLiM run finished - Starting BCFtools'
 
 # -----------------------------------------------------------------------------
 # Format SLiM output for read simulation - FILE_LABELS and SAMPLE_ID_LIST and
@@ -61,6 +63,7 @@ stop_logging
 # -----------------------------------------------------------------------------
 
 module load bcftools/1.17
+module load samtools/1.17
 
 start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
 
