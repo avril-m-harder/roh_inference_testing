@@ -11,15 +11,15 @@ library(scales)
 
 ### Loop over different settings for mutation and recombination rates and population sizes
 ## to summarize output
-pdf('/scratch/avrilh/roh_param_project/roh_inference_testing/data/01_slim/all_roh_output.pdf', width=15, height=6)
+pdf('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/all_roh_output.pdf', width=15, height=6)
 ## final settings
 for(m in c('5e-07')){
   for(r in c('1e-8')){
     for(p in c('500')) {
       ## select parameter set directory
-      setwd(paste0('/scratch/aubkbk001_01_slim/slim_output_fasta_filessample_fasta_files_m',m,'_r',r,'_p',p,'/')) ##  
+      setwd(paste0('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/output/slim_m',m,'_r',r,'_p',p,'/slim_output_fasta_files')) ##  
       print(paste0('m',m,'_r',r,'_p',p,'...'))
-
+      
       ## get list of files in the directory to test
       fns <- list.files()
       nums <- do.call(rbind, strsplit(fns, split='_'))[,1]
@@ -47,7 +47,7 @@ for(m in c('5e-07')){
         for(i in 1:length(locs)){
           if(i %% 25000 == 0){
             print(paste0(i,' - ',Sys.time()))
-            write.table(OUT, paste0('/scratch/aubkbk001_01_slim/roh_results_m',m,'_r',r,'_p',p,'.txt'),
+            write.table(OUT, paste0('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/roh_results_m',m,'_r',r,'_p',p,'.txt'),
                         sep='\t', row.names=FALSE, quote=FALSE, append=TRUE, col.names=FALSE)
             OUT <- NULL
           }
@@ -108,13 +108,13 @@ for(m in c('5e-07')){
         # lens <- OUT[,3] - OUT[,2]
         print('ROH lengths calculated...')
         print(paste0('... ',Sys.time()))
-        write.table(OUT, paste0('/scratch/aubkbk001_01_slim/roh_results_m',m,'_r',r,'_p',p,'.txt'),
+        write.table(OUT, paste0('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/roh_results_m',m,'_r',r,'_p',p,'.txt'),
                     sep='\t', row.names=FALSE, quote=FALSE, append=TRUE, col.names=FALSE)
       }
       
       print('Results written...')
       ## visualize ROH distributions
-      rohs <- read.table(paste0('/scratch/aubkbk001_01_slim/roh_results_m',m,'_r',r,'_p',p,'.txt'), 
+      rohs <- read.table(paste0('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/roh_results_m',m,'_r',r,'_p',p,'.txt'), 
                          sep='\t', header=FALSE)
       colnames(rohs) <- c('samp','start','end')
       rohs$length <- rohs$end - rohs$start
@@ -138,12 +138,12 @@ for(m in c('5e-07')){
         ## plot 3
         hist(long.rohs$length, breaks=30, main=paste0('m ',m,' - r',r,' - p',p), xlab='Lenghs ROHs >= 100kb')
       }
-        
+      
       ## write output to summarize some stats across parameter combos
       # if(length(frohs.long > 0)){
-        save <- c(m, r, p,
-                  min(30e6 - (frohs.all*30e6)), mean(30e6 - (frohs.all*30e6)), max(30e6 - (frohs.all*30e6)),
-                  mean(rohs$length), sd(rohs$length), mean(frohs.all), mean(long.rohs$length), sd(long.rohs$length), mean(frohs.long))
+      save <- c(m, r, p,
+                min(30e6 - (frohs.all*30e6)), mean(30e6 - (frohs.all*30e6)), max(30e6 - (frohs.all*30e6)),
+                mean(rohs$length), sd(rohs$length), mean(frohs.all), mean(long.rohs$length), sd(long.rohs$length), mean(frohs.long))
       # }
       # if(length(frohs.long == 0)){
       #   save <- c(m, r, p,
@@ -151,7 +151,7 @@ for(m in c('5e-07')){
       #             mean(rohs$length), sd(rohs$length), mean(frohs.all), NA, NA, NA)
       # }
       print('Writing summary stats...')
-      write.table(save, '/scratch/aubkbk001_01_slim/param_combo_sum_stats.txt',
+      write.table(save, '/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/param_combo_sum_stats.txt',
                   sep='\t', row.names=FALSE, quote=FALSE, append=TRUE, col.names=FALSE)
       
       ## plot cumulative ROH lengths for all samples
@@ -161,18 +161,19 @@ for(m in c('5e-07')){
       if(length(frohs.long) > 0){
         plot(x=c(min(long.rohs$length), max(long.rohs$length)), y=c(0, max(frohs.long)), col='transparent', log='x',
              xlab='ROH length', ylab='Cumulative f(ROH)', main=paste0('m ',m,' - r',r,' - p',p))
-          for(i in unique(long.rohs$samp)){
-            temp <- long.rohs[long.rohs$samp == i,]
-            temp <- temp[order(temp$length),]
-            temp$csum <- cumsum(temp$length)
-            temp$cfroh <- temp$csum/30e6
-            lines(x=temp$length, y=temp$cfroh)
-            points(max(long.rohs$length), max(temp$cfroh), pch=19, cex=0.5, col=alpha('deepskyblue3', 0.4))
-          }
-    	  legend('topleft', legend=c(paste0('Mean # het sites = ',mean(30e6 - (frohs.all*30e6)))),
-          	bty = 'n', fill = 'transparent')
+        for(i in unique(long.rohs$samp)){
+          temp <- long.rohs[long.rohs$samp == i,]
+          temp <- temp[order(temp$length),]
+          temp$csum <- cumsum(temp$length)
+          temp$cfroh <- temp$csum/30e6
+          lines(x=temp$length, y=temp$cfroh)
+          points(max(long.rohs$length), max(temp$cfroh), pch=19, cex=0.5, col=alpha('deepskyblue3', 0.4))
         }
-    }
-  }
-}
-dev.off()
+        legend('topleft', legend=c(paste0('Mean # het sites = ',mean(30e6 - (frohs.all*30e6)))),
+               bty = 'n', fill = 'transparent')
+      }
+          }
+        }
+      }
+      dev.off()
+      
