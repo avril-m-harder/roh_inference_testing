@@ -8,7 +8,7 @@
 #SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 #SBATCH --output=01_Rviz-%j.out
-#SBATCH --error=01_Rviz_error-%j.err
+#SBATCH --error=error-01_Rviz-%j.err
 
 
 ## --------------------------------

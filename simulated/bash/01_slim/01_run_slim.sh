@@ -7,7 +7,7 @@
 #SBATCH -t 300:00:00
 #SBATCH --mem=12000
 #SBATCH --output=01_slim-%j.out
-#SBATCH --error=01_slim_error-%j.err
+#SBATCH --error=error-01_slim-%j.err
 #SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
@@ -40,21 +40,21 @@ module load slim/4.0.1
 # init_script_vars.sh
 # -----------------------------------------------------------------------------
 
-mkdir ${OUTPUT_DIR}/${SLIM_OUT_DIR}
-
-start_logging "Run SLiM - ${SLIM_OUT_DIR}"
-
-## models chromosome with coding and non-coding regions
-slim \
-    -d POP_SIZE=${POP_SIZE} \
-    -d MUTATION_RATE=${MUTATION_RATE} \
-    -d RECOMB_RATE=${RECOMB_RATE} \
-    -d "OUT_PATH='${OUTPUT_DIR}/${SLIM_OUT_DIR}/'" \
-    ${SLIM_PARAM_FILE}
-
-stop_logging
-
-mail -s 'SLiM run finished - Starting BCFtools' ${EMAIL} <<<'SLiM run finished - Starting BCFtools'
+# mkdir ${OUTPUT_DIR}/${SLIM_OUT_DIR}
+# 
+# start_logging "Run SLiM - ${SLIM_OUT_DIR}"
+# 
+# ## models chromosome with coding and non-coding regions
+# slim \
+#     -d POP_SIZE=${POP_SIZE} \
+#     -d MUTATION_RATE=${MUTATION_RATE} \
+#     -d RECOMB_RATE=${RECOMB_RATE} \
+#     -d "OUT_PATH='${OUTPUT_DIR}/${SLIM_OUT_DIR}/'" \
+#     ${SLIM_PARAM_FILE}
+# 
+# stop_logging
+# 
+# mail -s 'SLiM run finished - Starting BCFtools' ${EMAIL} <<<'SLiM run finished - Starting BCFtools'
 
 # -----------------------------------------------------------------------------
 # Format SLiM output for read simulation - FILE_LABELS and SAMPLE_ID_LIST and
@@ -72,25 +72,25 @@ mkdir ${VCF_OUT_DIR}
 VCF_FILE_LIST=${OUTPUT_DIR}/vcf_file_list_${FILE_LABELS}.txt
 
 ## Compress output VCF
-bgzip ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf
-
-## Index compressed VCF
-tabix -f ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
-
-## Split output VCF into sample-specific VCF files
-
-bcftools +split -O z -o ${VCF_OUT_DIR}/ ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
-
-## Randomly select sample VCF files for conversation to FASTAs
-## >> Selecting 100, can be downsampled later
-
-ls ${VCF_OUT_DIR} i*.vcf.gz | sort -R | tail -100 >${VCF_FILE_LIST}
-sed 's/.vcf.gz//g' ${VCF_FILE_LIST} >${SAMPLE_ID_LIST}
+# bgzip ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf
+# 
+# ## Index compressed VCF
+# tabix -f ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
+# 
+# ## Split output VCF into sample-specific VCF files
+# 
+# bcftools +split -O z -o ${VCF_OUT_DIR}/ ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
+# 
+# ## Randomly select sample VCF files for conversation to FASTAs
+# ## >> Selecting 100, can be downsampled later
+# 
+# ls ${VCF_OUT_DIR} i*.vcf.gz | sort -R | tail -100 >${VCF_FILE_LIST}
+# sed 's/.vcf.gz//g' ${VCF_FILE_LIST} >${SAMPLE_ID_LIST}
 
 ## Convert sample VCF files to two separate haplotype FASTAs per individual
 
 while read -a line; do
-    tabix ${VCF_OUT_DIR}/${line[0]}.vcf.gz
+#     tabix ${VCF_OUT_DIR}/${line[0]}.vcf.gz
 
     bcftools norm --check-ref s \
         --fasta-ref ${REF_GENOME_FILE} \
