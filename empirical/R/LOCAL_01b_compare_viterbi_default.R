@@ -75,11 +75,12 @@ for(m in unique(dat$method)){
     dev.off()
     
     ## " length-specific f(ROH)
-    pdf(paste0('../figures/',m,'_viterbi_vs_default_fROH.pdf'), width = 7, height = 5)
+    pdf(paste0('../figures/',m,'_viterbi_vs_default_fROH_by_bins.pdf'), width = 7, height = 5)
+    n <- 1
     for(l in c(6:9)){
-      plot(0,0, main = m,
+      plot(0,0, main = bin.names[n],
            xlim = c(1, c(length(unique(sub$covg)) * length(unique(sub$ests)))), xaxt = 'n', xlab = '',
-           ylim = c(0, max(dat$froh)), ylab = 'f(ROH)',
+           ylim = c(0, max(dat[,c(6:9)])), ylab = 'f(ROH)',
            col = 'transparent')
       axis(1, at = c(1:c(length(unique(sub$covg)) * length(unique(sub$ests)))),
            labels = paste0(cats[,2],'X\n',cats[,1]), tick = FALSE)
@@ -87,18 +88,19 @@ for(m in unique(dat$method)){
       for(c in unique(sub$covg)){
         for(i in unique(sub$id)){
           lines(c(x, x+1), 
-                c(sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[1], 'froh'],
-                  sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[2], 'froh']),
+                c(sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[1], l],
+                  sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[2], l]),
                 col = alpha('darkgrey', 0.6))
           points(c(x, x+1), 
-                 c(sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[1], 'froh'],
-                   sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[2], 'froh']),
+                 c(sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[1], l],
+                   sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[2], l]),
                  col = alpha('black', 1), pch = 19, cex = 0.75)
         }
         x <- x+2
       }
-      dev.off()
+      n <- n+1
     }
+    dev.off()
 }
 
 
