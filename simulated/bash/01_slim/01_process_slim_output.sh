@@ -36,6 +36,7 @@ source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_i
 module load bcftools/1.17
 module load samtools/1.17
 module load bedtools/2.30.0
+module load R/4.2.3
 
 # -----------------------------------------------------------------------------
 # [NOTE: SLiM is now run on local machine (see README in 
@@ -68,66 +69,74 @@ rm tasdev_genbank_assem.fna*
 
 
 # -----------------------------------------------------------------------------
+# Specify REF and ALT alleles in VCF files based on ancestral sequence;
+# ALT allele is randomly selected to != REF allele
+# -----------------------------------------------------------------------------
+
+Rscript /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/01_slim/vcf_specify_alleles.R
+
+
+# -----------------------------------------------------------------------------
 # Format SLiM output for read simulation - FILE_LABELS and SAMPLE_ID_LIST and
 # FASTA_OUT_DIR are set in init_script_vars.sh. FASTA_OUT_DIR is used as the
 # input directory in 02a_run_art.sh
 # -----------------------------------------------------------------------------
 
-start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
-
-VCF_OUT_DIR=${OUTPUT_DIR}/sample_vcf_files_${FILE_LABELS}
-mkdir ${VCF_OUT_DIR}
-VCF_FILE_LIST=${OUTPUT_DIR}/vcf_file_list_${FILE_LABELS}.txt
-
-## Compress output VCF
-bgzip ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf
-
-## Index compressed VCF
-tabix -f ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
-
-## Split output VCF into sample-specific VCF files
-
-bcftools +split -O z -o ${VCF_OUT_DIR}/ ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
-
-## Randomly select sample VCF files for conversation to FASTAs
-## >> Selecting 100, can be downsampled later
-
-ls ${VCF_OUT_DIR} i*.vcf.gz | sort -R | tail -100 >${VCF_FILE_LIST}
-sed 's/.vcf.gz//g' ${VCF_FILE_LIST} >${SAMPLE_ID_LIST}
-
-## Convert sample VCF files to two separate haplotype FASTAs per individual
-
-while read -a line; do
-#     tabix ${VCF_OUT_DIR}/${line[0]}.vcf.gz
-
-    bcftools norm --check-ref s \
-        --fasta-ref ${REF_GENOME_FILE} \
-        --multiallelics - \
-        --do-not-normalize \
-        --output ${VCF_OUT_DIR}/norm_${line[0]}.vcf \
-        /${VCF_OUT_DIR}/${line[0]}.vcf.gz
-
-    bgzip ${VCF_OUT_DIR}/norm_${line[0]}.vcf
-    tabix ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
-
-    bcftools +fixref ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz -- \
-        --fasta-ref ${REF_GENOME_FILE}
-
-    bcftools consensus --haplotype 1 \
-        --fasta-ref ${REF_GENOME_FILE} \
-        --output ${FASTA_OUT_DIR}/${line[0]}_1.fasta \
-        ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
-
-    bcftools consensus --haplotype 2 \
-        --fasta-ref ${REF_GENOME_FILE} \
-        --output ${FASTA_OUT_DIR}/${line[0]}_2.fasta \
-        ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
-
-done <${SAMPLE_ID_LIST}
-
-stop_logging
-
-mail -s 'SLiM run finished - submit Rviz' ${EMAIL} <<<'SLiM run finished'
+# start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
+# 
+# VCF_OUT_DIR=${OUTPUT_DIR}/sample_vcf_files_${FILE_LABELS}
+# mkdir ${VCF_OUT_DIR}
+# VCF_FILE_LIST=${OUTPUT_DIR}/vcf_file_list_${FILE_LABELS}.txt
+# 
+# ## Compress output VCF
+# bgzip ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf
+# 
+# ## Index compressed VCF
+# tabix -f ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
+# 
+# ## Split output VCF into sample-specific VCF files
+# 
+# bcftools +split -O z -o ${VCF_OUT_DIR}/ ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
+# 
+# ## Randomly select sample VCF files for conversation to FASTAs
+# ## >> Selecting 100, can be downsampled later
+# 
+# ls ${VCF_OUT_DIR} i*.vcf.gz | sort -R | tail -100 >${VCF_FILE_LIST}
+# sed 's/.vcf.gz//g' ${VCF_FILE_LIST} >${SAMPLE_ID_LIST}
+# 
+# ## Convert sample VCF files to two separate haplotype FASTAs per individual
+# 
+# while read -a line; do
+# #     tabix ${VCF_OUT_DIR}/${line[0]}.vcf.gz
+# 
+#     bcftools norm --check-ref s \
+#         --fasta-ref ${REF_GENOME_FILE} \
+#         --multiallelics - \
+#         --do-not-normalize \
+#         --output ${VCF_OUT_DIR}/norm_${line[0]}.vcf \
+#         /${VCF_OUT_DIR}/${line[0]}.vcf.gz
+# 
+#     bgzip ${VCF_OUT_DIR}/norm_${line[0]}.vcf
+#     tabix ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
+# 
+#     bcftools +fixref ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz -- \
+#         --fasta-ref ${REF_GENOME_FILE}
+# 
+#     bcftools consensus --haplotype 1 \
+#         --fasta-ref ${REF_GENOME_FILE} \
+#         --output ${FASTA_OUT_DIR}/${line[0]}_1.fasta \
+#         ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
+# 
+#     bcftools consensus --haplotype 2 \
+#         --fasta-ref ${REF_GENOME_FILE} \
+#         --output ${FASTA_OUT_DIR}/${line[0]}_2.fasta \
+#         ${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
+# 
+# done <${SAMPLE_ID_LIST}
+# 
+# stop_logging
+# 
+# mail -s 'SLiM run finished - submit Rviz' ${EMAIL} <<<'SLiM run finished'
 
 mv *.out /home/amh0254/roh_param_project/roh_inference_testing/simulated/script_stdouts
 mv *.err /home/amh0254/roh_param_project/roh_inference_testing/simulated/script_stdouts

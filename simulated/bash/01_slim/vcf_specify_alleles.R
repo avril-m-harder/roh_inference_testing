@@ -1,0 +1,33 @@
+library(ape)
+library(readr)
+
+## read in ancestral fasta:
+## bases not included in VCF assumed to still be homozygous.
+anc.1 <- read.FASTA('ancestral.fasta')
+anc.1 <- as.character(anc.1)
+
+## read in VCF
+fns <- list.files(pattern = "final*")
+
+for(f in fns){
+  demo <- strsplit(f, split = '_')[[1]][2]
+  new.fn <- paste0(demo,'_n50_spec_allele.vcf')
+  vcf <- read.table(f, header=FALSE, skip = 6)
+  colnames(vcf) <- c('CHROM','POS','ID','REF','ALT','QUAL','FILTER','INFO','FORMAT',paste0('i',c(1:50)))
+  
+  ## convert reference alleles in VCF to nuc at that position in ancestral fasta
+  bases <- c('A','T','C','G')
+  for(i in 1:nrow(vcf)){
+    ref <- toupper(anc.1$`1`[vcf$POS[i]])
+    vcf[i, 'REF'] <- ref
+    vcf[i, 'ALT'] <- sample(bases[bases %notin% ref], 1)
+  }
+  print(paste0(demo,' - allele ID check: ',all(vcf$ALT != vcf$REF))) ## verify that all REF and ALT alleles differ for each locus (should be TRUE)
+  
+  meta <- readr::read_delim(f, delim = "\t", n_max = 5, 
+                            col_names = FALSE, show_col_types = FALSE)[[1]]
+  readr::write_lines(meta, file = new.fn)
+  # append genotypes to make file complete
+  data.table::fwrite(vcf, file = new.fn, append = TRUE, 
+                     col.names = TRUE, sep = "\t")
+}
