@@ -50,13 +50,21 @@ mkdir ${OUTPUT_DIR}/${SLIM_OUT_DIR}
 cd ${OUTPUT_DIR}/${SLIM_OUT_DIR}
 cp ${HOME_STEP_DIR}/*.vcf .
 
-echo -e "LR735554.1 Sarcophilus harrisii genome assembly, chromosome: 1\t129649026\t159649025\n" > subset.bed
+## issues with bedtools not recognizing chrom name, just rename it.
+echo -e "1\t129649026\t159649025\t1\n" \
+> subset.bed
+
+cp /scratch/avrilh/archive_first_roh_param_runs/rohparam_01b_assemb/tasdev_genbank_assem.fna .
+sed -i 's/LR735554.1 Sarcophilus harrisii genome assembly, chromosome: 1/1/g' \
+tasdev_genbank_assem.fna
 
 bedtools getfasta \
 -fo ${REF_GENOME_FILE_PATH}/${REF_GENOME_FILE_NAME}.fasta \
--fi \
-/scratch/avrilh/archive_first_roh_param_runs/rohparam_01b_assemb/tasdev_genbank_assem.fna \
+-nameOnly \
+-fi tasdev_genbank_assem.fna \
 -bed subset.bed
+
+rm tasdev_genbank_assem.fna*
 
 
 # -----------------------------------------------------------------------------
@@ -64,8 +72,6 @@ bedtools getfasta \
 # FASTA_OUT_DIR are set in init_script_vars.sh. FASTA_OUT_DIR is used as the
 # input directory in 02a_run_art.sh
 # -----------------------------------------------------------------------------
-
-
 
 start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
 
