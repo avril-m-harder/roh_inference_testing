@@ -86,8 +86,8 @@ indv_names = [f"tsk_{str(i)}indv" for i in ind_names]
 
 alive = pyslim.individuals_alive_at(mutated, 0).tolist()
 
-# subset 100 individuals
-ind_sub = random.sample(range(len(alive)), 100)
+# subset 50 individuals
+ind_sub = random.sample(range(len(alive)), 50)
 alive_sub = [alive[i] for i in ind_sub]
 indv_names_sub = [indv_names[i] for i in ind_sub]
 
