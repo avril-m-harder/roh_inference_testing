@@ -33,28 +33,31 @@ source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_i
 # Load modules
 # -----------------------------------------------------------------------------
 
-module load slim/4.0.1
+module load bcftools/1.17
+module load samtools/1.17
+module load bedtools/2.30.0
 
 # -----------------------------------------------------------------------------
-# Run SLiM - SLIM_OUT_DIR, parameters, and SLIM_PARAM_FILE are set in
-# init_script_vars.sh
+# [NOTE: SLiM is now run on local machine (see README in 
+# simulated/stoffel_et_al_sheep_roh_AMH/), and resulting VCF files are uploaded
+# to cluster for further processing below ]
+#
+# Prep ancestral fasta file from tas dev reference chromosome 1. start and end
+# coordinates generated randomly in R (local)
 # -----------------------------------------------------------------------------
 
-# mkdir ${OUTPUT_DIR}/${SLIM_OUT_DIR}
-# 
-# start_logging "Run SLiM - ${SLIM_OUT_DIR}"
-# 
-# ## models chromosome with coding and non-coding regions
-# slim \
-#     -d POP_SIZE=${POP_SIZE} \
-#     -d MUTATION_RATE=${MUTATION_RATE} \
-#     -d RECOMB_RATE=${RECOMB_RATE} \
-#     -d "OUT_PATH='${OUTPUT_DIR}/${SLIM_OUT_DIR}/'" \
-#     ${SLIM_PARAM_FILE}
-# 
-# stop_logging
-# 
-# mail -s 'SLiM run finished - Starting BCFtools' ${EMAIL} <<<'SLiM run finished - Starting BCFtools'
+mkdir ${OUTPUT_DIR}/${SLIM_OUT_DIR}
+cd ${OUTPUT_DIR}/${SLIM_OUT_DIR}
+cp ${HOME_STEP_DIR}/*.vcf .
+
+echo -e "LR735554.1 Sarcophilus harrisii genome assembly, chromosome: 1\t129649026\t159649025\n" > subset.bed
+
+bedtools getfasta \
+-fo ${REF_GENOME_FILE_PATH}/${REF_GENOME_FILE_NAME}.fasta \
+-fi \
+/scratch/avrilh/archive_first_roh_param_runs/rohparam_01b_assemb/tasdev_genbank_assem.fna \
+-bed subset.bed
+
 
 # -----------------------------------------------------------------------------
 # Format SLiM output for read simulation - FILE_LABELS and SAMPLE_ID_LIST and
@@ -62,8 +65,7 @@ module load slim/4.0.1
 # input directory in 02a_run_art.sh
 # -----------------------------------------------------------------------------
 
-module load bcftools/1.17
-module load samtools/1.17
+
 
 start_logging "Format SLiM Output for read simulation - ${SLIM_OUT_DIR}"
 
@@ -72,20 +74,20 @@ mkdir ${VCF_OUT_DIR}
 VCF_FILE_LIST=${OUTPUT_DIR}/vcf_file_list_${FILE_LABELS}.txt
 
 ## Compress output VCF
-# bgzip ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf
-# 
-# ## Index compressed VCF
-# tabix -f ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
-# 
-# ## Split output VCF into sample-specific VCF files
-# 
-# bcftools +split -O z -o ${VCF_OUT_DIR}/ ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
-# 
-# ## Randomly select sample VCF files for conversation to FASTAs
-# ## >> Selecting 100, can be downsampled later
-# 
-# ls ${VCF_OUT_DIR} i*.vcf.gz | sort -R | tail -100 >${VCF_FILE_LIST}
-# sed 's/.vcf.gz//g' ${VCF_FILE_LIST} >${SAMPLE_ID_LIST}
+bgzip ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf
+
+## Index compressed VCF
+tabix -f ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
+
+## Split output VCF into sample-specific VCF files
+
+bcftools +split -O z -o ${VCF_OUT_DIR}/ ${OUTPUT_DIR}/${SLIM_OUT_DIR}/final_pop.vcf.gz
+
+## Randomly select sample VCF files for conversation to FASTAs
+## >> Selecting 100, can be downsampled later
+
+ls ${VCF_OUT_DIR} i*.vcf.gz | sort -R | tail -100 >${VCF_FILE_LIST}
+sed 's/.vcf.gz//g' ${VCF_FILE_LIST} >${SAMPLE_ID_LIST}
 
 ## Convert sample VCF files to two separate haplotype FASTAs per individual
 

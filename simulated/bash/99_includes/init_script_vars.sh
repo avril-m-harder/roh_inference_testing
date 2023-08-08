@@ -55,26 +55,15 @@ mkdir ${OUTPUT_DIR}
 chmod -R 700 ${OUTPUT_DIR}
 
 # -----------------------------------------------------------------------------
-## Set Slim parameters and directories
+## Set Slim parameters
 # -----------------------------------------------------------------------------
-
-# parameters
-
-MUTATION_RATE=5e-07
-RECOMB_RATE=1e-8
-POP_SIZE=500
 
 # directory and file paths
 
-FILE_LABELS=m${MUTATION_RATE}_r${RECOMB_RATE}_p${POP_SIZE}
-
-SLIM_OUT_DIR=slim_${FILE_LABELS}
-
-SLIM_PARAM_FILE=/home/${USER}/${PROJECT}/simulated/bash/${STEP}/chrom_w_struct_and_evo.slim
+SLIM_OUT_DIR=slim_output
 
 INIT_OUTPUT_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${INIT_STEP}/output/${SLIM_OUT_DIR}
 
-# REF_GENOME_FILE_PATH=${INIT_OUTPUT_DIR}/${SLIM_OUT_DIR}
 REF_GENOME_FILE_PATH=${INIT_OUTPUT_DIR}
 
 REF_GENOME_FILE_NAME=ancestral
