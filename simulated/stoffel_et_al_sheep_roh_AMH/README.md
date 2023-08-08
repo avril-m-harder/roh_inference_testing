@@ -1,5 +1,7 @@
 The code in this directory was taken directly from MA Stoffel's [sheep_roh](https://github.com/mastoffel/sheep_roh) repository (README for that repo retained below). Scripts were updated by AM Harder to be compatible with SLiM v4 and with changing population sizes over time.
 
+***
+
 # Code for:
 
 Stoffel, MA, Johnston, SE, Pilkington, JG, Pemberton, JM (2021): **Mutation load decreases with haplotype age in wild Soay sheep.**  *Evolution Letters.* https://doi.org/10.1002/evl3.229.  
