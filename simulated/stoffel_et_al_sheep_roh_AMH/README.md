@@ -2,23 +2,11 @@
 
 Stoffel, MA, Johnston, SE, Pilkington, JG, Pemberton, JM (2021): **Mutation load decreases with haplotype age in wild Soay sheep.**  *Evolution Letters.* https://doi.org/10.1002/evl3.229.  
 
-</br>
-
-![](pics/IMG_3281.jpg)
-
-</br>
-
 ### Project
 Runs of homozygosity (ROH) are regions in the genome where individuals inherited two copies of the same ancestral haplotype. This can cause an increase in expressed deleterious recessive mutations, leading to reduced fitness. It has been suggested that longer ROH have a higher density of damaging mutations, as they are made up of younger haplotypes which are relatively untouched by selection. We used both empirical analyses in a large sample of wild Soay sheep and detailed forward genetic simulations to show that long ROH are more likely to harbour more and stronger deleterious mutations.
 
 </br>
 
-<p align="center">
-  <img width="70%" src="figs/Fig2_gen4_32_7030.jpg">
-</p>
-<p align="center" > <i> Long runs of homozygosity (ROH) are enriched for deleterious mutations in genetic simulations.</i></p>
-
-</br>
 
 ### Code structure
 This repository contains the analysis code for our paper under scripts/. For a smooth process, create a directory with sub-directories scripts/ data/ output/ figs/ tables/ . Put all the data associated with the paper (will be uploaded to Zenodo once accepted) in the data folder, so that the relative filepaths work correctly. These are the main scripts:
