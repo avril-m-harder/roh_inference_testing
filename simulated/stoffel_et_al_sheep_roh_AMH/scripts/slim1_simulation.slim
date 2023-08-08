@@ -1,0 +1,54 @@
+// set up a simple neutral simulation
+initialize() {
+	initializeSLiMOptions(keepPedigrees=T);
+	initializeTreeSeq();
+	initializeMutationRate(1e-9);
+	
+	// m1 mutation type: neutral -0.03
+	initializeMutationType("m1", 0.1, "g", -0.03, 0.2);
+	
+	// g1 genomic element type: uses m1 for all mutations
+	initializeGenomicElementType("g1", c(m1), c(1.0));
+	
+	// uniform chromosome of length 100 Mb with uniform recombination
+	initializeGenomicElement(g1, 0, 99999999);
+	initializeRecombinationRate(1.27 * 1e-8);
+}
+
+// create a population of 500 individuals
+1 {
+	defineConstant("simID", getSeed());
+	sim.addSubpop("p1", 5000);
+}
+
+10000 { p1.setSubpopulationSize(200); }
+
+11000 late() {
+	// output vcf
+	//g = p1.individuals.genomes;
+	//g.outputVCF(filePath="~/Dropbox/projects/current/sheep_roh/slim_sim/sheep.vcf");
+	
+	// tree sequence recording for 
+	sim.treeSeqOutput("slim_sim/sims/trees/sheep_"+simID+".trees");
+	
+	// mutations per genome
+	genomes = sim.subpopulations.genomes;
+	out1 = string(length(sim.subpopulations.genomes.mutations));
+	out1_index = 0;
+	
+	for (genome_index in seqAlong(genomes)) {
+		genome = genomes[genome_index];
+		pedigree_id = genome.individual.pedigreeID;
+		muts = genome.mutations;
+	
+		for (mut_index in seqAlong(muts)){
+			out1[out1_index]=paste(c(genome_index, asString(pedigree_id), muts[mut_index].id, muts[mut_index].position, muts[mut_index].selectionCoeff));
+			out1_index = out1_index + 1;
+		}
+		header1=paste(c("genome_id", "pedigree_id", "mut_id", "pos", "s"));
+		writeFile("slim_sim/sims/muts/mutperind_"+simID+".txt", paste(c(header1, out1), sep="\n"));
+	}
+	
+}
+
+
