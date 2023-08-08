@@ -12,6 +12,18 @@ library(readr)
 library(stringr)
 library(purrr)
 
+#### FOR TESTING #####
+# demo_mod <- 'TEST'
+# pop_size1 <- 100
+# pop_size2 <- 100
+# pop_size3 <- 100
+# pop_size4 <- 50
+# time1 <- 1000
+# time2 <- 2000
+# time3 <- 3000
+# time4 <- 4000
+######################
+
 # run slim simulation
 args_in <- commandArgs(trailingOnly=TRUE)
 print(args_in)
@@ -25,19 +37,6 @@ time1 <- as.numeric(args_in[6])
 time2 <- as.numeric(args_in[7])
 time3 <- as.numeric(args_in[8])
 time4 <- as.numeric(args_in[9])
-
-#### FOR TESTING #####
-# demo_mod <- 'TEST'
-# pop_size1 <- 1000
-# pop_size2 <- 750
-# pop_size3 <- 500
-# pop_size4 <- 250
-# time1 <- 1000
-# time2 <- 2000
-# time3 <- 3000
-# time4 <- 4000
-######################
-
 
 # directory structure
 out_dir <- paste0('/Users/Avril/Documents/roh_param_project/manuscript_resubmission/revised_SLiM/stoffel_et_al_sheep_roh-master_AMH/output/',
@@ -64,8 +63,8 @@ slim_roh <- function(seeds, pop_size = pop_size1, ...) {
 
    system(paste("python3 slim2_overlay_mut.py", run_name, demo_mod, pop_size1)) 
    
-   # correct vcf (AMH: commented out on Aug. 8, 2023 - correcting REF/ALT alleles appears to be unnecessary)
-   # correct_vcf(paste0("../output/", demo_mod, "/vcfs/tasdev_", seeds, ".vcf"))
+   # correct vcf 
+   correct_vcf(paste0("../output/", demo_mod, "/vcfs/tasdev_", seeds, ".vcf"))
 
    ##### AMH: still going to make nucleotide-specific VCF files and simulate seq reads from there #####   
    # call ROH
