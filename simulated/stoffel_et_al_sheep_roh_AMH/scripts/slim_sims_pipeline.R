@@ -39,9 +39,9 @@ time3 <- as.numeric(args_in[8])
 time4 <- as.numeric(args_in[9])
 
 # directory structure
-out_dir <- paste0('/Users/Avril/Documents/roh_param_project/manuscript_resubmission/revised_SLiM/stoffel_et_al_sheep_roh-master_AMH/output/',
+out_dir <- paste0('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/',
                   demo_mod)
-to_create <- paste0('/Users/Avril/Documents/roh_param_project/manuscript_resubmission/revised_SLiM/stoffel_et_al_sheep_roh-master_AMH/output/',
+to_create <- paste0('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/',
                     demo_mod, "/", c("muts", "out", "roh", "slim_code", "trees", "vcfs"))
 walk(to_create, dir.create, recursive = TRUE, showWarnings = TRUE)
 

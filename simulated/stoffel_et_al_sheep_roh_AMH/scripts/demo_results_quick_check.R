@@ -1,10 +1,17 @@
+library(scales)
+
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/')
 
 c.len <- 30e6
 
+## bin sizes for length-specific f(ROH) calcs
+b1 <- 500e3
+b2 <- 1e6
+b3 <- 2e6
+
 dirs <- list.files()
 
-pdf('demo_results_overview.pdf', width = 15, height = 5)
+pdf('demo_results_overview.pdf', width = 12, height = 4.5)
 par(mfrow = c(1,3))
 
 for(d in dirs){
@@ -109,6 +116,21 @@ for(d in dirs){
   hist(FROH, main = paste0('Model: ',d,'\nf(ROH)'), xlab = 'f(ROH) (ROHs >= 100 kb / chrom length)',
        xlim = c(0, 1))
   
-  hist(rohs[rohs$length >= 100e3, 'length'], main = paste0('Model: ',d,'\nROH lengths'), xlab = 'ROH lengths')
+  BINS <- NULL
+  for(i in unique(rohs$id)){
+    f.bin1 <- sum(rohs[which(rohs$id == i & rohs$length >= 100e3 & rohs$length < b1), 'length'])/c.len
+    f.bin2 <- sum(rohs[which(rohs$id == i & rohs$length >= b1 & rohs$length < b2), 'length'])/c.len
+    f.bin3 <- sum(rohs[which(rohs$id == i & rohs$length >= b2 & rohs$length < b3), 'length'])/c.len
+    f.bin4 <- sum(rohs[which(rohs$id == i & rohs$length >= b3), 'length'])/c.len
+    save <- c(i, f.bin1, f.bin2, f.bin3, f.bin4)
+    BINS <- rbind(BINS, save)
+  }
+  plot(0,0, xlim = c(0.75, 4.25), ylim = c(0, 1), col = 'transparent', xaxt = 'n', 
+       main = paste0('Model: ',d,'\nBinned f(ROH)'), xlab = '', ylab = 'f(ROH)')
+    axis(1, at = c(1:4), labels = c('small','med','large','x-large'))
+    points(jitter(rep(1, nrow(BINS)), amount = 0.15), BINS[,2], col = alpha('springgreen4', 0.5), pch = 19)
+    points(jitter(rep(2, nrow(BINS)), amount = 0.15), BINS[,3], col = alpha('springgreen4', 0.5), pch = 19)
+    points(jitter(rep(3, nrow(BINS)), amount = 0.15), BINS[,4], col = alpha('springgreen4', 0.5), pch = 19)
+    points(jitter(rep(4, nrow(BINS)), amount = 0.15), BINS[,5], col = alpha('springgreen4', 0.5), pch = 19)
 }
 dev.off()
