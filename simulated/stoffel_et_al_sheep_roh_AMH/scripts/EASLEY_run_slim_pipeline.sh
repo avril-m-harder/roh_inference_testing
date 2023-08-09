@@ -57,6 +57,6 @@ while read -a line; do
 
 done < demo_scenarios.txt
 
-cd ../../scripts/
+cd /home/amh0254/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/scripts/
 
 Rscript EASLEY_demo_results_quick_check.R
