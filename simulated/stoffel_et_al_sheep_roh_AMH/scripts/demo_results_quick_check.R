@@ -4,8 +4,8 @@ c.len <- 30e6
 
 dirs <- list.files()
 
-pdf('demo_results_overview.pdf', width = 10, height = 5)
-par(mfrow = c(1,2))
+pdf('demo_results_overview.pdf', width = 15, height = 5)
+par(mfrow = c(1,3))
 
 for(d in dirs){
   print(d)
@@ -98,7 +98,8 @@ for(d in dirs){
   for(i in unique(hets$id)){
     HETS <- c(HETS, nrow(hets[hets$id == i,])/c.len)
   }
-  hist(HETS, main = paste0('Model: ',d,'\nHeterozygosity'), xlab = 'Heterozygosity (# het sites / chrom length)')
+  hist(HETS, main = paste0('Model: ',d,'\nHeterozygosity'), xlab = 'Heterozygosity (# het sites / chrom length)',
+       xlim = c(0, 5e-05))
   
   FROH <- NULL
   for(i in unique(rohs$id)){
@@ -107,5 +108,7 @@ for(d in dirs){
   }
   hist(FROH, main = paste0('Model: ',d,'\nf(ROH)'), xlab = 'f(ROH) (ROHs >= 100 kb / chrom length)',
        xlim = c(0, 1))
+  
+  hist(rohs[rohs$length >= 100e3, 'length'], main = paste0('Model: ',d,'\nROH lengths'), xlab = 'ROH lengths')
 }
 dev.off()
