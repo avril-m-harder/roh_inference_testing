@@ -121,13 +121,18 @@ make_slim <- function(genome_size = NULL, pop_size1 = NULL, pop_size2 = NULL, po
       	sim.addSubpop("p1", {pop_size1});
       }}
       
-      {time1} early() {{ p1.setSubpopulationSize({pop_size2}); }}
+      {time1} early() {{ p1.setSubpopulationSize({pop_size2}); 
+                         cat("end burn-in"); }}
       
-      {time2} late() {{ p1.setSubpopulationSize({pop_size3}); }}
+      {time2} late() {{ p1.setSubpopulationSize({pop_size3}); 
+                        cat("first checkpoint"); }}
       
-      {time3} late() {{ p1.setSubpopulationSize({pop_size4}); }}
+      {time3} late() {{ p1.setSubpopulationSize({pop_size4}); 
+                        cat("second checkpoint"); }}
       
       {time4} late() {{
+      
+        cat("final checkpoint");
       
       	// tree sequence recording for 
       	sim.treeSeqOutput("{trees_out}/tasdev_"+simID+".trees");
