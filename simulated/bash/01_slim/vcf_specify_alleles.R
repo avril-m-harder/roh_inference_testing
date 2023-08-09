@@ -1,6 +1,10 @@
 library(ape)
 library(readr)
 
+`%notin%` <- Negate(`%in%`)
+
+setwd('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/output/slim_output')
+
 ## read in ancestral fasta:
 ## bases not included in VCF assumed to still be homozygous.
 anc.1 <- read.FASTA('ancestral.fasta')
