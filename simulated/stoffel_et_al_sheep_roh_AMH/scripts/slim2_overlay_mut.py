@@ -11,8 +11,8 @@ import random
 
 # get args
 script, run_name, demo_mod, pop_size = argv
-infile = "../output/" + demo_mod + "/trees/" + run_name + ".trees"
-outfile = "../output/" + demo_mod + "/vcfs/" + run_name + ".vcf"
+infile = "/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/" + demo_mod + "/trees/" + run_name + ".trees"
+outfile = "/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/" + demo_mod + "/vcfs/" + run_name + ".vcf"
 
 pop_size = int(pop_size)
 # tree sequence

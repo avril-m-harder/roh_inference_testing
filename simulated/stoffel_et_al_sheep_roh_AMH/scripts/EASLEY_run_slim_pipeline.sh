@@ -5,7 +5,7 @@
 #SBATCH -N 1
 #SBATCH -n 2
 #SBATCH -t 300:00:00
-#SBATCH --mem=64000
+#SBATCH --mem=120000
 #SBATCH --output=01_slim-%j.out
 #SBATCH --error=error-01_slim-%j.err
 
@@ -28,8 +28,14 @@ module load slim/4.0.1
 # -----------------------------------------------------------------------------
 
 cd /scratch/avrilh/roh_param_project/roh_inference_testing/simulated/
-cp -r /home/amh0254/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH .
+
+mkdir stoffel_et_al_sheep_roh_AMH
 cd stoffel_et_al_sheep_roh_AMH
+
+cp /home/amh0254/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/*.txt .
+
+cp -r /home/amh0254/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/scripts .
+
 mkdir output
 
 
@@ -55,7 +61,13 @@ while read -a line; do
 	
 	cd ../../
 
-done < demo_scenarios.txt
+# done < demo_scenarios.txt
+done < large_pop_scenarios.txt
+
+cd /scratch/avrilh/roh_param_project/roh_inference_testing/simulated/
+
+find . -name "final*" -exec cp {} \
+/home/amh0254/roh_param_project/roh_inference_testing/simulated/data/01_slim/ \;
 
 cd /home/amh0254/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/scripts/
 

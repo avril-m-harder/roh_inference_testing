@@ -3,7 +3,7 @@ library(readr)
 
 `%notin%` <- Negate(`%in%`)
 
-setwd('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/output/slim_output')
+setwd('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/data/01_slim/output')
 
 ## read in ancestral fasta:
 ## bases not included in VCF assumed to still be homozygous.
@@ -17,7 +17,7 @@ for(f in fns){
   demo <- strsplit(f, split = '_')[[1]][2]
   new.fn <- paste0(demo,'_n50_spec_allele.vcf')
   vcf <- read.table(f, header=FALSE, skip = 6)
-  colnames(vcf) <- c('CHROM','POS','ID','REF','ALT','QUAL','FILTER','INFO','FORMAT',paste0('i',c(1:50)))
+  colnames(vcf) <- c('#CHROM','POS','ID','REF','ALT','QUAL','FILTER','INFO','FORMAT',paste0('i',c(1:50)))
   
   ## convert reference alleles in VCF to nuc at that position in ancestral fasta
   bases <- c('A','T','C','G')

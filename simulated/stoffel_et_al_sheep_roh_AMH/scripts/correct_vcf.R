@@ -7,7 +7,7 @@ meta <- readr::read_delim(vcf_file, delim = "\t", n_max = 5,
                           col_names = FALSE, show_col_types = FALSE)[[1]]
 names <- strsplit(vcf_file, split = '/')[[1]]
 comps <- strsplit(names[length(names)], split = '_')
-new.fn <- paste0('../output/',demo_mod,'/vcfs/final',comps[[1]][1],'_',demo_mod,'_',comps[[1]][2])
+new.fn <- paste0('/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/',demo_mod,'/vcfs/final',comps[[1]][1],'_',demo_mod,'_',comps[[1]][2])
 
 # read genotypes, data.table does this correctly
 # i.e. jumping over the first 5 lines

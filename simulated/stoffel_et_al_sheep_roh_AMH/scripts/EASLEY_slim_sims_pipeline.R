@@ -48,7 +48,6 @@ out_dir <- paste0('/scratch/avrilh/roh_param_project/roh_inference_testing/simul
 # dotdotdot is input for making the slim file, see make_slim.R
 slim_roh <- function(seeds, pop_size = pop_size1, ...) {
    
-   # run_name <- paste0("tasdev_", demo_mod, "_", seeds)
    run_name <- paste0("tasdev_", seeds)
    
    # create slim_simulation
@@ -61,26 +60,11 @@ slim_roh <- function(seeds, pop_size = pop_size1, ...) {
    # recapitation and overlay of neutral mutations
    # check that folders are there
 
-   system(paste("python3 /scratch/avrilh/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/scripts/slim2_overlay_mut.py", run_name, demo_mod, pop_size1)) 
+   system(paste("python /scratch/avrilh/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/scripts/slim2_overlay_mut.py", run_name, demo_mod, pop_size1)) 
    
    # correct vcf 
-   correct_vcf(paste0("../output/", demo_mod, "/vcfs/tasdev_", seeds, ".vcf"))
+   correct_vcf(paste0("/scratch/avrilh/roh_param_project/roh_inference_testing/simulated/stoffel_et_al_sheep_roh_AMH/output/", demo_mod, "/vcfs/tasdev_", seeds, ".vcf"))
 
-   ##### AMH: still going to make nucleotide-specific VCF files and simulate seq reads from there #####   
-   # call ROH
-   # use vcf output to call ROH
-   # currently, pyslim sometimes outputs weird REF and ALT positions in the vcf file
-   # these might be the mutations from SLiM
-   # When one of these is the first line in the VCF gt table, then REF is the empty
-   # string and ALT is a large number. plink doesn't like this and will find no ROH
-   # This means that some of the simulations can't be processed further.
-   # system(paste0("plink --vcf ", out_path, "/vcfs/", run_name, ".vcf ",  # /usr/local/bin/plink
-   #               "--tasdev --out ", out_path, "/roh/", run_name, " ",
-   #               "--homozyg --homozyg-window-snp 25 --homozyg-snp 25 --homozyg-kb 390 ",
-   #               "--homozyg-gap 250 --homozyg-density 100 --homozyg-window-missing 0 ",
-   #               "--homozyg-het 0 ",
-   #               "--homozyg-window-het 0"))
-   
 }
 
 

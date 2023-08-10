@@ -62,7 +62,7 @@ chmod -R 700 ${OUTPUT_DIR}
 
 SLIM_OUT_DIR=slim_output
 
-INIT_OUTPUT_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${INIT_STEP}/output/${SLIM_OUT_DIR}
+INIT_OUTPUT_DIR=${BASE_DIR}/${PROJECT}/simulated/data/${INIT_STEP}/output/
 
 REF_GENOME_FILE_PATH=${INIT_OUTPUT_DIR}
 
@@ -74,11 +74,13 @@ REF_GENOME_FILE=${REF_GENOME_FILE_PATH}/${REF_GENOME_FILE_NAME}.fasta
 # We won't necessarily use all of those elements.
 
 # SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_id_list_${FILE_LABELS}.txt
-BASE_SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_id_list.txt
-
+# BASE_SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_id_list.txt
+# 
 # FASTA_OUT_DIR=${INIT_OUTPUT_DIR}/sample_fasta_files_${FILE_LABELS}
-FASTA_OUT_DIR=${INIT_OUTPUT_DIR}/slim_output_fasta_files
-mkdir ${FASTA_OUT_DIR}
+# FASTA_OUT_DIR=${INIT_OUTPUT_DIR}/slim_output_fasta_files
+# mkdir ${FASTA_OUT_DIR}
+
+# DEMO_SCEN_NAMES=${HOME_STEP_DIR}/demo_scenario_names.txt
 
 # -----------------------------------------------------------------------------
 # Create arrays defining coverage levels and population sizes. These arrays are
@@ -97,6 +99,9 @@ declare -a cvgX=(50x 30x 15x 10x 05x)
 
 ## Coverage level fraction to supply to samtools
 declare -a cvgP=(1.0 0.6 0.3 0.2 0.1)
+
+## Names of demographic scenarios to be analyzed
+declare -a dems=(small decline bottle large-1000)
 
 ## Get length of the coverage level arrays. Subtract 1 because arrays are zero
 ## based, and we'll iterate over the arrays from 0 to cvgCnt
