@@ -1,21 +1,14 @@
 #!/bin/bash
 
 #SBATCH --job-name=03_read_align
+#SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 20
 #SBATCH -t 02:00:00
-#SBATCH --mem=20000
+#SBATCH --mem=60000
 #SBATCH --mail-type=begin,end,fail
-#SBATCH --mail-user=kbk0024@auburn.edu
+#SBATCH --mail-user=avrilharder@gmail.com
 
-# srun -N1 -n20 -t02:00:00 --mem=20000 --pty bash
-
-#   +-----------------------+
-#   |  USE:                 |
-#   |    - LARGE queue      |
-#   |    - 20 CPU + 20 Gb   |
-#   +-----------------------+
-#
 
 # -----------------------------------------------------------------------------
 # Set variables for this step
@@ -29,14 +22,14 @@ SCRIPT=03_run_bwa.sh
 # Load variables and functions from settings file
 # -----------------------------------------------------------------------------
 
-source /scratch/kbk0024/roh_param_project/scripts/99_includes/init_script_vars.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/init_script_vars.sh
 
 # -----------------------------------------------------------------------------
 # Load Modules
 # -----------------------------------------------------------------------------
 
-module load bwa/0.7.17
-module load samtools/1.11
+module load bwa/2.0
+module load samtools/1.17
 
 # -----------------------------------------------------------------------------
 # Index reference genomes
@@ -50,37 +43,44 @@ module load samtools/1.11
 # Align reads to reference genome
 # -----------------------------------------------------------------------------
 
-cd ${OUTPUT_DIR}
+for d in ${dems[@]}; do
 
-while read -a line; do
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
+	
+	cd ${OUTPUT_DIR}
 
-    OUT_FILE=${line[0]}_genome.bam
-    start_logging "bwa align - ${OUT_FILE}"
+	while read -a line; do
 
-    bwa mem -t 20 -M \
-        ${REF_GENOME_FILE} \
-        ${INPUT_DIR}/${line[0]}_f.fq ${INPUT_DIR}/${line[0]}_r.fq >${OUT_FILE}
+		OUT_FILE=${d}_${line[0]}_genome.bam
+		start_logging "bwa align - ${OUT_FILE}"
 
-    stop_logging
+		bwa mem -t 20 -M \
+			${REF_GENOME_FILE} \
+			${INPUT_DIR}/${d}_${line[0]}_f.fq ${INPUT_DIR}/${d}_${line[0]}_r.fq \
+			> ${OUT_FILE}
 
-done <${SAMPLE_ID_LIST}
+		stop_logging
 
-# -----------------------------------------------------------------------------
-# Sort aligned read bam files
-# -----------------------------------------------------------------------------
+	done < ${SAMPLE_ID_LIST}
 
-while read -a line; do
+	# -------------------------------------------------------------------------
+	# Sort aligned read bam files
+	# -------------------------------------------------------------------------
 
-    OUT_FILE=${line[0]}_genome_sorted.bam
-    start_logging "samtools sort - ${OUT_FILE}"
+	while read -a line; do
 
-    samtools sort -@ 19 \
-        -o ${OUT_FILE} \
-        ${line[0]}_genome.bam
+		OUT_FILE=${d}_${line[0]}_genome_sorted.bam
+		start_logging "samtools sort - ${OUT_FILE}"
 
-    stop_logging
+		samtools sort -@ 19 \
+			-o ${OUT_FILE} \
+			${d}_${line[0]}_genome.bam
 
-done <${SAMPLE_ID_LIST}
+		stop_logging
+
+	done < ${SAMPLE_ID_LIST}
+	
+done
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.

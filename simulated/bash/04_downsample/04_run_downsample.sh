@@ -1,21 +1,14 @@
 #!/bin/bash
 #
 #SBATCH --job-name=03_downsample
+#SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 20
 #SBATCH -t 04:00:00
-#SBATCH --mem=20000
+#SBATCH --mem=24000
 #SBATCH --mail-type=begin,end,fail
-#SBATCH --mail-user=kbk0024@auburn.edu
+#SBATCH --mail-user=avrilharder@gmail.com
 
-# srun -N1 -n20 -t02:00:00 --mem=20000 --pty bash
-
-#   +-----------------------+
-#   |  USE:                 |
-#   |    - ?LARGE queue     |
-#   |    - 20 CPU + 20 Gb   |
-#   +-----------------------+
-#
 
 # -----------------------------------------------------------------------------
 # Set variables for this step
@@ -32,39 +25,46 @@ SCRIPT=04_run_downsample.sh
 # Load variables and functions from settings file
 # -----------------------------------------------------------------------------
 
-source /scratch/kbk0024/roh_param_project/scripts/99_includes/init_script_vars.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/init_script_vars.sh
 
 # -----------------------------------------------------------------------------
 # Load modules
 # -----------------------------------------------------------------------------
-module load samtools/1.11
+
+module load samtools/1.17
 
 # -----------------------------------------------------------------------------
 # Do the downsampling.
 # -----------------------------------------------------------------------------
 
-for i in $(seq 0 $cvgCnt); do
+for d in ${dems[@]}; do
 
-    # # Create output directory for each coverage level.
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
 
-    CVG_OUTPUT_DIR=${OUTPUT_DIR}/sample_cvg_${cvgX[i]}
-    mkdir ${CVG_OUTPUT_DIR}
+	for i in $(seq 0 $cvgCnt); do
 
-    # # Downsample each individual
+		# # Create output directory for each coverage level.
 
-    while read -a line; do
+		CVG_OUTPUT_DIR=${OUTPUT_DIR}/${d}_sample_cvg_${cvgX[i]}
+		mkdir ${CVG_OUTPUT_DIR}
 
-        OUT_FILE=${line[0]}_cvg_${cvgX[i]}.bam
-        start_logging "samtools view - ${OUT_FILE}"
+		# # Downsample each individual
 
-        samtools view -s ${cvgP[i]} -@ 19 \
-            -o ${CVG_OUTPUT_DIR}/${OUT_FILE} \
-            ${INPUT_DIR}/${line[0]}_genome_sorted.bam
+		while read -a line; do
 
-        stop_logging
+			OUT_FILE=${d}_${line[0]}_cvg_${cvgX[i]}.bam
+			start_logging "samtools view - ${OUT_FILE}"
 
-    done <${SAMPLE_ID_LIST}
+			samtools view -s ${cvgP[i]} -@ 19 \
+				-o ${CVG_OUTPUT_DIR}/${OUT_FILE} \
+				${INPUT_DIR}/${d}_${line[0]}_genome_sorted.bam
 
+			stop_logging
+
+		done <${SAMPLE_ID_LIST}
+
+	done
+	
 done
 
 # -----------------------------------------------------------------------------

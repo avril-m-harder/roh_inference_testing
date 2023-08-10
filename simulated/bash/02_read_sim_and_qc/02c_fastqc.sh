@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=02_read_sim_and_qc
+#SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 5
 #SBATCH -t 02:00:00
