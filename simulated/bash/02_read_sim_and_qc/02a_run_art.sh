@@ -15,7 +15,7 @@
 # -----------------------------------------------------------------------------
 
 STEP=02_read_sim_and_qc
-PREV_STEP=01b_create_subsample_lists
+PREV_STEP=01_slim
 SCRIPT=02a_run_art.sh
 
 # -----------------------------------------------------------------------------
@@ -42,31 +42,39 @@ module load artmountrainier/2016.06.05
 # 150-bp paired-end reads (--len and --paired parameters).
 # Using the HiSeq 2500 error model (--seqSys parameter).
 
-while read -a line; do
+for d in ${dems[@]}; do
 
-    for a in 1 2; do
+	VCF_OUT_DIR=${INIT_OUTPUT_DIR}/sample_vcf_files_${d}
+	FASTA_OUT_DIR=${INIT_OUTPUT_DIR}/sample_fasta_files_${d}
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
 
-        start_logging "ART Read - ${line[0]}_$a.fasta"
+	while read -a line; do
 
-        art_illumina \
-            --seqSys HS25 \
-            -i ${FASTA_OUT_DIR}/${line[0]}_$a.fas \
-            --paired \
-            -na \
-            --len 150 \
-            --fcov 25 \
-            -m 500 \
-            -s 75 \
-            -o ${OUTPUT_DIR}/${line[0]}_$a
+		for a in 1 2; do
 
-        # echo ${FASTA_OUT_DIR}/${line[0]}_$a.fas
-        # echo ${OUTPUT_DIR}/${line[0]}_$a
+			start_logging "ART Read - ${line[0]}_$a.fasta"
 
-        stop_logging
+			art_illumina \
+				--seqSys HS25 \
+				-i ${FASTA_OUT_DIR}/${d}_${line[0]}_$a.fasta \
+				--paired \
+				-na \
+				--len 150 \
+				--fcov 25 \
+				-m 500 \
+				-s 75 \
+				-o ${OUTPUT_DIR}/${d}_${line[0]}_$a
 
-    done
+			# echo ${FASTA_OUT_DIR}/${line[0]}_$a.fas
+			# echo ${OUTPUT_DIR}/${line[0]}_$a
 
-done <${SAMPLE_ID_LIST}
+			stop_logging
+
+		done
+
+	done < ${SAMPLE_ID_LIST}
+
+done
 
 # mail -s 'ART run finished' avrilharder@gmail.com <<<'SLiM run finished'
 
