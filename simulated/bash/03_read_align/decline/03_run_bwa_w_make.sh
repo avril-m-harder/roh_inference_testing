@@ -46,11 +46,11 @@ module load samtools/1.17
 SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_decline.txt
 
 cd ${OUTPUT_DIR}
-mkdir decline
+mkdir decline; cd decline
 
 while read -a line; do
 
-	OUT_FILE=/decline/decline_${line[0]}_genome.bam
+	OUT_FILE=decline_${line[0]}_genome.bam
 	start_logging "bwa align - ${OUT_FILE}"
 
 	bwa mem -t 20 -M \
@@ -69,12 +69,12 @@ done < ${SAMPLE_ID_LIST}
 
 while read -a line; do
 
-	OUT_FILE=/decline/decline_${line[0]}_genome_sorted.bam
+	OUT_FILE=decline_${line[0]}_genome_sorted.bam
 	start_logging "samtools sort - ${OUT_FILE}"
 
 	samtools sort -@ 19 \
 		-o ${OUT_FILE} \
-		/decline/decline_${line[0]}_genome.bam
+		decline_${line[0]}_genome.bam
 
 	stop_logging
 
