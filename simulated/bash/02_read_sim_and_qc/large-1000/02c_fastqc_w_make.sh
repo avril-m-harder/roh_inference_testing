@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=_demo__02c_read_sim_and_qc
+#SBATCH --job-name=large-1000_02c_read_sim_and_qc
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 5
 #SBATCH -t 02:00:00
 #SBATCH --mem=4000
-#SBATCH --mail-type=end,fail
+#SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
 
@@ -35,18 +35,18 @@ module load fastqc/0.11.9
 	# Create directory to save fastqc reports
 	cd ${OUTPUT_DIR}
 	cd ..
-	FASTQC_OUT_DIR=fastqc_reports__demo_
+	FASTQC_OUT_DIR=fastqc_reports_large-1000
 	mkdir ${FASTQC_OUT_DIR}
 
-	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list__demo_.txt
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_large-1000.txt
 
 	while read -a line; do
 
 		start_logging "fastqc - ${line[0]}"
 
 		fastqc -t 5 -o ./${FASTQC_OUT_DIR} \
-			${OUTPUT_DIR}/_demo__${line[0]}_f.fq \
-			${OUTPUT_DIR}/_demo__${line[0]}_r.fq
+			${OUTPUT_DIR}/large-1000_${line[0]}_f.fq \
+			${OUTPUT_DIR}/large-1000_${line[0]}_r.fq
 
 		stop_logging
 

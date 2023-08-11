@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#SBATCH --job-name=03_read_align
+#SBATCH --job-name=large-2000_03_read_align
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 20
-#SBATCH -t 02:00:00
+#SBATCH -t 20:00:00
 #SBATCH --mem=60000
 #SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
@@ -43,44 +43,43 @@ module load samtools/1.17
 # Align reads to reference genome
 # -----------------------------------------------------------------------------
 
-for d in ${dems[@]}; do
+SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_large-2000.txt
 
-	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
+cd ${OUTPUT_DIR}
+mkdir large-2000
+
+while read -a line; do
+
+	OUT_FILE=/large-2000/large-2000_${line[0]}_genome.bam
+	start_logging "bwa align - ${OUT_FILE}"
+
+	bwa mem -t 20 -M \
+		${REF_GENOME_FILE} \
+		${INPUT_DIR}/large-2000/large-2000_${line[0]}_f.fq \
+		${INPUT_DIR}/large-2000/large-2000_${line[0]}_r.fq \
+		> ${OUT_FILE}
+
+	stop_logging
+
+done < ${SAMPLE_ID_LIST}
+
+# -------------------------------------------------------------------------
+# Sort aligned read bam files
+# -------------------------------------------------------------------------
+
+while read -a line; do
+
+	OUT_FILE=/large-2000/large-2000_${line[0]}_genome_sorted.bam
+	start_logging "samtools sort - ${OUT_FILE}"
+
+	samtools sort -@ 19 \
+		-o ${OUT_FILE} \
+		/large-2000/large-2000_${line[0]}_genome.bam
+
+	stop_logging
+
+done < ${SAMPLE_ID_LIST}
 	
-	cd ${OUTPUT_DIR}
-
-	while read -a line; do
-
-		OUT_FILE=/${d}/${d}_${line[0]}_genome.bam
-		start_logging "bwa align - ${OUT_FILE}"
-
-		bwa mem -t 20 -M \
-			${REF_GENOME_FILE} \
-			${INPUT_DIR}/${d}_${line[0]}_f.fq ${INPUT_DIR}/${d}/${d}_${line[0]}_r.fq \
-			> ${OUT_FILE}
-
-		stop_logging
-
-	done < ${SAMPLE_ID_LIST}
-
-	# -------------------------------------------------------------------------
-	# Sort aligned read bam files
-	# -------------------------------------------------------------------------
-
-	while read -a line; do
-
-		OUT_FILE=/${d}/${d}_${line[0]}_genome_sorted.bam
-		start_logging "samtools sort - ${OUT_FILE}"
-
-		samtools sort -@ 19 \
-			-o ${OUT_FILE} \
-			/${d}/${d}_${line[0]}_genome.bam
-
-		stop_logging
-
-	done < ${SAMPLE_ID_LIST}
-	
-done
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.

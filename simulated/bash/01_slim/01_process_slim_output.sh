@@ -1,16 +1,17 @@
 #!/bin/bash
 
 #SBATCH --job-name=01_process_slim
-#SBATCH --partition=jrw0107_std
+#SBATCH --partition=general
 #SBATCH -N 1
 #SBATCH -n 2
-#SBATCH -t 300:00:00
+#SBATCH -t 10:00:00
 #SBATCH --mem=12000
 #SBATCH --output=01_slim-%j.out
 #SBATCH --error=error-01_slim-%j.err
 #SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
+# lab partition: jrw0107_std
 
 # IMPORTANT: before running this script, you must set SLiM parameters in
 # init_script_vars.sh
@@ -77,9 +78,9 @@ cp ${HOME_STEP_DIR}/*.vcf .
 # '2')
 # -----------------------------------------------------------------------------
 
-Rscript /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/01_slim/vcf_specify_alleles.R
+## UNCOMMENTING THIS MEANS RE-RERUNNING EVERYTHING DOWNSTREAM 
 
-# rm finaltasdev*.vcf
+# Rscript /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/01_slim/vcf_specify_alleles.R
 
 
 # -----------------------------------------------------------------------------
@@ -149,6 +150,7 @@ for d in ${dems[@]}; do
 			${VCF_OUT_DIR}/norm_${line[0]}.vcf.gz
 
 	done < ${SAMPLE_ID_LIST}
+
 done 
 
 # stop_logging

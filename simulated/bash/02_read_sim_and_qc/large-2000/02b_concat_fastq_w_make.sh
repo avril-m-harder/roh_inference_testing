@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-#SBATCH --job-name=_demo__02b_concat_fastq
+#SBATCH --job-name=large-2000_02b_concat_fastq
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -t 01:00:00
 #SBATCH --mem=4000
-#SBATCH --mail-type=end,fail
+#SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
 
 # -----------------------------------------------------------------------------
@@ -37,14 +37,14 @@ cd ${OUTPUT_DIR}
 
 # for d in ${dems[@]}; do
 
-	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list__demo_.txt
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_large-2000.txt
 	
 	while read -a line; do
 
 		start_logging "Concat fastq - ${line[0]}"
 
-		cat _demo__${line[0]}_11.fq _demo__${line[0]}_21.fq > _demo_/_demo__${line[0]}_f.fq
-		cat _demo__${line[0]}_12.fq _demo__${line[0]}_22.fq > _demo_/_demo__${line[0]}_r.fq
+		cat large-2000_${line[0]}_11.fq large-2000_${line[0]}_21.fq > large-2000_${line[0]}_f.fq
+		cat large-2000_${line[0]}_12.fq large-2000_${line[0]}_22.fq > large-2000_${line[0]}_r.fq
 
 		stop_logging
 
