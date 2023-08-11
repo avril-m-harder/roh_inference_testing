@@ -9,8 +9,8 @@ b1 <- 500e3
 b2 <- 1e6
 b3 <- 2e6
 
-dirs <- list.files()
-# dirs <- c('bottle','decline','small','large-1000')
+# dirs <- list.files()
+dirs <- c('bottle','decline','small','large-1000','large-2000')
 
 pdf('demo_results_overview.pdf', width = 12, height = 4.5)
 par(mfrow = c(1,3))
@@ -107,7 +107,7 @@ for(d in dirs){
     HETS <- c(HETS, nrow(hets[hets$id == i,])/c.len)
   }
   hist(HETS, main = paste0('Model: ',d,'\nHeterozygosity'), xlab = 'Heterozygosity (# het sites / chrom length)',
-       xlim = c(0, 5e-05))
+       xlim = c(0, 7e-05))
   
   FROH <- NULL
   for(i in unique(rohs$id)){

@@ -101,7 +101,7 @@ declare -a cvgX=(50x 30x 15x 10x 05x)
 declare -a cvgP=(1.0 0.6 0.3 0.2 0.1)
 
 ## Names of demographic scenarios to be analyzed
-declare -a dems=(small decline bottle large-1000)
+declare -a dems=(small decline bottle large-1000 large-2000)
 
 ## Get length of the coverage level arrays. Subtract 1 because arrays are zero
 ## based, and we'll iterate over the arrays from 0 to cvgCnt

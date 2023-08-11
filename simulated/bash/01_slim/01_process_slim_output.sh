@@ -70,11 +70,16 @@ cp ${HOME_STEP_DIR}/*.vcf .
 # -----------------------------------------------------------------------------
 # Specify REF and ALT alleles in VCF files based on ancestral sequence;
 # ALT allele is randomly selected to != REF allele
+#
+# R script now accounts for >biallelic loci. Bcftools can't be used to filter 
+# these loci because only 1 allele is ever indicated in the 'ALT' column, but
+# a third allele can still show up in the sample genotype columns (i.e., allele
+# '2')
 # -----------------------------------------------------------------------------
 
 Rscript /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/01_slim/vcf_specify_alleles.R
 
-rm finaltasdev*.vcf
+# rm finaltasdev*.vcf
 
 
 # -----------------------------------------------------------------------------
