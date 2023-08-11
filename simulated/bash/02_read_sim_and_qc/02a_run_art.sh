@@ -4,7 +4,7 @@
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 2
-#SBATCH -t 07:00:00
+#SBATCH -t 20:00:00
 #SBATCH --mem=4000
 #SBATCH --mail-type=end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
@@ -50,27 +50,32 @@ for d in ${dems[@]}; do
 
 	while read -a line; do
 
-		for a in 1 2; do
+		if [ ! -f ${OUTPUT_DIR}/${d}_${line[0]}_11.fq ]
+		then
 
-			start_logging "ART Read - ${line[0]}_$a.fasta"
+			for a in 1 2; do
+		
+				start_logging "ART Read - ${line[0]}_$a.fasta"
+			
+				art_illumina \
+					--seqSys HS25 \
+					-i ${FASTA_OUT_DIR}/${d}_${line[0]}_$a.fasta \
+					--paired \
+					-na \
+					--len 150 \
+					--fcov 25 \
+					-m 500 \
+					-s 75 \
+					-o ${OUTPUT_DIR}/${d}_${line[0]}_$a
 
-			art_illumina \
-				--seqSys HS25 \
-				-i ${FASTA_OUT_DIR}/${d}_${line[0]}_$a.fasta \
-				--paired \
-				-na \
-				--len 150 \
-				--fcov 25 \
-				-m 500 \
-				-s 75 \
-				-o ${OUTPUT_DIR}/${d}_${line[0]}_$a
+				# echo ${FASTA_OUT_DIR}/${line[0]}_$a.fas
+				# echo ${OUTPUT_DIR}/${line[0]}_$a
 
-			# echo ${FASTA_OUT_DIR}/${line[0]}_$a.fas
-			# echo ${OUTPUT_DIR}/${line[0]}_$a
-
-			stop_logging
-
-		done
+				stop_logging
+			
+			done
+			
+		fi
 
 	done < ${SAMPLE_ID_LIST}
 
