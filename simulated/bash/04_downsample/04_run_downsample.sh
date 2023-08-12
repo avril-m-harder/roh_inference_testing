@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-#SBATCH --job-name=03_downsample
+#SBATCH --job-name=04_downsample
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 20
-#SBATCH -t 04:00:00
+#SBATCH -t 12:00:00
 #SBATCH --mem=24000
 #SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
@@ -57,11 +57,11 @@ for d in ${dems[@]}; do
 
 			samtools view -s ${cvgP[i]} -@ 19 \
 				-o ${CVG_OUTPUT_DIR}/${OUT_FILE} \
-				${INPUT_DIR}/${d}_${line[0]}_genome_sorted.bam
+				${INPUT_DIR}/${d}/${d}_${line[0]}_genome_sorted.bam
 
 			stop_logging
 
-		done <${SAMPLE_ID_LIST}
+		done < ${SAMPLE_ID_LIST}
 
 	done
 	
@@ -71,4 +71,3 @@ done
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
 
-# source /home/aubkbk001/roh_param_project/scripts/99_includes/backup_output.sh
