@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=_demo__05c_combine_and_genotype_gvcfs
+#SBATCH --job-name=decline_05c_combine_and_genotype_gvcfs
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 2
@@ -39,11 +39,11 @@ for c in ${cvgX[@]}; do
 	cd ${OUTPUT_DIR}
 
 	# Set and create map file for this sample set
-	MAP_FILE=${OUTPUT_DIR}/_demo__sample_cvg_${c}_map.list
-	ls _demo__sample_cvg_${c}/*.g.vcf > ${MAP_FILE}
+	MAP_FILE=${OUTPUT_DIR}/decline_sample_cvg_${c}_map.list
+	ls decline_sample_cvg_${c}/*.g.vcf > ${MAP_FILE}
 	
 
-	OUT_FILE=_demo__sample_cvg_${c}_combined_gvcfs.vcf
+	OUT_FILE=decline_sample_cvg_${c}_combined_gvcfs.vcf
 	COMBINED_GVCFS_FILE=${OUT_FILE}
 
 	start_logging "gatk CombineGVCFs - ${OUT_FILE}"
@@ -59,7 +59,7 @@ for c in ${cvgX[@]}; do
 	# gatk GenotypeGVCFs
 	# -------------------------------------------------------------------------
 
-	OUT_FILE=_demo__sample_cvg_${c}_genotyped_gvcfs.vcf
+	OUT_FILE=decline_sample_cvg_${c}_genotyped_gvcfs.vcf
 	GENOTYPED_FILE=${OUT_FILE}
 
 	start_logging "gatk GenotypeGVCFs- ${OUT_FILE}"
