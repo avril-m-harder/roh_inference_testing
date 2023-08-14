@@ -309,7 +309,9 @@ for(f in fns){
 
   ## read in parental and triad rohverlap results
   parental.rohverlap <- read.table(paste0('parental_rohverlap_results_',method,'_',covg,'_',hmm,'.txt'), header = TRUE)
+  parental.rohverlap$p.roh.id <- c(1:nrow(parental.rohverlap))
   triad.rohverlap <- read.table(f, header = TRUE)
+  triad.rohverlap$t.roh.id <- c(1:nrow(triad.rohverlap))
 
   ## read in original ROH calls for all 3 individuals
   dat <- read.table(paste0('../data/tasdev_',method,'_',covg,'_',hmm,'_RG_ONLY.txt'))
@@ -331,23 +333,41 @@ for(f in fns){
     p.c <- parental.rohverlap$chrom[r]
     p.s <- parental.rohverlap$overlap.start[r]
     p.e <- parental.rohverlap$overlap.end[r]
+    p.roh.id <- parental.rohverlap$p.roh.id[r]
     
-    ## see if it exists in the triad rohverlap results
+    ## see if it exists in the triad rohverlap results, exactly once
     if(nrow(triad.rohverlap[triad.rohverlap$chrom == p.c &
                             triad.rohverlap$p.rohv.start == p.s &
-                            triad.rohverlap$p.rohv.end == p.e,]) > 0){
+                            triad.rohverlap$p.rohv.end == p.e,]) == 1){
       ## if it does, save and do some calcs
       temp <- triad.rohverlap[triad.rohverlap$chrom == p.c &
                               triad.rohverlap$p.rohv.start == p.s &
                               triad.rohverlap$p.rohv.end == p.e,]
       p.rohv.len <- temp$p.rohv.end - temp$p.rohv.start + 1
-      save <- c(method, covg, hmm, p.rohv.len, temp$triad.overlap.len, (p.rohv.len - temp$triad.overlap.len)/p.rohv.len)
+      save <- c(method, covg, hmm, p.roh.id, temp$t.roh.id[1], 
+                p.rohv.len, temp$triad.overlap.len[1], (p.rohv.len - temp$triad.overlap.len[1])/p.rohv.len)
       PROP.CALCS <- rbind(PROP.CALCS, save)
       ## if it doesn't, do some calcs
+    }
+    ## see if it exists in the triad rohverlap results, more than once
+    if(nrow(triad.rohverlap[triad.rohverlap$chrom == p.c &
+                            triad.rohverlap$p.rohv.start == p.s &
+                            triad.rohverlap$p.rohv.end == p.e,]) > 1){
+      ## if it does, save and do some calcs
+      temp <- triad.rohverlap[triad.rohverlap$chrom == p.c &
+                                triad.rohverlap$p.rohv.start == p.s &
+                                triad.rohverlap$p.rohv.end == p.e,]
+      for(t in 1:nrow(temp)){
+        p.rohv.len <- temp$p.rohv.end - temp$p.rohv.start + 1
+        save <- c(method, covg, hmm, p.roh.id, temp$t.roh.id[t], 
+                  p.rohv.len, temp$triad.overlap.len[t], (p.rohv.len - temp$triad.overlap.len[t])/p.rohv.len)
+        PROP.CALCS <- rbind(PROP.CALCS, save)
+      }
+    ## if it doesn't exist in the triad rohvelap results, do some calcs
     } else{
       p.rohv.len <- parental.rohverlap$overlap.len[r]
       triad.rohv.len <- 0
-      save <- c(method, covg, hmm, p.rohv.len, triad.rohv.len, (p.rohv.len - triad.rohv.len)/p.rohv.len)
+      save <- c(method, covg, hmm, p.roh.id, NA, p.rohv.len, triad.rohv.len, (p.rohv.len - triad.rohv.len)/p.rohv.len)
       PROP.CALCS <- rbind(PROP.CALCS, save)
     }
   }
