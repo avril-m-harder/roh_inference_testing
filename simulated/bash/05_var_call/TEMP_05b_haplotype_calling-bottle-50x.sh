@@ -8,7 +8,6 @@
 #SBATCH --mem=8000
 #SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=avrilharder@gmail.com
-#SBATCH --array=0-4
 
 #  +----------------------+
 #  | REQUEST 4 CPU + 60gb |
@@ -59,41 +58,37 @@ module load gatk/4.1.9.0
 # Run Haplotype caller on all sample files
 # -----------------------------------------------------------------------------
 
-for d in ${dems[@]}; do
+SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_bottle.txt
 
-	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
+# Create output directory for each coverage level.
 
-	# Create output directory for each coverage level.
+CVG_OUTPUT_DIR=${OUTPUT_DIR}/bottle_sample_cvg_50x
 
-	CVG_OUTPUT_DIR=${OUTPUT_DIR}/${d}_sample_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}
-	mkdir ${CVG_OUTPUT_DIR}
+# Process each individual sample file ----------------------------------
 
-	# Process each individual sample file ----------------------------------
+while read -a line; do
 
-	while read -a line; do
+	# ------------------------------------------------------------------
+	# Run HaplotypeCaller in GVCF mode
+	# ------------------------------------------------------------------
 
-		# ------------------------------------------------------------------
-		# Run HaplotypeCaller in GVCF mode
-		# ------------------------------------------------------------------
+	OUT_FILE=bottle_${line[0]}_cvg_50x.g.vcf
+	RGROUPS_FILE=bottle_${line[0]}_cvg_50x_rgroups.bam
+	start_logging "gatk Haplotype Caller - ${OUT_FILE}"
 
-		OUT_FILE=${d}_${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}.g.vcf
-		RGROUPS_FILE=${d}_${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}_rgroups.bam
-		start_logging "gatk Haplotype Caller - ${OUT_FILE}"
+	# Run gatk HaplotypeCaller
 
-		# Run gatk HaplotypeCaller
+	gatk HaplotypeCaller \
+		-R ${REF_GENOME_FILE} \
+		-I ${CVG_OUTPUT_DIR}/${RGROUPS_FILE} \
+		-stand-call-conf 20.0 \
+		--emit-ref-confidence GVCF \
+		-O ${CVG_OUTPUT_DIR}/${OUT_FILE}
 
-		gatk HaplotypeCaller \
-			-R ${REF_GENOME_FILE} \
-			-I ${CVG_OUTPUT_DIR}/${RGROUPS_FILE} \
-			-stand-call-conf 20.0 \
-			--emit-ref-confidence GVCF \
-			-O ${CVG_OUTPUT_DIR}/${OUT_FILE}
+	stop_logging
 
-		stop_logging
-
-	done <${SAMPLE_ID_LIST}
+done <${SAMPLE_ID_LIST}
 	
-done
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.

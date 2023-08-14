@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH --job-name=04_downsample
+#SBATCH --job-name=small_04_downsample
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 20
@@ -37,27 +37,27 @@ module load samtools/1.17
 # Do the downsampling.
 # -----------------------------------------------------------------------------
 
-for d in ${dems[@]}; do
+# for d in ${dems[@]}; do
 
-	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_small.txt
 
 	for i in $(seq 0 $cvgCnt); do
 
 		# # Create output directory for each coverage level.
 
-		CVG_OUTPUT_DIR=${OUTPUT_DIR}/${d}_sample_cvg_${cvgX[i]}
-# 		mkdir ${CVG_OUTPUT_DIR}
+		CVG_OUTPUT_DIR=${OUTPUT_DIR}/small_sample_cvg_${cvgX[i]}
+		mkdir ${CVG_OUTPUT_DIR}
 
 		# # Downsample each individual
 
 		while read -a line; do
 
-			OUT_FILE=${d}_${line[0]}_cvg_${cvgX[i]}.bam
-# 			start_logging "samtools view - ${OUT_FILE}"
-# 
-# 			samtools view -s ${cvgP[i]} -@ 19 \
-# 				-o ${CVG_OUTPUT_DIR}/${OUT_FILE} \
-# 				${INPUT_DIR}/${d}/${d}_${line[0]}_genome_sorted.bam
+			OUT_FILE=small_${line[0]}_cvg_${cvgX[i]}.bam
+			start_logging "samtools view - ${OUT_FILE}"
+
+			samtools view -s ${cvgP[i]} -@ 19 \
+				-o ${CVG_OUTPUT_DIR}/${OUT_FILE} \
+				${INPUT_DIR}/small/small_${line[0]}_genome_sorted.bam
 			
 			samtools coverage ${CVG_OUTPUT_DIR}/${OUT_FILE}
 
@@ -67,7 +67,7 @@ for d in ${dems[@]}; do
 
 	done
 	
-done
+# done
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.

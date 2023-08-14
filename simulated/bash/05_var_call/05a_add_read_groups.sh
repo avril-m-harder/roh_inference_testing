@@ -1,12 +1,13 @@
 #!/bin/bash
 #
 #SBATCH --job-name=05a_run_downsample
+#SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 4
 #SBATCH -t 03:30:00
 #SBATCH --mem=20000
-#SBATCH --mail-type=begin,end,fail
-#SBATCH --mail-user=kbk0024@auburn.edu
+#SBATCH --mail-type=end,fail
+#SBATCH --mail-user=avrilharder@gmail.com
 #SBATCH --array=0-4
 
 # IMPORTANT: The SBATCH --array parameter above needs to match the number of
@@ -51,7 +52,7 @@ SCRIPT=05a_add_read_groups.sh
 # Load variables and functions from settings file
 # -----------------------------------------------------------------------------
 
-source /scratch/kbk0024/roh_param_project/scripts/99_includes/init_script_vars.sh
+source /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/99_includes/init_script_vars.sh
 
 # -----------------------------------------------------------------------------
 # Load modules
@@ -63,62 +64,68 @@ module load picard/2.23.9
 # Run Haplotype caller on all sample files
 # -----------------------------------------------------------------------------
 
-# Create output directory for each coverage level.
+for d in ${dems[@]}; do
 
-CVG_OUTPUT_DIR=${OUTPUT_DIR}/sample_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}
-mkdir ${CVG_OUTPUT_DIR}
+	SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_${d}.txt
 
-# Set input directory for this coverage
+	# Create output directory for each coverage level.
 
-CVG_INPUT_DIR=${INPUT_DIR}/sample_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}
+	CVG_OUTPUT_DIR=${OUTPUT_DIR}/${d}_sample_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}
+	mkdir ${CVG_OUTPUT_DIR}
 
-# Process each individual sample file ----------------------------------
+	# Set input directory for this coverage
 
-while read -a line; do
+	CVG_INPUT_DIR=${INPUT_DIR}/${d}_sample_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}
 
-    # # ------------------------------------------------------------------
-    # # Add read group information
-    # # ------------------------------------------------------------------
+	# Process each individual sample file ----------------------------------
 
-    IN_FILE=${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}.bam
-    OUT_FILE=${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}_rgroups.bam
-    RGROUPS_FILE=${OUT_FILE}
-    echo IN_FILE: ${IN_FILE}
-    echo OUT_FILE: ${OUT_FILE}
-    start_logging "picard/AddOrReplaceReadGroups - ${OUT_FILE}"
+	while read -a line; do
 
-    ## Do picard read groups
+		# # ------------------------------------------------------------------
+		# # Add read group information
+		# # ------------------------------------------------------------------
 
-    # Format for Alabama Supercomputer
-    # java -jar /opt/asn/apps/picard_1.79/picard_1.79/picard-tools-1.79/AddOrReplaceReadGroups.jar \
+		IN_FILE=${d}_${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}.bam
+		OUT_FILE=${d}_${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}_rgroups.bam
+		RGROUPS_FILE=${OUT_FILE}
+		echo IN_FILE: ${IN_FILE}
+		echo OUT_FILE: ${OUT_FILE}
+		start_logging "picard/AddOrReplaceReadGroups - ${OUT_FILE}"
 
-    # Format for Easley.auburn.edu
-    java -jar /tools/picard-2.23.9/libs/picard.jar AddOrReplaceReadGroups \
-        I=${CVG_INPUT_DIR}/${IN_FILE} \
-        O=${CVG_OUTPUT_DIR}/${OUT_FILE} SORT_ORDER=coordinate RGID=group1 RGLB=lib1 RGPL=illumina RGSM=${line[0]} RGPU=unit4
+		## Do picard read groups
 
-    stop_logging
+		# Format for Alabama Supercomputer
+		# java -jar /opt/asn/apps/picard_1.79/picard_1.79/picard-tools-1.79/AddOrReplaceReadGroups.jar \
 
-    # ------------------------------------------------------------------
-    # Index BAM files
-    # ------------------------------------------------------------------
+		# Format for Easley.auburn.edu
+		java -jar /tools/picard-2.23.9/libs/picard.jar AddOrReplaceReadGroups \
+			I=${CVG_INPUT_DIR}/${IN_FILE} \
+			O=${CVG_OUTPUT_DIR}/${OUT_FILE} SORT_ORDER=coordinate RGID=group1 RGLB=lib1 RGPL=illumina RGSM=${line[0]} RGPU=unit4
 
-    OUT_FILE=${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}_rgroups.bai
-    echo BAM_OUT_FILE: ${OUT_FILE}
-    start_logging "picard/BuildBamIndex - ${OUT_FILE}"
+		stop_logging
 
-    ## Run picard BuildBamIndex
+		# ------------------------------------------------------------------
+		# Index BAM files
+		# ------------------------------------------------------------------
 
-    # Format for Alabama Supercomputer
-    # java -jar /opt/asn/apps/picard_1.79/picard_1.79/picard-tools-1.79/BuildBamIndex.jar \
+		OUT_FILE=${d}_${line[0]}_cvg_${cvgX[$SLURM_ARRAY_TASK_ID]}_rgroups.bai
+		echo BAM_OUT_FILE: ${OUT_FILE}
+		start_logging "picard/BuildBamIndex - ${OUT_FILE}"
 
-    # Format for Easley.auburn.edu
-    java -jar /tools/picard-2.23.9/libs/picard.jar BuildBamIndex \
-        I=${CVG_OUTPUT_DIR}/${RGROUPS_FILE}
+		## Run picard BuildBamIndex
 
-    stop_logging
+		# Format for Alabama Supercomputer
+		# java -jar /opt/asn/apps/picard_1.79/picard_1.79/picard-tools-1.79/BuildBamIndex.jar \
 
-done <${SAMPLE_ID_LIST}
+		# Format for Easley.auburn.edu
+		java -jar /tools/picard-2.23.9/libs/picard.jar BuildBamIndex \
+			I=${CVG_OUTPUT_DIR}/${RGROUPS_FILE}
+
+		stop_logging
+
+	done <${SAMPLE_ID_LIST}
+
+done
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.

@@ -1,0 +1,65 @@
+# Makefile
+# Date: 4/2/2015 - Created by Mark Christie
+# set paths, directories, and filenames
+
+# JW update:14 Oct 2015; AH update for Easley: 19 Apr 2021
+
+## Script
+FILE1 = 05c_combine_and_genotype_gvcfs_w_make.sh
+
+## Set variables
+USER = avrilh
+
+HOMEDIR = /home/amh0254/roh_param_project/roh_inference_testing/simulated/bash/05_var_call
+
+## Each directory will only contain the scripts used to process that particular
+## group of contigs. Scripts will be held in /home/, data will be processed in /scratch/.
+DEMO1 = small
+DEMO2 = bottle
+DEMO3 = decline
+DEMO4 = large-2000
+
+
+all:
+	@echo "Please type....."
+	@echo "    make directories"
+	@echo "    make scripts"
+	@echo "    make setgroup"
+	@echo "    make submit"
+	
+directories:
+	@echo "Here we go directories"
+	mkdir $(HOMEDIR)/$(DEMO1)
+	mkdir $(HOMEDIR)/$(DEMO2)
+	mkdir $(HOMEDIR)/$(DEMO3)
+	mkdir $(HOMEDIR)/$(DEMO4)
+	
+	
+scripts:
+	@echo "Here we go write scripts"	
+	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO1)/$(FILE1)
+	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO2)/$(FILE1)
+	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO3)/$(FILE1)
+	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO4)/$(FILE1)
+
+
+setgroup:
+	@echo "Here we go set groups"
+	sed -i 's/_demo_/$(DEMO1)/g' $(HOMEDIR)/$(DEMO1)/$(FILE1)
+	sed -i 's/_demo_/$(DEMO2)/g' $(HOMEDIR)/$(DEMO2)/$(FILE1)
+	sed -i 's/_demo_/$(DEMO3)/g' $(HOMEDIR)/$(DEMO3)/$(FILE1)
+	sed -i 's/_demo_/$(DEMO4)/g' $(HOMEDIR)/$(DEMO4)/$(FILE1)
+
+	
+submit:
+	@echo "Here we go prep + submit"
+	chmod +x $(HOMEDIR)/$(DEMO1)/$(FILE1)
+	chmod +x $(HOMEDIR)/$(DEMO2)/$(FILE1)
+	chmod +x $(HOMEDIR)/$(DEMO3)/$(FILE1)
+	chmod +x $(HOMEDIR)/$(DEMO4)/$(FILE1)
+	sbatch $(HOMEDIR)/$(DEMO1)/$(FILE1)
+	sbatch $(HOMEDIR)/$(DEMO2)/$(FILE1)
+	sbatch $(HOMEDIR)/$(DEMO3)/$(FILE1)
+	sbatch $(HOMEDIR)/$(DEMO4)/$(FILE1)
+	
+	

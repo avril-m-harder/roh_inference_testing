@@ -36,6 +36,7 @@ module load samtools/1.17
 # -----------------------------------------------------------------------------
 
 # TO DO: move this indexing to step O1  - make it step 01c_index_ref_genome
+# For now, just ran it manually since using makefile
 
 # bwa index ${REF_GENOME_FILE}
 
@@ -43,46 +44,47 @@ module load samtools/1.17
 # Align reads to reference genome
 # -----------------------------------------------------------------------------
 
-SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_large-2000.txt
+# SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_large-2000.txt
 
 cd ${OUTPUT_DIR}
-mkdir large-2000; cd large-2000
-
-while read -a line; do
-
-	OUT_FILE=large-2000_${line[0]}_genome.bam
-	start_logging "bwa align - ${OUT_FILE}"
-
-	bwa mem -t 20 -M \
-		${REF_GENOME_FILE} \
-		${INPUT_DIR}/large-2000/large-2000_${line[0]}_f.fq \
-		${INPUT_DIR}/large-2000/large-2000_${line[0]}_r.fq \
-		> ${OUT_FILE}
-
-	stop_logging
-
-done < ${SAMPLE_ID_LIST}
+# mkdir large-2000; cd large-2000
+# 
+# while read -a line; do
+# 
+# 	OUT_FILE=large-2000_${line[0]}_genome.bam
+# 	start_logging "bwa align - ${OUT_FILE}"
+# 
+# 	bwa mem -t 20 -M \
+# 		${REF_GENOME_FILE} \
+# 		${INPUT_DIR}/large-2000/large-2000_${line[0]}_f.fq \
+# 		${INPUT_DIR}/large-2000/large-2000_${line[0]}_r.fq \
+# 		> ${OUT_FILE}
+# 
+# 	stop_logging
+# 
+# done < ${SAMPLE_ID_LIST}
 
 # -------------------------------------------------------------------------
 # Sort aligned read bam files
 # -------------------------------------------------------------------------
 
-while read -a line; do
-
-	OUT_FILE=large-2000_${line[0]}_genome_sorted.bam
-	start_logging "samtools sort - ${OUT_FILE}"
-
-	samtools sort -@ 19 \
-		-o ${OUT_FILE} \
-		large-2000_${line[0]}_genome.bam
-
-	stop_logging
-
-done < ${SAMPLE_ID_LIST}
+# while read -a line; do
+# 
+# 	OUT_FILE=large-2000_${line[0]}_genome_sorted.bam
+# 	start_logging "samtools sort - ${OUT_FILE}"
+# 
+# 	samtools sort -@ 19 \
+# 		-o ${OUT_FILE} \
+# 		large-2000_${line[0]}_genome.bam
+# 
+# 	stop_logging
+# 
+# done < ${SAMPLE_ID_LIST}
 	
 
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
 
-# source /home/aubkbk001/roh_param_project/scripts/99_includes/backup_output.sh
+cp ./large-2000/large-2000_*_genome_sorted.bam \
+/home/amh0254/roh_param_project/roh_inference_testing/simulated/data/03_read_align
