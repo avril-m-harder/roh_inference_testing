@@ -66,7 +66,7 @@ for c in ${cvgX[@]}; do
 	# Keep only SNPs that pass the above filters
 	# ------------------------------------------------------------------------------
 
-	OUT_FILE=_demo__sample_cvg_${c}_filtered_SNPS.vcf
+	OUT_FILE=_demo__sample_cvg_${c}_filtered_SNPs.vcf
 
 	start_logging "gatk SelectVariants - ${OUT_FILE}"
 
@@ -84,6 +84,9 @@ done
 # -----------------------------------------------------------------------------
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
+
+cp _demo_*combined_gvcfs.vcf \
+/home/amh0254/roh_param_project/roh_inference_testing/simulated/data/05_var_call/
 
 cp _demo__sample_cvg_*_filtered_SNPS.vcf \
 /home/amh0254/roh_param_project/roh_inference_testing/simulated/data/05_var_call/
