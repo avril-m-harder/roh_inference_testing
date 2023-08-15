@@ -1,3 +1,4 @@
+library(scales)
 `%notin%` <- Negate(`%in%`)
 
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/empirical/data/')
@@ -294,10 +295,10 @@ o.id <- 'SRR9329977'
 # }
 
 
-##### Calculate proportions of parental ROHverlap called as ROH in offspring
+##### Calculate proportions of parental ROHverlap called as ROH in offspring #####
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/empirical/output/')
 
-PROP.CALCS <- NULL
+CALC.PROPS <- matrix(c('method','covg','hmm','p.roh.id','triad.roh.id','p.rohv.len','triad.rohv.len','prop.p.cov'), nrow = 1)
 
 fns <- list.files(pattern = 'parent-offspring_rohverlap_results_*')
 for(f in fns){
@@ -346,7 +347,7 @@ for(f in fns){
       p.rohv.len <- temp$p.rohv.end - temp$p.rohv.start + 1
       save <- c(method, covg, hmm, p.roh.id, temp$t.roh.id[1], 
                 p.rohv.len, temp$triad.overlap.len[1], (p.rohv.len - temp$triad.overlap.len[1])/p.rohv.len)
-      PROP.CALCS <- rbind(PROP.CALCS, save)
+      CALC.PROPS <- rbind(CALC.PROPS, save)
       ## if it doesn't, do some calcs
     }
     ## see if it exists in the triad rohverlap results, more than once
@@ -358,17 +359,54 @@ for(f in fns){
                                 triad.rohverlap$p.rohv.start == p.s &
                                 triad.rohverlap$p.rohv.end == p.e,]
       for(t in 1:nrow(temp)){
-        p.rohv.len <- temp$p.rohv.end - temp$p.rohv.start + 1
+        p.rohv.len <- temp$p.rohv.end[t] - temp$p.rohv.start[t] + 1
         save <- c(method, covg, hmm, p.roh.id, temp$t.roh.id[t], 
                   p.rohv.len, temp$triad.overlap.len[t], (p.rohv.len - temp$triad.overlap.len[t])/p.rohv.len)
-        PROP.CALCS <- rbind(PROP.CALCS, save)
+        CALC.PROPS <- rbind(CALC.PROPS, save)
       }
     ## if it doesn't exist in the triad rohvelap results, do some calcs
-    } else{
+    } 
+    if(nrow(triad.rohverlap[triad.rohverlap$chrom == p.c &
+                            triad.rohverlap$p.rohv.start == p.s &
+                            triad.rohverlap$p.rohv.end == p.e,]) == 0){
       p.rohv.len <- parental.rohverlap$overlap.len[r]
       triad.rohv.len <- 0
       save <- c(method, covg, hmm, p.roh.id, NA, p.rohv.len, triad.rohv.len, (p.rohv.len - triad.rohv.len)/p.rohv.len)
-      PROP.CALCS <- rbind(PROP.CALCS, save)
+      CALC.PROPS <- rbind(CALC.PROPS, save)
     }
   }
 }
+prop.calcs <- as.data.frame(CALC.PROPS)
+colnames(prop.calcs) <- prop.calcs[1,]
+prop.calcs <- prop.calcs[-1,]
+rm(CALC.PROPS)
+
+prop.calcs$combo <- paste0(prop.calcs$method,'-',prop.calcs$covg,'-',prop.calcs$hmm)
+for(c in c(6:7)){
+  prop.calcs[,c] <- as.numeric(prop.calcs[,c])
+}
+
+pdf('../figures/parental_vs_triad_rohverlap_lengths.pdf', width = 10, height = 5)
+par(mfrow = c(1,2))
+for(c in unique(prop.calcs$combo)){
+  sub <- prop.calcs[prop.calcs$combo == c,]
+  plot(sub$p.rohv.len, sub$triad.rohv.len, pch = 19, col = alpha('springgreen3', 0.5), 
+       main = c, xlab = 'Parental ROHverlap length', ylab = 'Triad ROHverlap length')
+    abline(0, 1, lty = 2)
+}
+dev.off()
+
+OUT <- NULL
+for(c in unique(prop.calcs$combo)){
+  sub <- prop.calcs[prop.calcs$combo == c,]
+  sub.filt <- sub[sub$p.rohv.len >= 100e3,]
+  save <- c(c, sum(sub$p.rohv.len), sum(sub$triad.rohv.len), sum(sub$triad.rohv.len)/sum(sub$p.rohv.len),
+            sum(sub.filt$p.rohv.len), sum(sub.filt$triad.rohv.len), sum(sub.filt$triad.rohv.len)/sum(sub.filt$p.rohv.len))
+  OUT <- rbind(OUT, save)
+}
+stats <- as.data.frame(OUT)
+for(c in c(2:7)){
+  stats[,c] <- as.numeric(stats[,c])
+}
+colnames(stats) <- c('combo','p.rohv.len','triad.rohv.len','prop.p.cov','filt.p.roh.len','filt.triad.rohv.len','prop.filt.p.cov')
+stats <- stats[order(stats$prop.p.cov),]
