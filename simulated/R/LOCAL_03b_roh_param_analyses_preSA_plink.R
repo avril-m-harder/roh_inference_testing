@@ -61,7 +61,9 @@ for(true.fn in true.fns){
                             plink.res[,12],'-',
                             plink.res[,13])
   
+  ##### Loop over param setting combos, writing ROHverlap results as it goes #####
   for(c in unique(plink.res$combo)){
+    print(paste0(demo,' - ',c))
     ##### 2. ROH identification -- PLINK results #####
     ## Output: for each true ROH, identify all overlapping called ROHs. Each instance
     ## of overlap will occupy one line in the output matrix. The output matrix will contain:
@@ -73,7 +75,6 @@ for(true.fn in true.fns){
     ## the proportion overlapping a called ROH
     PLINK.OUT <- NULL
     for(i in unique(plink.combo$id)){                 ## for each individual,
-      print(i)
       true.sub <- true.rohs[true.rohs$id == i,]       ## subset true ROH data,
       sub.plink <- plink.combo[plink.combo$id == i,]  ## subset PLINK results
       for(r in 1:nrow(true.sub)){                     ## loop over true ROHs,
@@ -143,8 +144,9 @@ for(true.fn in true.fns){
       }
     }
     rm(PLINK.OUT)
-    
   }
+  
+  ##### Read in overlap results for all setting combos #####
   plink.out <- read.table(paste0(demo,'_PLINK_overlap_results.txt'),
                           sep = '\t', header = TRUE)
   plink.out <- plink.out[plink.out$len >= 100000,]
