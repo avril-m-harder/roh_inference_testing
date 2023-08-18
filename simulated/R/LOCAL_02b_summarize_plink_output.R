@@ -1,13 +1,17 @@
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/plink_output/')
 fns <- list.files(pattern = 'hom')
 
+##
+fns <- fns[grep('ROUND2', fns)]  ## to process round 2 of the sensitivity analysis data
+rnd <- 'round2'
+
 ##### Read in PLINK results and summarize #####
 ## Loop over demographic scenarios and write 1 file for each
 demos <- unique(do.call(rbind, strsplit(fns, split = '_'))[,1])
 
 for(d in demos){
   OUT <- matrix(c('id','start','end','n.snps','covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.table(OUT, paste0(d,'_PLINK_all_coordinates.txt'),
+  write.table(OUT, paste0(rnd,'/',d,'_PLINK_all_coordinates.txt'),
               quote = FALSE, row.names = FALSE, sep='\t', col.names = FALSE)
   
   d.fns <- fns[grep(d, fns)]
@@ -35,7 +39,7 @@ for(d in demos){
       dat$phwt <- phwt
       dat$phzs <- phzs
       dat$phzk <- phzk
-      write.table(dat, paste0(d,'_PLINK_all_coordinates.txt'),
+      write.table(dat, paste0(rnd,'/',d,'_PLINK_all_coordinates.txt'),
                   append = TRUE, quote = FALSE, row.names = FALSE, sep='\t', col.names = FALSE)
     }
   }

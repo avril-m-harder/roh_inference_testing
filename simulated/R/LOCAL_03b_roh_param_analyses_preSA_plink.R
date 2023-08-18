@@ -4,6 +4,9 @@ library(grDevices)
 
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/plink_output/')
 
+## 
+rnd <- 'round2'
+
 ##### Loop over demographic scenarios #####
 true.fns <- list.files('../slim_true_data/', pattern = 'true_roh_coords')
 
@@ -13,26 +16,26 @@ for(true.fn in true.fns){
   ## set up output files
   PLINK.OUT <- matrix(c('id','covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk',
                         'len','true.len','true.roh.id','called.roh.id','n.snps'), nrow = 1)
-  write.table(PLINK.OUT, paste0(demo,'_PLINK_overlap_results.txt'),
+  write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
               sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE)
   
   OUT <- matrix(c('id','covg','phwh','phwm','phws','phzd','phzg',
                   'phwt','phzs','phzk','true.froh','call.froh'), nrow = 1)
-  write.table(OUT, paste0(demo,'_PLINK_individual_froh_results.txt'),
+  write.table(OUT, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.txt'),
               sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE)
   
   froh.stats <- matrix(c('id','true.froh','call.froh','abs.diff','combo','covg',
                          'phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.csv(froh.stats, paste0(demo,'_PLINK_individual_froh_results.csv'), row.names = FALSE, col.names = FALSE)
+  write.csv(froh.stats, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.csv'), row.names = FALSE, col.names = FALSE)
   
   OUT1 <- matrix(c('mean.true.froh','mean.called.froh','sd.diff','group','covg',
                    'phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.csv(OUT1, paste0(demo,'_population_froh_results_SA.csv'), 
+  write.csv(OUT1, paste0(rnd,'/',demo,'_population_froh_results_SA.csv'), 
             row.names = FALSE, col.names = FALSE)
   
   froh.stats <- matrix(c('id','true.froh','call.froh','covg','phwh','phwm','phws',
                          'phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.csv(froh.stats, paste0(demo,'_individual_froh_results_SA.csv'), 
+  write.csv(froh.stats, paste0(rnd,'/',demo,'_individual_froh_results_SA.csv'), 
             row.names = FALSE, col.names = FALSE)
     
   ##### Read in known/true heterozygosity + ROH information #####
@@ -46,7 +49,7 @@ for(true.fn in true.fns){
   
   ##### Read in ROH calling results #####
   ## PLINK (written from 02b_summarize_plink_output.R)
-  plink.res <- read.table(paste0(demo,'_PLINK_all_coordinates.txt'), header = TRUE)
+  plink.res <- read.table(paste0(rnd,'/',demo,'_PLINK_all_coordinates.txt'), header = TRUE)
   plink.res$called.roh.id <- c(1:nrow(plink.res))
   plink.res$id <- gsub('i','',plink.res$id)
   
@@ -93,7 +96,7 @@ for(true.fn in true.fns){
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
-        write.table(PLINK.OUT, paste0(demo,'_PLINK_overlap_results.txt'),
+        write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
                     sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
         ## called ROHs beginning inside of a true ROH, ending outside
@@ -108,7 +111,7 @@ for(true.fn in true.fns){
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
-        write.table(PLINK.OUT, paste0(demo,'_PLINK_overlap_results.txt'),
+        write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
                     sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
         ## called ROHs completely covering a true ROH
@@ -123,7 +126,7 @@ for(true.fn in true.fns){
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
-        write.table(PLINK.OUT, paste0(demo,'_PLINK_overlap_results.txt'),
+        write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
                     sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
         ## called ROHs completely within a true ROH
@@ -138,7 +141,7 @@ for(true.fn in true.fns){
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
-        write.table(PLINK.OUT, paste0(demo,'_PLINK_overlap_results.txt'),
+        write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
                     sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
       }
@@ -147,7 +150,7 @@ for(true.fn in true.fns){
   }
   
   ##### Read in overlap results for all setting combos #####
-  plink.out <- read.table(paste0(demo,'_PLINK_overlap_results.txt'),
+  plink.out <- read.table(paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
                           sep = '\t', header = TRUE)
   plink.out <- plink.out[plink.out$len >= 100000,]
   
@@ -174,12 +177,12 @@ for(true.fn in true.fns){
         save <- c(i, unlist(sub[1, c(2:10)]), true.froh, call.froh)
         OUT <- rbind(OUT, save)
       }
-    write.table(OUT, paste0(demo,'_PLINK_individual_froh_results.txt'),
+    write.table(OUT, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.txt'),
                 sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
     OUT <- NULL
   }
 
-  OUT <- read.table(paste0(demo,'_PLINK_individual_froh_results.txt'), header = TRUE)
+  OUT <- read.table(paste0(rnd,'/',demo,'_PLINK_individual_froh_results.txt'), header = TRUE)
   froh.stats <- as.data.frame(OUT)
   froh.stats$abs.diff <- abs(froh.stats$call.froh - froh.stats$true.froh)
   froh.stats$combo <- paste0(froh.stats[,2],'-',
@@ -193,8 +196,8 @@ for(true.fn in true.fns){
                              froh.stats[,10])
   froh.stats <- froh.stats[,c('id','true.froh','call.froh','abs.diff','combo',
                               'covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk')]
-  write.csv(froh.stats, paste0(demo,'_PLINK_individual_froh_results.csv'), row.names = FALSE)
-  froh.stats <- read.csv(paste0(demo,'_PLINK_individual_froh_results.csv'))
+  write.csv(froh.stats, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.csv'), row.names = FALSE)
+  froh.stats <- read.csv(paste0(rnd,'/',demo,'_PLINK_individual_froh_results.csv'))
   
   ## add f(ROH) difference with sign (i.e., directionality)
   froh.stats$froh.diff <- froh.stats$call.froh - froh.stats$true.froh
@@ -228,8 +231,8 @@ for(true.fn in true.fns){
     pop.lev.res[,c] <- as.numeric(pop.lev.res[,c])
   }
 
-  write.csv(OUT1[,c(2,3,7,8:ncol(OUT1))], paste0(demo,'_population_froh_results_SA.csv'), 
+  write.csv(OUT1[,c(2,3,7,8:ncol(OUT1))], paste0(rnd,'/',demo,'_population_froh_results_SA.csv'), 
             row.names = FALSE, append = TRUE)
-  write.csv(froh.stats[,c(1:3,6:ncol(froh.stats))], paste0(demo,'_individual_froh_results_SA.csv'), 
+  write.csv(froh.stats[,c(1:3,6:ncol(froh.stats))], paste0(rnd,'/',demo,'_individual_froh_results_SA.csv'), 
             row.names = FALSE, append = TRUE)
 }
