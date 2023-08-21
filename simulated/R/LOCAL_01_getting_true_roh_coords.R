@@ -95,6 +95,8 @@ for(f in fns){
 
 ### Format histograms for manuscript figures
 pdf('/Users/Avril/Desktop/scenario_froh.pdf', width = 5, height = 5)
+
+## histograms require demo-specific # breaks for uniformity
 bottle <- read.table('bottle_true_roh_coords.txt', header = FALSE)
 colnames(bottle) <- c('id','start','end','length')
 bottle <- bottle[bottle$length >= 100e3,]
@@ -142,126 +144,36 @@ b.3 <- 1e6
 b.4 <- 2e6
 
 pdf('/Users/Avril/Desktop/scenario_froh_length_bins.pdf', width = 4, height = 5)
-pt.cex = 0.8
+pt.cex <- 0.8
+pt.alph <- 0.6
+line.len <- 0.3
 
-bottle <- read.table('bottle_true_roh_coords.txt', header = FALSE)
-colnames(bottle) <- c('id','start','end','length')
-bottle <- bottle[bottle$length >= 100e3,]
-OUT <- NULL
-for(i in unique(bottle$id)){
-  sub <- bottle[bottle$id == i,]
-  b1 <- sum(sub[sub$length >= b.1 & sub$length < b.2, 'length'])/c.len
-  b2 <- sum(sub[sub$length >= b.2 & sub$length < b.3, 'length'])/c.len
-  b3 <- sum(sub[sub$length >= b.3 & sub$length < b.4, 'length'])/c.len
-  b4 <- sum(sub[sub$length >= b.4, 'length'])/c.len
+for(f in fns){
+  demo <- strsplit(f, split = '_')[[1]][2]
   
-  save <- c(i, b1, b2, b3, b4)
-  OUT <- rbind(OUT, save)
-}
-plot(0, 0, xlim = c(0.75, 4.25), ylim = c(0, 1), xaxt = 'n', main = 'bottle', ylab = '', xlab = '', yaxt = 'n')
+  dat <- read.table(paste0(demo,'_true_roh_coords.txt'), header = FALSE)
+  colnames(dat) <- c('id','start','end','length')
+  dat <- dat[dat$length >= 100e3,]
+  OUT <- NULL
+  for(i in unique(dat$id)){
+    sub <- dat[dat$id == i,]
+    b1 <- sum(sub[sub$length >= b.1 & sub$length < b.2, 'length'])/c.len
+    b2 <- sum(sub[sub$length >= b.2 & sub$length < b.3, 'length'])/c.len
+    b3 <- sum(sub[sub$length >= b.3 & sub$length < b.4, 'length'])/c.len
+    b4 <- sum(sub[sub$length >= b.4, 'length'])/c.len
+    
+    save <- c(i, b1, b2, b3, b4)
+    OUT <- rbind(OUT, save)
+  }
+  plot(0, 0, xlim = c(0.75, 4.25), ylim = c(0, 1), xaxt = 'n', main = demo, ylab = '', xlab = '', yaxt = 'n')
   axis(1, at = c(1:4))
   axis(2, at = c(0, 0.25, 0.5, 0.75, 1))
-  points(jitter(rep(1, 50), amount = .15), OUT[,2], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 5, col = 'springgreen4')
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(2, 50), amount = .15), OUT[,3], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 5, col = 'springgreen4')
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(3, 50), amount = .15), OUT[,4], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 5, col = 'springgreen4')
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(4, 50), amount = .15), OUT[,5], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 5, col = 'springgreen4')
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 3, col = 'springgreen3')
-
-decline <- read.table('decline_true_roh_coords.txt', header = FALSE)
-colnames(decline) <- c('id','start','end','length')
-decline <- decline[decline$length >= 100e3,]
-OUT <- NULL
-for(i in unique(decline$id)){
-  sub <- decline[decline$id == i,]
-  b1 <- sum(sub[sub$length >= b.1 & sub$length < b.2, 'length'])/c.len
-  b2 <- sum(sub[sub$length >= b.2 & sub$length < b.3, 'length'])/c.len
-  b3 <- sum(sub[sub$length >= b.3 & sub$length < b.4, 'length'])/c.len
-  b4 <- sum(sub[sub$length >= b.4, 'length'])/c.len
-  
-  save <- c(i, b1, b2, b3, b4)
-  OUT <- rbind(OUT, save)
+  x <- 1
+  for(c in 2:5){
+    points(jitter(rep(x, 50), amount = .15), OUT[,c], pch = 19, col = alpha('springgreen4', pt.alph), cex = pt.cex)
+    lines(c(x - line.len, x + line.len), c(median(OUT[,c]), median(OUT[,c])), lwd = 5, col = 'springgreen4')
+    lines(c(x - line.len, x + line.len), c(median(OUT[,c]), median(OUT[,c])), lwd = 3, col = 'springgreen3')
+    x <- x+1
+  }
 }
-plot(0, 0, xlim = c(0.75, 4.25), ylim = c(0, 1), xaxt = 'n', main = 'decline', ylab = '', xlab = '', yaxt = 'n')
-  axis(1, at = c(1:4))
-  axis(2, at = c(0, 0.25, 0.5, 0.75, 1))
-  points(jitter(rep(1, 50), amount = .15), OUT[,2], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 5, col = 'springgreen4')
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(2, 50), amount = .15), OUT[,3], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 5, col = 'springgreen4')
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(3, 50), amount = .15), OUT[,4], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 5, col = 'springgreen4')
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(4, 50), amount = .15), OUT[,5], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 5, col = 'springgreen4')
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 3, col = 'springgreen3')
-
-small <- read.table('small_true_roh_coords.txt', header = FALSE)
-colnames(small) <- c('id','start','end','length')
-small <- small[small$length >= 100e3,]
-OUT <- NULL
-for(i in unique(small$id)){
-  sub <- small[small$id == i,]
-  b1 <- sum(sub[sub$length >= b.1 & sub$length < b.2, 'length'])/c.len
-  b2 <- sum(sub[sub$length >= b.2 & sub$length < b.3, 'length'])/c.len
-  b3 <- sum(sub[sub$length >= b.3 & sub$length < b.4, 'length'])/c.len
-  b4 <- sum(sub[sub$length >= b.4, 'length'])/c.len
-  
-  save <- c(i, b1, b2, b3, b4)
-  OUT <- rbind(OUT, save)
-}
-plot(0, 0, xlim = c(0.75, 4.25), ylim = c(0, 1), xaxt = 'n', main = 'small', ylab = '', xlab = '', yaxt = 'n')
-  axis(1, at = c(1:4))
-  axis(2, at = c(0, 0.25, 0.5, 0.75, 1))
-  points(jitter(rep(1, 50), amount = .15), OUT[,2], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 5, col = 'springgreen4')
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(2, 50), amount = .15), OUT[,3], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 5, col = 'springgreen4')
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(3, 50), amount = .15), OUT[,4], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 5, col = 'springgreen4')
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(4, 50), amount = .15), OUT[,5], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 5, col = 'springgreen4')
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 3, col = 'springgreen3')
-
-large.1000 <- read.table('large-1000_true_roh_coords.txt', header = FALSE)
-colnames(large.1000) <- c('id','start','end','length')
-large.1000 <- large.1000[large.1000$length >= 100e3,]
-OUT <- NULL
-for(i in unique(large.1000$id)){
-  sub <- large.1000[large.1000$id == i,]
-  b1 <- sum(sub[sub$length >= b.1 & sub$length < b.2, 'length'])/c.len
-  b2 <- sum(sub[sub$length >= b.2 & sub$length < b.3, 'length'])/c.len
-  b3 <- sum(sub[sub$length >= b.3 & sub$length < b.4, 'length'])/c.len
-  b4 <- sum(sub[sub$length >= b.4, 'length'])/c.len
-  
-  save <- c(i, b1, b2, b3, b4)
-  OUT <- rbind(OUT, save)
-}
-plot(0, 0, xlim = c(0.75, 4.25), ylim = c(0, 1), xaxt = 'n', main = 'large.1000', ylab = '', xlab = '', yaxt = 'n')
-  axis(1, at = c(1:4))
-  axis(2, at = c(0, 0.25, 0.5, 0.75, 1))
-  points(jitter(rep(1, 50), amount = .15), OUT[,2], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 5, col = 'springgreen4')
-  lines(c(0.7, 1.3), c(median(OUT[,2]), median(OUT[,2])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(2, 50), amount = .15), OUT[,3], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 5, col = 'springgreen4')
-  lines(c(1.7, 2.3), c(median(OUT[,3]), median(OUT[,3])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(3, 50), amount = .15), OUT[,4], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 5, col = 'springgreen4')
-  lines(c(2.7, 3.3), c(median(OUT[,4]), median(OUT[,4])), lwd = 3, col = 'springgreen3')
-  points(jitter(rep(4, 50), amount = .15), OUT[,5], pch = 19, col = alpha('springgreen4', 0.6), cex = pt.cex)
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 5, col = 'springgreen4')
-  lines(c(3.7, 4.3), c(median(OUT[,5]), median(OUT[,5])), lwd = 3, col = 'springgreen3')
-
 dev.off()
