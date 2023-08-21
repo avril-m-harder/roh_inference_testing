@@ -97,56 +97,48 @@ for(f in fns){
 pdf('/Users/Avril/Desktop/scenario_froh.pdf', width = 5, height = 5)
 
 ## histograms require demo-specific # breaks for uniformity
-bottle <- read.table('bottle_true_roh_coords.txt', header = FALSE)
-colnames(bottle) <- c('id','start','end','length')
-bottle <- bottle[bottle$length >= 100e3,]
-SAVE <- NULL
-for(i in unique(bottle$id)){
-  froh <- sum(bottle[bottle$id == i, 'length'])/c.len
-  SAVE <- c(SAVE, froh)
-}
-hist(SAVE, xlim = c(0,1), xlab = '', main = 'bottle', ylim = c(0,25), breaks = 10) ## 19
+breaks <- c(10, 11, 8, 7)
+demos <- c('bottle','decline','small','large-1000')
+cex.axis <- 1.5
+lwd <- 2
+line<-par(lwd = 2)
 
-decline <- read.table('decline_true_roh_coords.txt', header = FALSE)
-colnames(decline) <- c('id','start','end','length')
-decline <- decline[decline$length >= 100e3,]
-SAVE <- NULL
-for(i in unique(decline$id)){
-  froh <- sum(decline[decline$id == i, 'length'])/c.len
-  SAVE <- c(SAVE, froh)
+for(d in 1:4){
+  dat <- read.table(paste0(demos[d],'_true_roh_coords.txt'), header = FALSE)
+  colnames(dat) <- c('id','start','end','length')
+  dat <- dat[dat$length >= 100e3,]
+  SAVE <- NULL
+  for(i in unique(dat$id)){
+    froh <- sum(dat[dat$id == i, 'length'])/c.len
+    SAVE <- c(SAVE, froh)
+  }
+  hist(SAVE, xlim = c(0,1), xlab = '', main = demos[d], ylim = c(0,25), breaks = breaks[d], xaxt = 'n',
+       lwd = lwd, ylab = '', yaxt = 'n') ## 19
+    axis(1, at = c(0, .25, .5, .75, 1), labels = c('0.0','','0.5','','1.0'), lwd = lwd, cex.axis = cex.axis)
+    # axis(2, at = c(0, 5, 10, 15, 20, 25), labels = c('0','','10','','20',''), lwd = 2)
+    axis(2, at = c(0, 5, 10, 15, 20, 25), lwd = lwd, cex.axis = cex.axis)
+    
+  plot(density(SAVE), xlim = c(0, 1), ylim = c(0, 10), col = 'springgreen4', main = demos[d], xaxt = 'n', yaxt = 'n', bty = 'n', zero.line = FALSE)
+    axis(1, at = c(0, .25, .5, .75, 1), labels = c('0.0','','0.5','','1.0'), lwd = lwd, cex.axis = cex.axis)
+    axis(2, at = c(0, 5, 10), lwd = lwd, cex.axis = cex.axis)
+    polygon(density(SAVE), col = 'springgreen4', border = NA)
 }
-hist(SAVE, xlim = c(0,1), xlab = '', main = 'decline', ylim = c(0,25), breaks = 11) ## 19
 
-small <- read.table('small_true_roh_coords.txt', header = FALSE)
-colnames(small) <- c('id','start','end','length')
-small <- small[small$length >= 100e3,]
-SAVE <- NULL
-for(i in unique(small$id)){
-  froh <- sum(small[small$id == i, 'length'])/c.len
-  SAVE <- c(SAVE, froh)
-}
-hist(SAVE, xlim = c(0,1), xlab = '', main = 'small', ylim = c(0,25), breaks = 8) ## 9
-
-large.1000 <- read.table('large-1000_true_roh_coords.txt', header = FALSE)
-colnames(large.1000) <- c('id','start','end','length')
-large.1000 <- large.1000[large.1000$length >= 100e3,]
-SAVE <- NULL
-for(i in unique(large.1000$id)){
-  froh <- sum(large.1000[large.1000$id == i, 'length'])/c.len
-  SAVE <- c(SAVE, froh)
-}
-hist(SAVE, xlim = c(0,1), xlab = '', main = 'large.1000', ylim = c(0,25), breaks = 7) ## 8
 dev.off()
 
+
+## Length bin figures
 b.1 <- 100e3
 b.2 <- 500e3
 b.3 <- 1e6
 b.4 <- 2e6
 
-pdf('/Users/Avril/Desktop/scenario_froh_length_bins.pdf', width = 4, height = 5)
-pt.cex <- 0.8
-pt.alph <- 0.6
+pdf('/Users/Avril/Desktop/scenario_froh_length_bins.pdf', width = 5, height = 5)
+pt.cex <- 1.25
+pt.alph <- 0.3
 line.len <- 0.3
+cex.axis <- 1.5
+lwd <- 2
 
 for(f in fns){
   demo <- strsplit(f, split = '_')[[1]][2]
@@ -165,15 +157,16 @@ for(f in fns){
     save <- c(i, b1, b2, b3, b4)
     OUT <- rbind(OUT, save)
   }
-  plot(0, 0, xlim = c(0.75, 4.25), ylim = c(0, 1), xaxt = 'n', main = demo, ylab = '', xlab = '', yaxt = 'n')
-  axis(1, at = c(1:4))
-  axis(2, at = c(0, 0.25, 0.5, 0.75, 1))
+  plot(0, 0, xlim = c(0.6, 4.4), ylim = c(0, 1), xaxt = 'n', main = demo, ylab = '', xlab = '', yaxt = 'n', bty = 'n')
+  axis(1, at = c(1:4), lwd = lwd, cex.axis = cex.axis)
+  axis(2, at = c(0, 0.25, 0.5, 0.75, 1), labels = c('0.0','','0.5','','1.0'), lwd = lwd, cex.axis = cex.axis)
   x <- 1
   for(c in 2:5){
-    points(jitter(rep(x, 50), amount = .15), OUT[,c], pch = 19, col = alpha('springgreen4', pt.alph), cex = pt.cex)
-    lines(c(x - line.len, x + line.len), c(median(OUT[,c]), median(OUT[,c])), lwd = 5, col = 'springgreen4')
-    lines(c(x - line.len, x + line.len), c(median(OUT[,c]), median(OUT[,c])), lwd = 3, col = 'springgreen3')
+    points(jitter(rep(x, 50), amount = .15), OUT[,c], pch = 16, col = alpha('springgreen4', pt.alph), cex = pt.cex)
+    lines(c(x - line.len, x + line.len), c(median(OUT[,c]), median(OUT[,c])), lwd = 3, col = 'springgreen4')
+    # lines(c(x - line.len, x + line.len), c(median(OUT[,c]), median(OUT[,c])), lwd = 3, col = 'springgreen3')
     x <- x+1
   }
 }
 dev.off()
+
