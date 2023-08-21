@@ -38,7 +38,6 @@ for(d in demos){
   chrom.len <- 30e6
   
   ### Read in ROH calling results 
-
   bcf.res <- read.table('bcftools_output/bcftoolsROH_all_coordinates.txt',
                            header = TRUE, sep = '\t')
   
@@ -46,25 +45,23 @@ for(d in demos){
   bcf.gt.res <- bcf.res[bcf.res$method == 'GT' & bcf.res$demo == d,]
   bcf.gt.res <- bcf.gt.res[bcf.gt.res$length >= 100000,] ## applying 100kb filter
   bcf.gt.res$called.roh.id <- c(1:nrow(bcf.gt.res))
-  bcf.gt.res <- bcf.gt.res[bcf.gt.res$pop.size == 100,]
-  
+
   ## PL
   bcf.pl.res <- bcf.res[bcf.res$method == 'PL' & bcf.res$demo == d,]
   bcf.pl.res <- bcf.pl.res[bcf.pl.res$length >= 100000,] ## applying 100kb filter
   bcf.pl.res$called.roh.id <- c(1:nrow(bcf.pl.res))
-  bcf.pl.res <- bcf.pl.res[bcf.pl.res$pop.size == 100,]
-  
-  ##### PICK UP HERE #####
+
   ## PLINK
-  plink.res <- read.table('plink_results_final_iteration/PLINK_all_coordinates.txt')
-  colnames(plink.res) <- c('id','start','end','n.snps','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk','pop.size','covg')
+  plink.res <- read.table(paste0('plink_final_iteration/',d,'_PLINK_all_coordinates.txt'), header = TRUE)
+  ##### !!! Needs to be updated with final sets !!! #####
+  ## final selection = default settings
+  plink.res <- plink.res[plink.res$phwh == 1 & plink.res$phwm == 5 & plink.res$phws == 50 & 
+                           plink.res$phwt == 0.05 & plink.res$phzs == 100 & plink.res$phzg == 1000,]
   plink.res$called.roh.id <- c(1:nrow(plink.res))
   plink.res$length <- plink.res$end - plink.res$start + 1
-  ## final selection = default settings
-  plink.res <- plink.res[plink.res$phwh == 1 & plink.res$phwm == 5 & plink.res$phws == 50 & plink.res$phwt == 0.05 & plink.res$phzs == 100 & plink.res$phzg == 1000,]
   
+  ##### !!! PICK UP HERE -- need to write true v called from final sets (bcftools default or viterbi and final PLINK) #####
   ### Read in called vs. true f(ROH) results
-  
   froh.stats <- read.csv('3_methods_data/true_vs_called_froh_data.csv', header = TRUE)
   
   ### Called ROH data (i.e., overlap/true information - previously pl.out, gt.out, and plink.out in scripts, need to F+R)
