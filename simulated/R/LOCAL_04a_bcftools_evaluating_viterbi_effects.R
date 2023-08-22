@@ -1,5 +1,6 @@
 library(scales)
 library(ghibli)
+library(TeachingDemos)
 
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/')
 
@@ -104,11 +105,16 @@ for(c in 5:ncol(dat)){
 
 ## plot results
 pt.alph <- 0.9
+cex.text <- 1.25
+demo.names <- cbind(c('bottle','decline','large-2000','small','large-1000'),
+                    c('Bottlenecked population','Long-term declining population','Long-term large population',
+                      'Long-term small population','Long-term large population'))
 
 OUT <- NULL ## place to store correlation coefficients
 
-pdf('/Users/Avril/Desktop/test.pdf', width = 16, height = 4.5)
-par(mfrow = c(1, 3))
+## width = 8, height = 20 for side-by-side option
+pdf('../figures/viterbi_default_true_vs_called_fROH.pdf', width = 16, height = 7)
+par(mfrow = c(2, 5))
 for(d in unique(dat$demo)){
   for(m in unique(dat$method)){
     for(c in unique(dat$covg)){
@@ -116,11 +122,19 @@ for(d in unique(dat$demo)){
       if(m == 'GT'){
         colour <- gt.col
         lt.colour <- lt.gt.col
+        method.name <- 'Genotypes'
       } else{
         colour <- pl.col
         lt.colour <- lt.pl.col
+        method.name <- 'Likelihoods'
       }
       sub <- dat[dat$demo == d & dat$method == m & dat$covg == c,]
+      
+      scen.name <- demo.names[which(demo.names[,1] == d), 2]
+      covg.name <- gsub('x','X',c)
+      if(c == '05x'){
+        covg.name <- gsub('0','',covg.name)
+      }
       
       def <- cor(sub$true.froh, sub$d.froh)
       vit <- cor(sub$true.froh, sub$v.froh)
@@ -137,59 +151,49 @@ for(d in unique(dat$demo)){
       OUT <- rbind(OUT, save)
       
       ## true f(ROH) vs. default and viterbi f(ROH)s
-      par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = FALSE)
-      plot(0, 0, xlim = c(0, 1), ylim = c(0, 1), 
-           pch = 16, col = 'transparent',
-           main = paste0(d,' - ',m,' - ',c), xlab = 'True f(ROH)', ylab = 'Called f(ROH)')
-        abline(0, 1, lty = 2, col = 'darkgrey')
-        points(sub$true.froh, sub$d.froh, pch = 16, col = alpha(colour, pt.alph))
-        abline(lm(sub$d.froh ~ sub$true.froh), col = colour)
-        points(sub$true.froh, sub$v.froh, pch = 17, col = alpha(lt.colour, pt.alph))
-        abline(lm(sub$v.froh ~ sub$true.froh), col = lt.colour)
-        par(xpd = TRUE)
-        legend('right', pch = c(16, 17), col = c(colour, lt.colour), legend = c('Default','Viterbi-trained'), inset = c(-0.27, 0))
-        
-      par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = FALSE)
-      plot(0, 0, xlim = c(min(sub$true.froh), max(sub$true.froh)),
-           ylim = c(min(sub$d.froh, sub$v.froh), max(sub$d.froh, sub$v.froh)), 
-           pch = 16, col = 'transparent',
-           main = paste0(d,' - ',m,' - ',c), xlab = 'True f(ROH)', ylab = 'Called f(ROH)')
-        abline(0, 1, lty = 2, col = 'darkgrey')
-        points(sub$true.froh, sub$d.froh, pch = 16, col = alpha(colour, pt.alph))
-        abline(lm(sub$d.froh ~ sub$true.froh), col = colour)
-        points(sub$true.froh, sub$v.froh, pch = 17, col = alpha(lt.colour, pt.alph))
-        abline(lm(sub$v.froh ~ sub$true.froh), col = lt.colour)
-        par(xpd = TRUE)
-        legend('right', pch = c(16, 17), col = c(colour, lt.colour), legend = c('Default','Viterbi-trained'), inset = c(-0.27, 0))
-    
-      # ## true binned f(ROH) vs. default binned f(ROH)
-      # par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = FALSE)
-      # plot(0, 0, pch = 16, col = 'transparent', xlim = c(0, 1), ylim = c(0, 1),
-      #      main = paste0(d,' - ',m,' - ',c,' - Default'), xlab = 'True binned f(ROH)', ylab = 'Called binned f(ROH)')
-      #   abline(0, 1, lty = 2, col = 'darkgrey')
-      #   points(sub$true.bin1, sub$v.bin1, pch = 16, col = alpha(colour, pt.alph))
-      #   points(sub$true.bin2, sub$d.bin2, pch = 17, col = alpha(colour, pt.alph))
-      #   points(sub$true.bin3, sub$d.bin3, pch = 15, col = alpha(colour, pt.alph))
-      #   points(sub$true.bin4, sub$d.bin4, pch = 18, col = alpha(colour, pt.alph))
-      #   par(xpd = TRUE)
-      #   legend('right', pch = c(16, 17, 15, 18), legend = c('Short','Intermediate','Long','Very long'), inset = c(-0.27, 1),
-      #          col = colour)
-      #   
-      # ## true binned f(ROH) vs. viterbi binned f(ROH)
-      # par(mar = c(5.1, 4.1, 4.1, 8.1), xpd = FALSE)
-      # plot(0, 0, pch = 16, col = 'transparent', xlim = c(0, 1), ylim = c(0, 1),
-      #      main = paste0(d,' - ',m,' - ',c,' - Viterbi-trained'), xlab = 'True binned f(ROH)', ylab = 'Called binned f(ROH)')
-      #   abline(0, 1, lty = 2, col = 'darkgrey')
-      #   points(sub$true.bin1, sub$v.bin1, pch = 16, col = alpha(colour, pt.alph))
-      #   points(sub$true.bin2, sub$v.bin2, pch = 17, col = alpha(colour, pt.alph))
-      #   points(sub$true.bin3, sub$v.bin3, pch = 15, col = alpha(colour, pt.alph))
-      #   points(sub$true.bin4, sub$v.bin4, pch = 18, col = alpha(colour, pt.alph))
-      #   par(xpd = TRUE)
-      #   legend('right', pch = c(16, 17, 15, 18), legend = c('Short','Intermediate','Long','Very long'), inset = c(-0.27, 1),
-      #          col = colour)
-        
-      ## # true : # called ROHs
-      
+      if(c == '05x'){
+        par(mar = c(5.1, 2.6, 3.1, 2.1), xpd = FALSE)
+        plot(0, 0, xlim = c(0, 1), ylim = c(0, 1), 
+             pch = 16, col = 'transparent',
+             main = '',
+             xlab=expression('True ' * italic('F')['ROH']),
+             ylab=expression('Called ' * italic('F')['ROH']),
+             cex.axis = cex.text, cex.lab = cex.text)
+          abline(0, 1, lty = 2, col = 'darkgrey')
+          points(sub$true.froh, sub$d.froh, pch = 16, col = alpha(colour, pt.alph))
+          suppressWarnings(clipplot(abline(lm(sub$d.froh ~ sub$true.froh), col=colour), 
+                                    xlim = c(min(sub$true.froh), max(sub$true.froh))))
+          points(sub$true.froh, sub$v.froh, pch = 17, col = alpha(lt.colour, pt.alph))
+          suppressWarnings(clipplot(abline(lm(sub$v.froh ~ sub$true.froh), col=lt.colour), 
+                                    xlim = c(min(sub$true.froh), max(sub$true.froh))))
+          legend('topleft', pch = c(16, 17), col = c(colour, lt.colour), 
+                 legend = c('Default','Viterbi-trained'), inset = 0.02, cex = cex.text)
+          text(x = 0.05, y = 0.75, labels = covg.name, font = 3, cex = cex.text)
+          if(m == 'GT'){
+            mtext(text = paste0(scen.name,'\n',method.name), 
+                  adj = 0, cex = cex.text*.75, font = 3, line = 0.5)
+          } else{
+            mtext(text = paste0(method.name), 
+                  adj = 0, cex = cex.text*.75, font = 3, line = 0.5)
+          }
+      } else{
+        par(mar = c(5.1, 2.6, 3.1, 2.1), xpd = FALSE)
+        plot(0, 0, xlim = c(0, 1), ylim = c(0, 1), 
+             pch = 16, col = 'transparent',
+             main = '',
+             xlab=expression('True ' * italic('F')['ROH']),
+             # ylab=expression('Called ' * italic('F')['ROH']),
+             ylab = '',
+             cex.axis = cex.text, cex.lab = cex.text)
+          abline(0, 1, lty = 2, col = 'darkgrey')
+          points(sub$true.froh, sub$d.froh, pch = 16, col = alpha(colour, pt.alph))
+          suppressWarnings(clipplot(abline(lm(sub$d.froh ~ sub$true.froh), col=colour), 
+                                    xlim = c(min(sub$true.froh), max(sub$true.froh))))
+          points(sub$true.froh, sub$v.froh, pch = 17, col = alpha(lt.colour, pt.alph))
+          suppressWarnings(clipplot(abline(lm(sub$v.froh ~ sub$true.froh), col=lt.colour), 
+                                    xlim = c(min(sub$true.froh), max(sub$true.froh))))
+          text(x = 0.05, y = 0.97, labels = covg.name, font = 3, cex = cex.text)
+      }
     }
   }
 }
@@ -254,7 +258,7 @@ for(d in unique(dat$demo)){
   par(xpd = FALSE)
   plot(0, 0, col = 'transparent', xlim = c(1, 20), 
        # ylim = c(0, max(c(sub$mean.def.true.call.ratio+sub$sd.def.true.call.ratio, sub$mean.vit.true.call.ratio+sub$sd.vit.true.call.ratio))),
-       ylim = c(0, 5.2),
+       ylim = c(1, 5.2),
        xaxt = 'n', ylab = '', xlab = '', main = d)
   abline(v = 10.5, lty = 2, col = 'darkgrey')
   points(seq(1, 9, 2), sub[sub$method == 'GT', 'mean.def.true.call.ratio'], pch = 16, col = gt.col)
