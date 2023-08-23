@@ -29,7 +29,6 @@ b.4 <- 2e6
 OUT <- NULL
 
 ### remove when final data sets are in place:
-true.fns <- true.fns[c(1,2,4,5)]
 for(t in true.fns){
   demo <- unlist(strsplit(t, split = '_'))[1]
   print(demo)
