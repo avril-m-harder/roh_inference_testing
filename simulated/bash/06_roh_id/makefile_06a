@@ -20,6 +20,7 @@ DEMO1 = small
 DEMO2 = bottle
 DEMO3 = decline
 DEMO4 = large-2000
+DEMO5 = large-1000
 
 
 all:
@@ -31,10 +32,11 @@ all:
 	
 directories:
 	@echo "Here we go directories"
-	mkdir $(HOMEDIR)/$(DEMO1)
-	mkdir $(HOMEDIR)/$(DEMO2)
-	mkdir $(HOMEDIR)/$(DEMO3)
-	mkdir $(HOMEDIR)/$(DEMO4)
+# 	mkdir $(HOMEDIR)/$(DEMO1)
+# 	mkdir $(HOMEDIR)/$(DEMO2)
+# 	mkdir $(HOMEDIR)/$(DEMO3)
+# 	mkdir $(HOMEDIR)/$(DEMO4)
+	mkdir $(HOMEDIR)/$(DEMO5)
 	
 	
 scripts:
@@ -43,10 +45,12 @@ scripts:
 	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO2)/$(FILE1)
 	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO3)/$(FILE1)
 	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO4)/$(FILE1)
+	cp -r $(HOMEDIR)/$(FILE1) $(HOMEDIR)/$(DEMO5)/$(FILE1)
 	cp -r $(R_HOMEDIR)/$(FILE2) $(HOMEDIR)/$(DEMO1)/$(FILE2)
 	cp -r $(R_HOMEDIR)/$(FILE2) $(HOMEDIR)/$(DEMO2)/$(FILE2)
 	cp -r $(R_HOMEDIR)/$(FILE2) $(HOMEDIR)/$(DEMO3)/$(FILE2)
 	cp -r $(R_HOMEDIR)/$(FILE2) $(HOMEDIR)/$(DEMO4)/$(FILE2)
+	cp -r $(R_HOMEDIR)/$(FILE2) $(HOMEDIR)/$(DEMO5)/$(FILE2)
 
 
 setgroup:
@@ -55,10 +59,12 @@ setgroup:
 	sed -i 's/_demo_/$(DEMO2)/g' $(HOMEDIR)/$(DEMO2)/$(FILE1)
 	sed -i 's/_demo_/$(DEMO3)/g' $(HOMEDIR)/$(DEMO3)/$(FILE1)
 	sed -i 's/_demo_/$(DEMO4)/g' $(HOMEDIR)/$(DEMO4)/$(FILE1)
+	sed -i 's/_demo_/$(DEMO5)/g' $(HOMEDIR)/$(DEMO5)/$(FILE1)
 	sed -i 's/_demo_/$(DEMO1)/g' $(HOMEDIR)/$(DEMO1)/$(FILE2)
 	sed -i 's/_demo_/$(DEMO2)/g' $(HOMEDIR)/$(DEMO2)/$(FILE2)
 	sed -i 's/_demo_/$(DEMO3)/g' $(HOMEDIR)/$(DEMO3)/$(FILE2)
 	sed -i 's/_demo_/$(DEMO4)/g' $(HOMEDIR)/$(DEMO4)/$(FILE2)
+	sed -i 's/_demo_/$(DEMO5)/g' $(HOMEDIR)/$(DEMO5)/$(FILE2)
 
 	
 submit:
@@ -67,9 +73,11 @@ submit:
 	chmod +x $(HOMEDIR)/$(DEMO2)/$(FILE1)
 	chmod +x $(HOMEDIR)/$(DEMO3)/$(FILE1)
 	chmod +x $(HOMEDIR)/$(DEMO4)/$(FILE1)
+	chmod +x $(HOMEDIR)/$(DEMO5)/$(FILE1)
 	sbatch $(HOMEDIR)/$(DEMO1)/$(FILE1)
 	sbatch $(HOMEDIR)/$(DEMO2)/$(FILE1)
 	sbatch $(HOMEDIR)/$(DEMO3)/$(FILE1)
 	sbatch $(HOMEDIR)/$(DEMO4)/$(FILE1)
+	sbatch $(HOMEDIR)/$(DEMO5)/$(FILE1)
 	
 	

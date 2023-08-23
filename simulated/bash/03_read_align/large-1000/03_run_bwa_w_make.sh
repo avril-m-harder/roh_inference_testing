@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=decline_03_read_align
+#SBATCH --job-name=large-1000_03_read_align
 #SBATCH --partition=jrw0107_std
 #SBATCH -N 1
 #SBATCH -n 20
@@ -44,20 +44,20 @@ module load samtools/1.17
 # Align reads to reference genome
 # -----------------------------------------------------------------------------
 
-SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_decline.txt
+SAMPLE_ID_LIST=${INIT_OUTPUT_DIR}/sample_ID_list_large-1000.txt
 
 cd ${OUTPUT_DIR}
-mkdir decline; cd decline
+mkdir large-1000; cd large-1000
 
 while read -a line; do
 
-	OUT_FILE=decline_${line[0]}_genome.bam
+	OUT_FILE=large-1000_${line[0]}_genome.bam
 	start_logging "bwa align - ${OUT_FILE}"
 
 	bwa mem -t 20 -M \
 		${REF_GENOME_FILE} \
-		${INPUT_DIR}/decline/decline_${line[0]}_f.fq \
-		${INPUT_DIR}/decline/decline_${line[0]}_r.fq \
+		${INPUT_DIR}/large-1000/large-1000_${line[0]}_f.fq \
+		${INPUT_DIR}/large-1000/large-1000_${line[0]}_r.fq \
 		> ${OUT_FILE}
 
 	stop_logging
@@ -70,12 +70,12 @@ done < ${SAMPLE_ID_LIST}
 
 while read -a line; do
 
-	OUT_FILE=decline_${line[0]}_genome_sorted.bam
+	OUT_FILE=large-1000_${line[0]}_genome_sorted.bam
 	start_logging "samtools sort - ${OUT_FILE}"
 
 	samtools sort -@ 19 \
 		-o ${OUT_FILE} \
-		decline_${line[0]}_genome.bam
+		large-1000_${line[0]}_genome.bam
 
 	stop_logging
 
@@ -86,5 +86,5 @@ done < ${SAMPLE_ID_LIST}
 # Copy output files to user's home directory.
 # -----------------------------------------------------------------------------
 
-cp ./decline/decline_*_genome_sorted.bam \
+cp ./large-1000/large-1000_*_genome_sorted.bam \
 /home/amh0254/roh_param_project/roh_inference_testing/simulated/data/03_read_align

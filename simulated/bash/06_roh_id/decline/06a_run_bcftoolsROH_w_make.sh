@@ -49,27 +49,11 @@ for c in ${cvgX[@]}; do
 	OUT_FILE=decline_sample_cvg_${c}_bcftools_filteredSNPs.tab.gz
 
 	start_logging "bcftools query/tabix  - ${OUT_FILE}"
-	
-	## Remove 2 samples with extremely high homozygosity that hang the Viterbi step
-	vcftools \
-	--vcf ${INPUT_DIR}/${IN_FILE} \
-	--recode \
-	--recode-INFO-all \
-	--remove-indv i33 \
-	--remove-indv i48 \
-	--out ${INPUT_DIR}/excluded_samps_decline_cvg_${c}
-	
-	EX_IN_FILE=excluded_samps_decline_cvg_${c}.recode.vcf
-	EX_OUT_FILE=excluded_samps_decline_cvg_${c}.tab.gz
 
-	## Extract allele frequencies from sample-excluded vcf and full vcf
-	bcftools query -f'%CHROM\t%POS\t%REF,%ALT\t%INFO/AF\n' \
-	${INPUT_DIR}/${EX_IN_FILE} | bgzip -c >${OUTPUT_DIR}/${EX_OUT_FILE}
+	# Extract allele frequencies from sample vcf
 
-	tabix -s1 -b2 -e2 ${OUTPUT_DIR}/${EX_OUT_FILE}
-	
 	bcftools query -f'%CHROM\t%POS\t%REF,%ALT\t%INFO/AF\n' \
-	${INPUT_DIR}/${IN_FILE} | bgzip -c >${OUTPUT_DIR}/${OUT_FILE}
+		${INPUT_DIR}/${IN_FILE} | bgzip -c >${OUTPUT_DIR}/${OUT_FILE}
 
 	tabix -s1 -b2 -e2 ${OUTPUT_DIR}/${OUT_FILE}
 
@@ -81,9 +65,9 @@ for c in ${cvgX[@]}; do
  	# -----------------------------------------------------------------------------
 
 	## Genotypes
-	IN_FILE=excluded_samps_decline_cvg_${c}.recode.vcf
+	IN_FILE=decline_sample_cvg_${c}_filtered_SNPs.vcf
 	GT_OUT_FILE=decline_sample_cvg_${c}_bcftools_roh_gt_viterbi.txt
-	AF_FILE=excluded_samps_decline_cvg_${c}.tab.gz
+	AF_FILE=decline_sample_cvg_${c}_bcftools_filteredSNPs.tab.gz
 
 	start_logging "bcftools roh gt - ${OUT_FILE}"
 
@@ -96,9 +80,9 @@ for c in ${cvgX[@]}; do
 		${INPUT_DIR}/${IN_FILE}
 	
 	## Genotype likelihoods	
-	IN_FILE=excluded_samps_decline_cvg_${c}.recode.vcf
+	IN_FILE=decline_sample_cvg_${c}_filtered_SNPs.vcf
 	PL_OUT_FILE=decline_sample_cvg_${c}_bcftools_roh_pl_viterbi.txt
-	AF_FILE=excluded_samps_decline_cvg_${c}.tab.gz
+	AF_FILE=decline_sample_cvg_${c}_bcftools_filteredSNPs.tab.gz
 
 	start_logging "bcftools roh pl - ${OUT_FILE}"
 

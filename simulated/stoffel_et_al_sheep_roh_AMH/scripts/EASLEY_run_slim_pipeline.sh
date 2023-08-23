@@ -62,7 +62,8 @@ while read -a line; do
 	cd ../../
 
 # done < demo_scenarios.txt
-done < large_pop_scenarios.txt
+# done < large_pop_scenarios.txt
+done < decline_only.txt
 
 cd /scratch/avrilh/roh_param_project/roh_inference_testing/simulated/
 
