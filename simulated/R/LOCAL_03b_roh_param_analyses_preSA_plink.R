@@ -10,9 +10,6 @@ rnd <- 'round1'
 ##### Loop over demographic scenarios #####
 true.fns <- list.files('../slim_true_data/', pattern = 'true_roh_coords')
 
-## temp
-true.fns <- true.fns[2:3]
-
 for(true.fn in true.fns){
   demo <- unlist(strsplit(true.fn, split = '_'))[1]
   
