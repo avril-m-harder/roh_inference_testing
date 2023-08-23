@@ -722,139 +722,146 @@ for(d in demos){
       col <- col+1
     }
     
-    k <- 1
-    while(k == 1){
-      
-      text.size <- 1.25
-      alph <- 1
-      poly.alph <- 0.4
-      wid <- 2
-      
-      # new.dat <- data.frame(true.froh=c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]))) ## new data for prediction
-      new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[,3])))) ## new data for prediction
-      
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_true_fROH_vs_pos_neg_rates.pdf'), width = 7, height = 6)
-      par(mai = c(1.02,0.82,0.82,1.42))
-      ## PL
-      plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(pl.true.v.called$covg)){
-        mod <- lm(pl.true.v.called[pl.true.v.called$covg == c, 'false.neg.rate'] ~ pl.true.v.called[pl.true.v.called$covg == c, 'true.froh'])
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(-new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(unique(froh.stats[,3])), 
-                      sort(unique(froh.stats[,3]), decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
-                col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
-              col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
+    if(d != 'decline'){
+      k <- 1
+      while(k == 1){
+        
+        text.size <- 1.25
+        alph <- 1
+        poly.alph <- 0.4
+        wid <- 2
+        
+        # new.dat <- data.frame(true.froh=c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]))) ## new data for prediction
+        new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[,3])))) ## new data for prediction
+        
+        pdf(paste0('../figures/',d,'/',d,'_',h,'_true_fROH_vs_pos_neg_rates.pdf'), width = 7, height = 6)
+        par(mai = c(1.02,0.82,0.82,1.42))
+        ## PL
+        plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(pl.true.v.called$covg)){
+          mod <- lm(pl.true.v.called[pl.true.v.called$covg == c, 'false.neg.rate'] ~ pl.true.v.called[pl.true.v.called$covg == c, 'true.froh'])
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(-new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
+                  col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(pl.true.v.called$covg)){
+          mod <- lm(pl.true.v.called[pl.true.v.called$covg == c, 'false.pos.rate'] ~ pl.true.v.called[pl.true.v.called$covg == c, 'true.froh'])
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
+                  col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        ## GT
+        plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(gt.true.v.called$covg)){
+          mod <- lm(gt.true.v.called[gt.true.v.called$covg == c, 'false.neg.rate'] ~ gt.true.v.called[gt.true.v.called$covg == c, 'true.froh'])
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(-new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
+                  col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(gt.true.v.called$covg)){
+          mod <- lm(gt.true.v.called[gt.true.v.called$covg == c, 'false.pos.rate'] ~ gt.true.v.called[gt.true.v.called$covg == c, 'true.froh'])
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
+                  col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        ## PLINK
+        plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(plink.true.v.called$covg)){
+          mod <- lm(plink.true.v.called[plink.true.v.called$covg == c, 'false.neg.rate'] ~ plink.true.v.called[plink.true.v.called$covg == c, 'true.froh'])
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(-new.vals[,1]),]
+          ## CI polygon
+          polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+                        sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
+                  col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+                col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(plink.true.v.called$covg)){
+          mod <- lm(plink.true.v.called[plink.true.v.called$covg == c, 'false.pos.rate'] ~ plink.true.v.called[plink.true.v.called$covg == c, 'true.froh'])
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(new.vals[,1]),]
+          ## CI polygon
+          polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+                        sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
+                  col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+                col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        k <- k+1
+        dev.off()
       }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(pl.true.v.called$covg)){
-        mod <- lm(pl.true.v.called[pl.true.v.called$covg == c, 'false.pos.rate'] ~ pl.true.v.called[pl.true.v.called$covg == c, 'true.froh'])
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(unique(froh.stats[,3])), 
-                      sort(unique(froh.stats[,3]), decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
-                col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
-              col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      ## GT
-      plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(gt.true.v.called$covg)){
-        mod <- lm(gt.true.v.called[gt.true.v.called$covg == c, 'false.neg.rate'] ~ gt.true.v.called[gt.true.v.called$covg == c, 'true.froh'])
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(-new.vals[,1]),]
-        ## CI polygon
-        polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-                      sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
-                col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-              col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(gt.true.v.called$covg)){
-        mod <- lm(gt.true.v.called[gt.true.v.called$covg == c, 'false.pos.rate'] ~ gt.true.v.called[gt.true.v.called$covg == c, 'true.froh'])
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(new.vals[,1]),]
-        ## CI polygon
-        polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-                      sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
-                col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-              col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      
-      ## PLINK
-      plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(plink.true.v.called$covg)){
-        mod <- lm(plink.true.v.called[plink.true.v.called$covg == c, 'false.neg.rate'] ~ plink.true.v.called[plink.true.v.called$covg == c, 'true.froh'])
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(-new.vals[,1]),]
-        ## CI polygon
-        polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-                      sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
-                col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-              col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(plink.true.v.called$covg)){
-        mod <- lm(plink.true.v.called[plink.true.v.called$covg == c, 'false.pos.rate'] ~ plink.true.v.called[plink.true.v.called$covg == c, 'true.froh'])
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(new.vals[,1]),]
-        ## CI polygon
-        polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-                      sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
-                col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-              col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      k <- k+1
-      dev.off()
     }
     
     ##### >>> 3F. Combining false - and false + into single plot for all 3 methods (2 plots) #####

@@ -22,6 +22,6 @@ for(c in 1:ncol(gts)){
 }
 
 hist(as.numeric(OUT[,3]))
-OUT[which(as.numeric(OUT[,3]) < 0.05),]
+OUT[which(as.numeric(OUT[,3]) < 0.01),]
 
-## removing samples i24 and i38
+## removing samples i33 and i48

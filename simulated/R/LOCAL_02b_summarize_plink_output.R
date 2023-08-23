@@ -1,9 +1,9 @@
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/plink_output/')
-fns <- list.files(pattern = 'hom')
+fns <- list.files(path = 'plink_round1/', pattern = 'hom')
 
 ##
-fns <- fns[grep('ROUND2', fns)]  ## to process round 2 of the sensitivity analysis data
-rnd <- 'round2'
+# fns <- fns[grep('ROUND2', fns)]  ## to process round 2 of the sensitivity analysis data
+rnd <- 'round1'
 
 ##### Read in PLINK results and summarize #####
 ## Loop over demographic scenarios and write 1 file for each
@@ -27,7 +27,7 @@ for(d in demos){
     phzs <- vars[20]
     phzk <- vars[22]
     covg <- vars[4]
-    dat <- read.table(f, header=TRUE)
+    dat <- read.table(paste0('plink_round1/',f), header=TRUE)
     if(nrow(dat) > 0){
       dat <- dat[,c(1,7,8,10)]
       dat$covg <- covg

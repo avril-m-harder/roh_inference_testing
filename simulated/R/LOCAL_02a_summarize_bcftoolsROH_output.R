@@ -7,7 +7,7 @@ library(scales)
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/bcftools_output/')
 
 ## get filenames of GT-only and PL results
-fns <- list.files()
+fns <- list.files(pattern = 'RG_ONLY')
 
 ##### Read in bcftools/ROH results, summarize, and write files with summary stats and ROH coordinates #####
 ## loop over GT-only results to summarize ROH call data
