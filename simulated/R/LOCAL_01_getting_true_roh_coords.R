@@ -16,6 +16,8 @@ for(f in fns){
   print(demo)
   head(vcf[,c(1:10)])
   
+  true.roh.id <- 1
+  
   ##### Check ROH / heterozygosity statistics #####
   ## check ROH length distributions based on variants in VCF
   samp.cols <- grep('i', colnames(vcf)) ## get columns that contain sample data
@@ -43,34 +45,40 @@ for(f in fns){
         if(h == 1 & nrow(het.sites)!= 1){
           s <- 1
           e <- het.sites[h, 1] - 1
-          save <- c(samp, s, e, (e-s+1))
+          save <- c(samp, s, e, (e-s+1), true.roh.id)
+          true.roh.id <- true.roh.id + 1
           OUT1 <- rbind(OUT1, save)
         }
         if(h == nrow(het.sites) & nrow(het.sites)!= 1){
           s <- het.sites[h-1, 1] + 1
           e <- het.sites[h, 1] - 1
-          save <- c(samp, s, e, (e-s+1))
+          save <- c(samp, s, e, (e-s+1), true.roh.id)
+          true.roh.id <- true.roh.id + 1
           OUT1 <- rbind(OUT1, save)
           s <- het.sites[h, 1] + 1
           e <- c.len
-          save <- c(samp, s, e, (e-s+1))
+          save <- c(samp, s, e, (e-s+1), true.roh.id)
+          true.roh.id <- true.roh.id + 1
           OUT1 <- rbind(OUT1, save)
         }
         if(h != 1 & h != nrow(het.sites) & nrow(het.sites)!= 1){
           s <- het.sites[h-1, 1] + 1
           e <- het.sites[h, 1] - 1
-          save <- c(samp, s, e, (e-s+1))
+          save <- c(samp, s, e, (e-s+1), true.roh.id)
+          true.roh.id <- true.roh.id + 1
           OUT1 <- rbind(OUT1, save)
         }
         if(nrow(het.sites) == 1){
           s <- 1
           e <- het.sites[h, 1] - 1
-          save <- c(samp, s, e, (e-s+1))
+          save <- c(samp, s, e, (e-s+1), true.roh.id)
+          true.roh.id <- true.roh.id + 1
           OUT1 <- rbind(OUT1, save)
           
           s <- het.sites[h, 1] + 1
           e <- c.len
-          save <- c(samp, s, e, (e-s+1))
+          save <- c(samp, s, e, (e-s+1), true.roh.id)
+          true.roh.id <- true.roh.id + 1
           OUT1 <- rbind(OUT1, save)
         }
       }

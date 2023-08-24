@@ -26,48 +26,48 @@ setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/
 true.fns <- list.files(path = 'slim_true_data/', pattern = 'true_roh_coords')
 demos <- do.call(rbind, strsplit(true.fns, split = '_'))[,1]
 
-for(d in demos){
+# for(d in demos){
+for(d in c('small')){
   for(h in c('vtrained','defaults')){
+  # for(h in c('vtrained')){
     print(paste0(d,' - ',h))
     ##### 1A. Read in data and summary files #####
     ### True ROH information
     true.rohs <- read.table(paste0('slim_true_data/',d,'_true_roh_coords.txt'))
-    colnames(true.rohs) <- c('id','start','end','length','true.roh.id')
+    colnames(true.rohs) <- c('id','start','end','length')
     true.rohs <- true.rohs[true.rohs$length >= 100000,]
+    ## create unique ROH ID for linking true ROHs to called ROHs
+    ns <- c(1:nrow(true.rohs))
+    true.rohs$true.roh.id <- ns
     chrom.len <- 30e6
-    if(d == 'decline'){
-      true.rohs <- true.rohs[true.rohs$id %notin% c(33,48),]
-    }
     
     ### Read in ROH calling results 
     bcf.res <- read.table('bcftools_output/bcftoolsROH_all_coordinates.txt',
                           header = TRUE, sep = '\t')
-    bcf.res$covg <- as.numeric(gsub('x', '', bcf.res$covg))
-    bcf.res$id <- gsub('i', '', bcf.res$id)
     bcf.res <- bcf.res[bcf.res$demo == d,]
-    if(d == 'decline'){
-      bcf.res <- bcf.res[bcf.res$id %notin% c(33,48),]
-    }
+    bcf.res$called.roh.id <- c(1:nrow(bcf.res))
     
     ## GT
     bcf.gt.res <- bcf.res[bcf.res$method == 'GT' & bcf.res$hmm == h,]
     bcf.gt.res <- bcf.gt.res[bcf.gt.res$length >= 100000,] ## applying 100kb filter
+    bcf.gt.res$id <- gsub('i', '', bcf.gt.res$id)
+    bcf.gt.res$covg <- as.numeric(gsub('x', '', bcf.gt.res$covg))
     
     ## PL
     bcf.pl.res <- bcf.res[bcf.res$method == 'PL' & bcf.res$hmm == h,]
     bcf.pl.res <- bcf.pl.res[bcf.pl.res$length >= 100000,] ## applying 100kb filter
+    bcf.pl.res$id <- gsub('i', '', bcf.pl.res$id)
+    bcf.pl.res$covg <- as.numeric(gsub('x', '', bcf.pl.res$covg))
     
     ## PLINK
     plink.res <- read.table(paste0('plink_final_iteration/',d,'_PLINK_all_coordinates.txt'), header = TRUE)
+    plink.res$called.roh.id <- c(1:nrow(plink.res))
     ##### !!! Update this for all demo scenarios, covgs if necessary !!! #####
     ## final selection = default settings
     plink.res <- plink.res[plink.res$phwh == 1 & plink.res$phwm == 5 & plink.res$phws == 50 & 
                              plink.res$phwt == 0.05 & plink.res$phzs == 100 & plink.res$phzg == 1000,]
     plink.res$length <- plink.res$end - plink.res$start + 1
     plink.res$id <- gsub('i', '', plink.res$id)
-    if(d == 'decline'){
-      plink.res <- plink.res[plink.res$id %notin% c(33,48),]
-    }
     plink.res$covg <- as.numeric(gsub('x', '', plink.res$covg))
     
     ### Write/read in called vs. true f(ROH) results
@@ -88,36 +88,43 @@ for(d in demos){
     
     ### Called ROH data (i.e., overlap/true information - previously pl.out, gt.out, and plink.out in scripts, need to F+R)
     bcf.overlap <- read.table(paste0('bcftools_output/bcftoolsROH_',d,'_overlap_results.txt'), header = TRUE)
-    if(d == 'decline'){
-      bcf.overlap <- bcf.overlap[bcf.overlap$id %notin% c(33,48),]
-    }
-    bcf.overlap$covg <- as.numeric(gsub('x', '', bcf.overlap$covg))
-    gt.overlap <- bcf.overlap[bcf.overlap$method == 'GT' & bcf.overlap$hmm == h,]
-    pl.overlap <- bcf.overlap[bcf.overlap$method == 'PL' & bcf.overlap$hmm == h,]
+    gt.overlap <- bcf.overlap[bcf.overlap$method == 'GT',]
+    pl.overlap <- bcf.overlap[bcf.overlap$method == 'PL',]
     
     plink.overlap <- read.table(paste0('plink_final_iteration/',d,'_PLINK_overlap_results.txt'), sep = '\t', header = TRUE)
-    plink.overlap$covg <- as.numeric(gsub('x', '', plink.overlap$covg))
     ##### !!! Update this for all demo scenarios, covgs if necessary !!! #####
     ## final selection = default settings
     plink.overlap <- plink.overlap[plink.overlap$phwh == 1 & plink.overlap$phwm == 5 & plink.overlap$phws == 50 & plink.overlap$phwt == 0.05 & plink.overlap$phzs == 100 & plink.overlap$phzg == 1000,]
-    if(d == 'decline'){
-      plink.overlap <- plink.overlap[plink.overlap$id %notin% c(33,48),]
-    }
     
     ##### 1B. Plot histograms of ROH length distributions (true and called) #####
     alph <- 0.4
-    x.max <- max(true.rohs$length, bcf.gt.res$length, bcf.pl.res$length, plink.res$length)
-    
     pdf(paste0('../figures/',d,'/',d,'_',h,'_ROH_length_histograms.pdf'), width = 6, height = 5)
-    
     ## true ROHs
-    hist(true.rohs$length, breaks = 50, xlab = 'True ROH length', main = 'True simulated data', xlim = c(100e3, x.max))
+    hist(true.rohs$length, breaks = 50, xlab = 'True ROH length', main = 'True simulated data')
+    # axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6), labels = c(0, 1, 2, 3, 4, 5))
+    hist(true.rohs$length, breaks = 100, xlab = 'True ROH length', main = 'True simulated data', xlim = c(1e5, 1e6))
+    
     ## called BCFtools Genotypes
-    hist(bcf.gt.res$length, breaks = 50, xlab = 'Called ROH length', main = 'BCFtools Genotypes - simulated data', xlim = c(100e3, x.max))
+    hist(bcf.gt.res$length, breaks = 50, xlab = 'Called ROH length', main = 'BCFtools Genotypes - simulated data')
+    # axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6), labels = c(0, 1, 2, 3, 4, 5))
+    hist(bcf.gt.res$length, breaks = 100, xlab = 'Called ROH length', main = 'BCFtools Genotypes - simulated data', xlim = c(1e5, 1e6))
+    
     ## called BCFtools Likelihoods
-    hist(bcf.pl.res$length, breaks = 25, xlab = 'Called ROH length', main = 'BCFtools Likelihoods - simulated data', xlim = c(100e3, x.max))
+    hist(bcf.pl.res$length, breaks = 25, xlab = 'Called ROH length', main = 'BCFtools Likelihoods - simulated data')
+    # axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6), labels = c(0, 1, 2, 3, 4, 5))
+    hist(bcf.pl.res$length, breaks = 100, xlab = 'Called ROH length', main = 'BCFtools Likelihoods - simulated data', xlim = c(1e5, 1e6))
+    
     ## called PLINK
-    hist(plink.res$length, breaks = 50, xlab = 'Called ROH length', main = 'PLINK - simulated data', xlim = c(100e3, x.max))
+    hist(plink.res$length, breaks = 50, xlab = 'Called ROH length', main = 'PLINK - simulated data')
+    # axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6), labels = c(0, 1, 2, 3, 4, 5))
+    hist(plink.res$length, breaks = 100, xlab = 'Called ROH length', main = 'PLINK - simulated data', xlim = c(1e5, 1e6))
+    
+    ## combined
+    hist(true.rohs$length, breaks = 100, xlab = 'True ROH length', main = 'True simulated data', xlim = c(1e5, 1e6), col = 'white')
+    # axis(1, at = c(0, 2.5e5, 5e5, 7.5e5, 1e6), labels = c(0, 250, 500, 750, 1000))
+    hist(plink.res$length, breaks = 100, add = TRUE, col = alpha(plink.col, alph))
+    hist(bcf.pl.res$length, breaks = 100, add = TRUE, col = alpha(pl.col, alph))
+    hist(bcf.gt.res$length, breaks = 100, add = TRUE, col = alpha(gt.col, alph))
     
     plot(density(true.rohs$length), xlab = 'ROH length')
     # axis(1, at = c(0, 2.5e5, 5e5, 7.5e5, 1e6), labels = c(0, 250, 500, 750, 1000))
@@ -127,7 +134,7 @@ for(d in demos){
     legend('topright', legend = c('True','Genotypes', 'Likelihoods','PLINK'), border = c('black', gt.col, pl.col, plink.col),
            fill = c('white', alpha(gt.col, alph), alpha(pl.col, alph), alpha(plink.col, alph)), bty = 'n')
     
-    plot(density(true.rohs$length), xlim = c(1e5, 4e6), xlab = 'ROH length')
+    plot(density(true.rohs$length), xlim = c(1e5, 1e6), xlab = 'ROH length')
     # axis(1, at = c(0, 1e5, 2e5, 3e5, 4e5, 5e5), labels = c(0, 100, 200, 300, 400, 500))
     polygon(density(plink.res$length), col = alpha(plink.col, alph), border = plink.col)
     polygon(density(bcf.pl.res$length), col = alpha(pl.col, alph), border = pl.col)  
@@ -137,17 +144,86 @@ for(d in demos){
     dev.off()
     
     ##### 1C. Plot cumulative f(ROH) for each sample #####
-    alph <- 0.4
-    pt.cex <- 0.2
-    maximum <- max(bcf.gt.res$length, bcf.pl.res$length, plink.res$length)
-    y.max <- max(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh)
+    # pdf(paste0('../figures/',d,'/',d,'_',h,'_cumulative_fROH_figures_simulated.pdf'), width = 8, height = 6)
     
     pdf(paste0('../figures/',d,'/',d,'_',h,'_cumulative_fROH_figures_simulated.pdf'), width = 20, height = 12)
-    par(mfrow = c(3, 5))
+    par(mfrow = c(3,5))
+    
+    maximum <- max(bcf.gt.res$length, bcf.pl.res$length, plink.res$length)
     
     ## Genotypes
     for(c in unique(bcf.gt.res$covg)){
-      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), ylim = c(0, y.max), 
+      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), 
+           ylim = c(0, max(froh.stats[froh.stats$covg == c, 'gt.froh'])), 
+           main = paste0('Simulated: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+      axis(1, at = seq(from = 0, to = maximum, by = 1e6), labels = seq(from = 0, to = maximum, by = 1e6)/1e6)
+      for(i in unique(bcf.gt.res$id)){
+        sub <- bcf.gt.res[bcf.gt.res$id == i & bcf.gt.res$covg == c,]
+        sub <- sub[order(sub$length),]
+        sub$cumlen <- cumsum(sub$length)
+        sub$cumfroh <- sub$cumlen / chrom.len
+        lines(sub$length, sub$cumfroh, col = alpha(gt.col, 0.6))
+      }
+    }
+    
+    ## Likelihoods
+    for(c in unique(bcf.pl.res$covg)){
+      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum),
+           ylim = c(0, max(froh.stats[froh.stats$covg == c, 'pl.froh'])), 
+           main = paste0('Simulated: BCFtools Likelihoods - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+      axis(1, at = seq(from = 0, to = maximum, by = 1e6), labels = seq(from = 0, to = maximum, by = 1e6)/1e6)
+      for(i in unique(bcf.pl.res$id)){
+        sub <- bcf.pl.res[bcf.pl.res$id == i & bcf.pl.res$covg == c,]
+        sub <- sub[order(sub$length),]
+        sub$cumlen <- cumsum(sub$length)
+        sub$cumfroh <- sub$cumlen / chrom.len
+        lines(sub$length, sub$cumfroh, col = alpha(pl.col, 0.6))
+      }
+    }
+    
+    ## PLINK
+    for(c in unique(plink.res$covg)){
+      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum),
+           ylim = c(0, max(froh.stats[froh.stats$covg == c, 'plink.froh'])), 
+           main = paste0('Simulated: PLINK - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+      axis(1, at = seq(from = 0, to = maximum, by = 1e6), labels = seq(from = 0, to = maximum, by = 1e6)/1e6)
+      for(i in unique(plink.res$id)){
+        sub <- plink.res[plink.res$id == i & plink.res$covg == c,]
+        sub <- sub[order(sub$length),]
+        sub$cumlen <- cumsum(sub$length)
+        sub$cumfroh <- sub$cumlen / chrom.len
+        lines(sub$length, sub$cumfroh, col = alpha(plink.col, 0.6))
+      }
+    }
+    
+    dev.off()
+    
+    # pdf(paste0('../figures/',d,'/',d,'_',h,'_cumulative_fROH_figures_simulated_uniformyaxis.pdf'), width = 8, height = 6)
+    
+    pdf(paste0('../figures/',d,'/',d,'_',h,'_cumulative_fROH_figures_simulated_uniformyaxis.pdf'), width = 20, height = 12)
+    par(mfrow = c(3, 5))
+    alph <- 0.4
+    pt.cex <- 0.2
+    
+    maximum <- max(bcf.gt.res$length, bcf.pl.res$length, plink.res$length)
+    
+    ## True
+    # for(c in unique(bcf.gt.res$covg)){
+    #   plot(0, 0, col = 'transparent', xlim = c(1e5, 4e6), ylim = c(0, 0.45), 
+    #        main = paste0('Simulated: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+    #   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6), labels = c(0, 1, 2, 3, 4))
+    #   for(i in unique(bcf.gt.res$id)){
+    #     sub <- bcf.gt.res[bcf.gt.res$id == i & bcf.gt.res$covg == c,]
+    #     sub <- sub[order(sub$length),]
+    #     sub$cumlen <- cumsum(sub$length)
+    #     sub$cumfroh <- sub$cumlen / chrom.len
+    #     lines(sub$length, sub$cumfroh, col = alpha(gt.col, 0.6))
+    #   }
+    # }
+    
+    ## Genotypes
+    for(c in unique(bcf.gt.res$covg)){
+      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), ylim = c(0, 0.45), 
            main = paste0('Simulated: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
       axis(1, at = seq(from = 0, to = maximum, by = 1e6), labels = seq(from = 0, to = maximum, by = 1e6)/1e6)
       for(i in unique(bcf.gt.res$id)){
@@ -162,7 +238,7 @@ for(d in demos){
     
     ## Likelihoods
     for(c in unique(bcf.pl.res$covg)){
-      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), ylim = c(0, y.max), 
+      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), ylim = c(0, 0.45), 
            main = paste0('Simulated: BCFtools Likelihoods - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
       axis(1, at = seq(from = 0, to = maximum, by = 1e6), labels = seq(from = 0, to = maximum, by = 1e6)/1e6)
       for(i in unique(bcf.pl.res$id)){
@@ -177,7 +253,7 @@ for(d in demos){
     
     ## PLINK
     for(c in unique(plink.res$covg)){
-      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), ylim = c(0, y.max), 
+      plot(0, 0, col = 'transparent', xlim = c(1e5, maximum), ylim = c(0, 0.45), 
            main = paste0('Simulated: PLINK - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
       axis(1, at = seq(from = 0, to = maximum, by = 1e6), labels = seq(from = 0, to = maximum, by = 1e6)/1e6)
       for(i in unique(plink.res$id)){
@@ -191,6 +267,75 @@ for(d in demos){
     }
     
     dev.off()
+    
+    ### for comp'ing with empirical data (15X only)
+    # pdf(paste0('../figures/',d,'/',d,'_',h,'_cumulative_fROH_figures_simulated_uniformyaxis_15X.pdf'), width = 5, height = 5)
+    # xmin <- 1e5
+    # xmax <- 5e6
+    # ymin <- 0
+    # ymax <- 0.35
+    # pt.cex <- 0.2
+    # alph <- 0.4
+    # 
+    # ## True
+    # plot(0, 0, col = 'transparent', xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
+    #      main = paste0('Simulated: True ROHs'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+    #   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+    #   for(i in unique(bcf.gt.res$id)){
+    #     sub <- true.rohs[true.rohs$id == i,]
+    #     sub <- sub[order(sub$length),]
+    #     sub$cumlen <- cumsum(sub$length)
+    #     sub$cumfroh <- sub$cumlen / chrom.len
+    #     lines(sub$length, sub$cumfroh, col = alpha('black', alph))
+    #     points(sub$length, sub$cumfroh, col = 'black', cex = pt.cex)
+    #   }
+    # 
+    # ## Genotypes
+    # for(c in 15){
+    #   plot(0, 0, col = 'transparent', xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
+    #        main = paste0('Simulated: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+    #   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+    #   for(i in unique(bcf.gt.res$id)){
+    #     sub <- bcf.gt.res[bcf.gt.res$id == i & bcf.gt.res$covg == c,]
+    #     sub <- sub[order(sub$length),]
+    #     sub$cumlen <- cumsum(sub$length)
+    #     sub$cumfroh <- sub$cumlen / chrom.len
+    #     lines(sub$length, sub$cumfroh, col = alpha(gt.col, alph))
+    #     points(sub$length, sub$cumfroh, col = gt.col, cex = pt.cex)
+    #   }
+    # }
+    # 
+    # ## Likelihoods
+    # for(c in 15){
+    #   plot(0, 0, col = 'transparent', xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
+    #        main = paste0('Simulated: BCFtools Likelihoods - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+    #   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+    #   for(i in unique(bcf.pl.res$id)){
+    #     sub <- bcf.pl.res[bcf.pl.res$id == i & bcf.pl.res$covg == c,]
+    #     sub <- sub[order(sub$length),]
+    #     sub$cumlen <- cumsum(sub$length)
+    #     sub$cumfroh <- sub$cumlen / chrom.len
+    #     lines(sub$length, sub$cumfroh, col = alpha(pl.col, alph))
+    #     points(sub$length, sub$cumfroh, col = pl.col, cex = pt.cex)
+    #   }
+    # }
+    # 
+    # ## PLINK
+    # for(c in 15){
+    #   plot(0, 0, col = 'transparent', xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
+    #        main = paste0('Simulated: PLINK - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+    #   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+    #   for(i in unique(plink.res$id)){
+    #     sub <- plink.res[plink.res$id == i & plink.res$covg == c,]
+    #     sub <- sub[order(sub$length),]
+    #     sub$cumlen <- cumsum(sub$length)
+    #     sub$cumfroh <- sub$cumlen / chrom.len
+    #     lines(sub$length, sub$cumfroh, col = alpha(plink.col, alph))
+    #     points(sub$length, sub$cumfroh, col = plink.col, cex = pt.cex)
+    #   }
+    # }
+    # 
+    # dev.off()
     
     
     ##### 3. Calculation of false-positive and false-negative rates #####
@@ -213,24 +358,18 @@ for(d in demos){
         TOT.TRUE <- 0
         for(r in unique(called$called.roh.id)){
           ## total up length that overlaps any >= 100 kb true ROH == tp == true positive
+          ##### !!! PICK UP HERE - MAYBE AN ISSUE WITH DIFFERENT ROH IDS BEING ASSIGNED !!! #####
           true.call.len <- sum(pl.overlap[pl.overlap$called.roh.id == r, 'true.len'])
           TOT.TRUE <- TOT.TRUE + true.call.len
         }
         save <- c(i, c, tot.call.len, n.called, tot.true.len, n.true, TOT.TRUE)
-        OUT <- rbind(OUT, as.integer(save))
+        OUT <- rbind(OUT, save)
       }
     }
     pl.true.v.called <- as.data.frame(OUT)
     colnames(pl.true.v.called) <- c('id','covg','total.call.len','n.called','tot.true.len','n.true','tp')
-    
-    ## total.call.len = total length of all called ROHs
-    ## n.called = # of ROHs called
-    ## tot.true.len = total length of all true ROHs
-    ## n.true = # of true ROHs
-    ## tp = # of called ROH base pairs that overlap true ROH base pairs
-    
     for(c in 1:ncol(pl.true.v.called)){
-      pl.true.v.called[,c] <- as.integer(pl.true.v.called[,c])
+      pl.true.v.called[,c] <- as.numeric(pl.true.v.called[,c])
     }
     ## fn = false negative = total length of true ROHs - total length of called ROHs that overlap true 
     ## ROHs = total length of true ROHs - true positive calls
@@ -245,7 +384,6 @@ for(d in demos){
     pl.true.v.called$true.pos.rate <- pl.true.v.called$tp / (pl.true.v.called$tp + pl.true.v.called$fn)
     pl.true.v.called$true.neg.rate <- pl.true.v.called$tn / (pl.true.v.called$tn + pl.true.v.called$fp)
     pl.true.v.called$true.froh <- pl.true.v.called$tot.true.len/chrom.len
-    
     
     ##### >>> 3B. BCFtools/ROH - GT (genotypes only) #####
     OUT <- NULL
@@ -276,11 +414,11 @@ for(d in demos){
     gt.true.v.called <- as.data.frame(OUT)
     colnames(gt.true.v.called) <- c('id','covg','total.call.len','n.called','tot.true.len','n.true','tp')
     for(c in 1:ncol(gt.true.v.called)){
-      gt.true.v.called[,c] <- as.integer(gt.true.v.called[,c])
+      gt.true.v.called[,c] <- as.numeric(gt.true.v.called[,c])
     }
-    gt.true.v.called$fn <- gt.true.v.called$tot.true.len - gt.true.v.called$tp
-    gt.true.v.called$fp <- gt.true.v.called$total.call.len - gt.true.v.called$tp
-    gt.true.v.called$tn <- chrom.len - gt.true.v.called$tp - gt.true.v.called$fn - gt.true.v.called$fp
+    gt.true.v.called$fn <- gt.true.v.called$tot.true.len - gt.true.v.called$tp ## fn = false negative = total length of true ROHs - total length of called ROHs that overlap true ROHs = total length of true ROHs - true positive calls
+    gt.true.v.called$fp <- gt.true.v.called$total.call.len - gt.true.v.called$tp ## fp = false positive = total length of called ROHs - total length of called ROHs that overlap true ROHs = total length of called ROHs - true positive calls
+    gt.true.v.called$tn <- chrom.len - gt.true.v.called$tp - gt.true.v.called$fn - gt.true.v.called$fp ## tn = true negative = total chromosome length not covered by true positives, false negatives, or false positives
     gt.true.v.called$false.pos.rate <- gt.true.v.called$fp / (gt.true.v.called$fp + gt.true.v.called$tn)
     gt.true.v.called$false.neg.rate <- gt.true.v.called$fn / (gt.true.v.called$fn + gt.true.v.called$tp)
     gt.true.v.called$true.pos.rate <- gt.true.v.called$tp / (gt.true.v.called$tp + gt.true.v.called$fn)
@@ -306,7 +444,6 @@ for(d in demos){
         TOT.TRUE <- 0 ## TOT.TRUE == tot.hit
         for(r in unique(called$called.roh.id)){
           ## total up length that overlaps any >= 100 kb true ROH
-          ##### !!! maybe something to do with how 'true.len' is calculated in the overlap script? !!! #####
           true.call.len <- sum(plink.overlap[plink.overlap$called.roh.id == r, 'true.len'])
           TOT.TRUE <- TOT.TRUE + true.call.len
         }
@@ -317,13 +454,11 @@ for(d in demos){
     plink.true.v.called <- as.data.frame(OUT)
     colnames(plink.true.v.called) <- c('id','covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk','total.call.len','n.called','tot.true.len','n.true','tp')
     for(c in 1:ncol(plink.true.v.called)){
-      plink.true.v.called[,c] <- as.integer(plink.true.v.called[,c])
+      plink.true.v.called[,c] <- as.numeric(plink.true.v.called[,c])
     }
-    ##### !!! at least for covg == 5, these rates are all wrong !!! #####
-    ##### !!! probably an issue with the PLINK overlap calculation script !!! #####
-    plink.true.v.called$fn <- plink.true.v.called$tot.true.len - plink.true.v.called$tp
-    plink.true.v.called$fp <- plink.true.v.called$total.call.len - plink.true.v.called$tp
-    plink.true.v.called$tn <- chrom.len - plink.true.v.called$tp - plink.true.v.called$fn - plink.true.v.called$fp
+    plink.true.v.called$fn <- plink.true.v.called$tot.true.len - plink.true.v.called$tp ## fn = false negative = total length of true ROHs - total length of called ROHs that overlap true ROHs = total length of true ROHs - true positive calls
+    plink.true.v.called$fp <- plink.true.v.called$total.call.len - plink.true.v.called$tp ## fp = false positive = total length of called ROHs - total length of called ROHs that overlap true ROHs = total length of called ROHs - true positive calls
+    plink.true.v.called$tn <- chrom.len - plink.true.v.called$tp - plink.true.v.called$fn - plink.true.v.called$fp ## tn = true negative = total chromosome length not covered by true positives, false negatives, or false positives
     plink.true.v.called$false.pos.rate <- plink.true.v.called$fp / (plink.true.v.called$fp + plink.true.v.called$tn)
     plink.true.v.called$false.neg.rate <- plink.true.v.called$fn / (plink.true.v.called$fn + plink.true.v.called$tp)
     plink.true.v.called$true.pos.rate <- plink.true.v.called$tp / (plink.true.v.called$tp + plink.true.v.called$fn)
@@ -342,30 +477,26 @@ for(d in demos){
       ##### >>>>> False positives #####
       pdf(paste0('../figures/',d,'/',d,'_',h,'_PL_false_pos_rates.pdf'), width = 5, height = 6)
       par(mar = c(5.1,6.1,4.1,2.1))
-      plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', 
-           ylab = 'False positive rate', col = 'transparent', main = 'Genotype likelihoods', xlim = c(0.5,5.5), 
-           cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
-        # axis(2, at = c(0, 0.1, 0.2, 0.3), labels = c('0.0','0.1','0.2','0.3'), cex.axis = text.size)
-        axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
-        x <- 1
-        for(c in unique(pl.true.v.called$covg)){
-          temp <- pl.true.v.called[pl.true.v.called$covg == c,]
-          f <- sample(c(-100:100), length(unique(temp$id)))
-          f <- f/shrink+x
-          points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
-          points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
-          suppressWarnings(arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10), 
-                                  y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10),
-                                  lwd = 2, col = pl.col, code=3, angle=90, length=0.1))
-          x <- x+1
-        }
+      plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'Genotype likelihoods', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      # axis(2, at = c(0, 0.1, 0.2, 0.3), labels = c('0.0','0.1','0.2','0.3'), cex.axis = text.size)
+      axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      x <- 1
+      for(c in unique(pl.true.v.called$covg)){
+        temp <- pl.true.v.called[pl.true.v.called$covg == c,]
+        f <- sample(c(-100:100), length(unique(temp$id)))
+        f <- f/shrink+x
+        points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
+        suppressWarnings(arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10), 
+                                y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10),
+                                lwd = 2, col = pl.col, code=3, angle=90, length=0.1))
+        x <- x+1
+      }
       dev.off()  
       
       pdf(paste0('../figures/',d,'/',d,'_',h,'_GT_false_pos_rates.pdf'), width = 5, height = 6)
       par(mar = c(5.1,6.1,4.1,2.1))
-      plot(gt.true.v.called$covg, gt.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', 
-           ylab = 'False positive rate', col = 'transparent', main = 'Genotypes only', xlim = c(0.5,5.5), 
-           cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      plot(gt.true.v.called$covg, gt.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'Genotypes only', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
       # axis(2, at = c(0, 0.1, 0.2, 0.3), labels = c('0.0','0.1','0.2','0.3'), cex.axis = text.size)
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
       x <- 1
@@ -384,9 +515,7 @@ for(d in demos){
       
       pdf(paste0('../figures/',d,'/',d,'_',h,'_PLINK_false_pos_rates.pdf'), width = 5, height = 6)
       par(mar = c(5.1,6.1,4.1,2.1))
-      plot(plink.true.v.called$covg, plink.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', 
-           ylab = 'False positive rate', col = 'transparent', main = 'PLINK', xlim = c(0.5,5.5), 
-           cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      plot(plink.true.v.called$covg, plink.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'PLINK', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
       # axis(2, at = c(0, 0.1, 0.2, 0.3), labels = c('0.0','0.1','0.2','0.3'), cex.axis = text.size)
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
       x <- 1
@@ -456,6 +585,114 @@ for(d in demos){
       }
       dev.off()
       
+      # ##### >>>>> True positives #####
+      # pdf(paste0('../figures/',d,'/',d,'_',h,'_PL_true_pos_rates.pdf'), width = 5, height = 6)
+      # par(mar = c(5.1,6.1,4.1,2.1))
+      # plot(pl.true.v.called$covg, pl.true.v.called$true.pos.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'True positive rate', col = 'transparent', main = 'Genotype likelihoods', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      # axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      # x <- 1
+      # for(c in unique(pl.true.v.called$covg)){
+      #   temp <- pl.true.v.called[pl.true.v.called$covg == c,]
+      #   f <- sample(c(-100:100), length(unique(temp$id)))
+      #   f <- f/shrink+x
+      #   points(f, temp$true.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+      #   points(x, mean(temp$true.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
+      #   arrows(x0 = x, x1 = x, y0 = (mean(temp$true.pos.rate, na.rm = TRUE) - sd(temp$true.pos.rate, na.rm = TRUE)/10), 
+      #          y1 = (mean(temp$true.pos.rate, na.rm = TRUE) + sd(temp$true.pos.rate, na.rm = TRUE)/10),
+      #          lwd = 2, col = pl.col, code=3, angle=90, length=0.1)
+      #   x <- x+1
+      # }
+      # dev.off()
+      # 
+      # pdf(paste0('../figures/',d,'/',d,'_',h,'_GT_true_pos_rates.pdf'), width = 5, height = 6)
+      # par(mar = c(5.1,6.1,4.1,2.1))
+      # plot(gt.true.v.called$covg, gt.true.v.called$true.pos.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'True positive rate', col = 'transparent', main = 'Genotypes only', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      # axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      # x <- 1
+      # for(c in unique(gt.true.v.called$covg)){
+      #   temp <- gt.true.v.called[gt.true.v.called$covg == c,]
+      #   f <- sample(c(-100:100), length(unique(temp$id)))
+      #   f <- f/shrink+x
+      #   points(f, temp$true.pos.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+      #   points(x, mean(temp$true.pos.rate, na.rm = TRUE), pch = 19, col = gt.col)
+      #   arrows(x0 = x, x1 = x, y0 = (mean(temp$true.pos.rate, na.rm = TRUE) - sd(temp$true.pos.rate, na.rm = TRUE)/10), 
+      #          y1 = (mean(temp$true.pos.rate, na.rm = TRUE) + sd(temp$true.pos.rate, na.rm = TRUE)/10),
+      #          lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
+      #   x <- x+1
+      # }
+      # dev.off()
+      # 
+      # pdf(paste0('../figures/',d,'/',d,'_',h,'_PLINK_true_pos_rates.pdf'), width = 5, height = 6)
+      # par(mar = c(5.1,6.1,4.1,2.1))
+      # plot(plink.true.v.called$covg, plink.true.v.called$true.pos.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'True positive rate', col = 'transparent', main = 'PLINK', xlim = c(0.5,5.5), xaxt = 'n', cex.axis = text.size, cex.lab = text.size)
+      # axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      # x <- 1
+      # for(c in unique(plink.true.v.called$covg)){
+      #   temp <- plink.true.v.called[plink.true.v.called$covg == c,]
+      #   f <- sample(c(-100:100), length(unique(temp$id)))
+      #   f <- f/shrink+x
+      #   points(f, temp$true.pos.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+      #   points(x, mean(temp$true.pos.rate), pch = 19, col = plink.col)
+      #   arrows(x0 = x, x1 = x, y0 = (mean(temp$true.pos.rate) - sd(temp$true.pos.rate)/10), y1 = (mean(temp$true.pos.rate) + sd(temp$true.pos.rate)/10),
+      #          lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
+      #   x <- x+1
+      # }
+      # dev.off()
+      # 
+      # ##### >>>>> True negatives #####
+      # pdf(paste0('../figures/',d,'/',d,'_',h,'_PL_true_neg_rates.pdf'), width = 5, height = 6)
+      # par(mar = c(5.1,6.1,4.1,2.1))
+      # plot(pl.true.v.called$covg, pl.true.v.called$true.neg.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'True negative rate', col = 'transparent', main = 'Genotype likelihoods', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      # axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      # x <- 1
+      # for(c in unique(pl.true.v.called$covg)){
+      #   temp <- pl.true.v.called[pl.true.v.called$covg == c,]
+      #   f <- sample(c(-100:100), length(unique(temp$id)))
+      #   f <- f/shrink+x
+      #   points(f, temp$true.neg.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+      #   points(x, mean(temp$true.neg.rate, na.rm = TRUE), pch = 19, col = pl.col)
+      #   arrows(x0 = x, x1 = x, y0 = (mean(temp$true.neg.rate, na.rm = TRUE) - sd(temp$true.neg.rate, na.rm = TRUE)/10), 
+      #          y1 = (mean(temp$true.neg.rate, na.rm = TRUE) + sd(temp$true.neg.rate, na.rm = TRUE)/10),
+      #          lwd = 2, col = pl.col, code=3, angle=90, length=0.1)
+      #   x <- x+1
+      # }
+      # dev.off()
+      # 
+      # pdf(paste0('../figures/',d,'/',d,'_',h,'_GT_true_neg_rates.pdf'), width = 5, height = 6)
+      # par(mar = c(5.1,6.1,4.1,2.1))
+      # plot(gt.true.v.called$covg, gt.true.v.called$true.neg.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'True negative rate', col = 'transparent', main = 'Genotypes only', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
+      # axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      # x <- 1
+      # for(c in unique(gt.true.v.called$covg)){
+      #   temp <- gt.true.v.called[gt.true.v.called$covg == c,]
+      #   f <- sample(c(-100:100), length(unique(temp$id)))
+      #   f <- f/shrink+x
+      #   points(f, temp$true.neg.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+      #   points(x, mean(temp$true.neg.rate, na.rm = TRUE), pch = 19, col = gt.col)
+      #   arrows(x0 = x, x1 = x, y0 = (mean(temp$true.neg.rate, na.rm = TRUE) - sd(temp$true.neg.rate, na.rm = TRUE)/10), 
+      #          y1 = (mean(temp$true.neg.rate, na.rm = TRUE) + sd(temp$true.neg.rate, na.rm = TRUE)/10),
+      #          lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
+      #   x <- x+1
+      # }
+      # dev.off()
+      # 
+      # pdf(paste0('../figures/',d,'/',d,'_',h,'_PLINK_true_neg_rates.pdf'), width = 5, height = 6)
+      # par(mar = c(5.1,6.1,4.1,2.1))
+      # plot(plink.true.v.called$covg, plink.true.v.called$true.neg.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'True negative rate', col = 'transparent', main = 'PLINK', xlim = c(0.5,5.5), xaxt = 'n', cex.axis = text.size, cex.lab = text.size)
+      # axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      # x <- 1
+      # for(c in unique(plink.true.v.called$covg)){
+      #   temp <- plink.true.v.called[plink.true.v.called$covg == c,]
+      #   f <- sample(c(-100:100), length(unique(temp$id)))
+      #   f <- f/shrink+x
+      #   points(f, temp$true.neg.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+      #   points(x, mean(temp$true.neg.rate), pch = 19, col = plink.col)
+      #   arrows(x0 = x, x1 = x, y0 = (mean(temp$true.neg.rate) - sd(temp$true.neg.rate)/10), y1 = (mean(temp$true.neg.rate) + sd(temp$true.neg.rate)/10),
+      #          lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
+      #   x <- x+1
+      # }
+      # dev.off()
+      
       i <- i+1
     }
     
@@ -486,158 +723,153 @@ for(d in demos){
       col <- col+1
     }
     
-    k <- 1
-    while(k == 1){
-      
-      text.size <- 1.25
-      alph <- 1
-      poly.alph <- 0.4
-      wid <- 2
-      
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_true_fROH_vs_pos_neg_rates.pdf'), width = 7, height = 6)
-      par(mai = c(1.02,0.82,0.82,1.42))
-      ## PL
-      plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(pl.true.v.called$covg)){
-        sub <- pl.true.v.called[pl.true.v.called$covg == c,]
-        mod <- lm(sub$false.neg.rate ~ sub$true.froh)
-        new.dat <- data.frame(true.froh=c(sort(sub$true.froh))) ## new data for prediction
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(-new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(sub$true.froh), 
-                      sort(sub$true.froh, decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
-                col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(sub$true.froh), new.vals[,1], lwd = wid,
-              col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
+    if(d != 'decline'){
+      k <- 1
+      while(k == 1){
+        
+        text.size <- 1.25
+        alph <- 1
+        poly.alph <- 0.4
+        wid <- 2
+        
+        # new.dat <- data.frame(true.froh=c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]))) ## new data for prediction
+        
+        pdf(paste0('../figures/',d,'/',d,'_',h,'_true_fROH_vs_pos_neg_rates.pdf'), width = 7, height = 6)
+        par(mai = c(1.02,0.82,0.82,1.42))
+        ## PL
+        plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(pl.true.v.called$covg)){
+          mod <- lm(pl.true.v.called[pl.true.v.called$covg == c, 'false.neg.rate'] ~ pl.true.v.called[pl.true.v.called$covg == c, 'true.froh'])
+          new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[froh.stats$id %in% pl.true.v.called$id, 3])))) ## new data for prediction
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(-new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
+                  col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(pl.true.v.called$covg)){
+          mod <- lm(pl.true.v.called[pl.true.v.called$covg == c, 'false.pos.rate'] ~ pl.true.v.called[pl.true.v.called$covg == c, 'true.froh'])
+          new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[froh.stats$id %in% pl.true.v.called$id, 3])))) ## new data for prediction
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
+                  col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        ## GT
+        plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(gt.true.v.called$covg)){
+          mod <- lm(gt.true.v.called[gt.true.v.called$covg == c, 'false.neg.rate'] ~ gt.true.v.called[gt.true.v.called$covg == c, 'true.froh'])
+          new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[froh.stats$id %in% gt.true.v.called$id, 3])))) ## new data for prediction
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(-new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
+                  col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(gt.true.v.called$covg)){
+          mod <- lm(gt.true.v.called[gt.true.v.called$covg == c, 'false.pos.rate'] ~ gt.true.v.called[gt.true.v.called$covg == c, 'true.froh'])
+          new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[froh.stats$id %in% gt.true.v.called$id, 3])))) ## new data for prediction
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(new.vals[,1]),]
+          ## CI polygon
+          # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+          #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+          polygon(x = c(sort(unique(froh.stats[,3])), 
+                        sort(unique(froh.stats[,3]), decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
+                  col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+          lines(sort(unique(froh.stats[,3])), new.vals[,1], lwd = wid,
+                col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        ## PLINK
+        plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(plink.true.v.called$covg)){
+          mod <- lm(plink.true.v.called[plink.true.v.called$covg == c, 'false.neg.rate'] ~ plink.true.v.called[plink.true.v.called$covg == c, 'true.froh'])
+          new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[froh.stats$id %in% plink.true.v.called$id, 3])))) ## new data for prediction
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(-new.vals[,1]),]
+          ## CI polygon
+          polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+                        sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
+                  col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+                col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
+             xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
+        for(c in unique(plink.true.v.called$covg)){
+          mod <- lm(plink.true.v.called[plink.true.v.called$covg == c, 'false.pos.rate'] ~ plink.true.v.called[plink.true.v.called$covg == c, 'true.froh'])
+          new.dat <- data.frame(true.froh=c(sort(unique(froh.stats[froh.stats$id %in% plink.true.v.called$id, 3])))) ## new data for prediction
+          new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+          new.vals <- new.vals[order(new.vals[,1]),]
+          ## CI polygon
+          polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
+                        sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+                  y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
+                  col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
+          lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
+                col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
+        }
+        par(xpd = TRUE)
+        legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+        par(xpd = FALSE)
+        
+        k <- k+1
+        dev.off()
       }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(pl.true.v.called$covg)){
-        sub <- pl.true.v.called[pl.true.v.called$covg == c,]
-        mod <- lm(sub$false.pos.rate ~ sub$true.froh)
-        new.dat <- data.frame(true.froh=c(sort(sub$true.froh))) ## new data for prediction
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(sub$true.froh), 
-                      sort(sub$true.froh, decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
-                col = alpha(pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(sub$true.froh), new.vals[,1], lwd = wid,
-              col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      ## GT
-      plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(gt.true.v.called$covg)){
-        sub <- gt.true.v.called[gt.true.v.called$covg == c,]
-        mod <- lm(sub$false.neg.rate ~ sub$true.froh)
-        new.dat <- data.frame(true.froh=c(sort(sub$true.froh))) ## new data for prediction
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(-new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(sub$true.froh), 
-                      sort(sub$true.froh, decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
-                col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(sub$true.froh), new.vals[,1], lwd = wid,
-              col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(gt.true.v.called$covg)){
-        sub <- gt.true.v.called[gt.true.v.called$covg == c,]
-        mod <- lm(sub$false.pos.rate ~ sub$true.froh)
-        new.dat <- data.frame(true.froh=c(sort(sub$true.froh))) ## new data for prediction
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(sub$true.froh), 
-                      sort(sub$true.froh, decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
-                col = alpha(gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(sub$true.froh), new.vals[,1], lwd = wid,
-              col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      ## PLINK
-      plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(plink.true.v.called$covg)){
-        sub <- plink.true.v.called[plink.true.v.called$covg == c,]
-        mod <- lm(sub$false.neg.rate ~ sub$true.froh)
-        new.dat <- data.frame(true.froh=c(sort(sub$true.froh))) ## new data for prediction
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(-new.vals[,1]),]
-        ## CI polygon
-        # polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), 
-        #               sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
-        polygon(x = c(sort(sub$true.froh), 
-                      sort(sub$true.froh, decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = FALSE)), border = NA, 
-                col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        # lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid, 
-        lines(sort(sub$true.froh), new.vals[,1], lwd = wid,
-              col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
-           xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
-      for(c in unique(plink.true.v.called$covg)){
-        sub <- plink.true.v.called[plink.true.v.called$covg == c,]
-        mod <- lm(sub$false.pos.rate ~ sub$true.froh)
-        new.dat <- data.frame(true.froh=c(sort(sub$true.froh))) ## new data for prediction
-        new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
-        new.vals <- new.vals[order(new.vals[,1]),]
-        polygon(x = c(sort(sub$true.froh), 
-                      sort(sub$true.froh, decreasing = TRUE)),
-                y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA, 
-                col = alpha(plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1], poly.alph))
-        lines(sort(sub$true.froh), new.vals[,1], lwd = wid, 
-              col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
-      }
-      par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
-      par(xpd = FALSE)
-      
-      k <- k+1
-      dev.off()
     }
-      
-    ##### !!! PICK UP HERE !!! #####
+    
     ##### >>> 3F. Combining false - and false + into single plot for all 3 methods (2 plots) #####
     ## all points plus mean +/- SE
     i <- 1
@@ -645,7 +877,7 @@ for(d in demos){
       text.size <- 1.25
       shrink <- 2000 ## higher # here ==> narrower x-direction spread for points
       alph <- 0.2
-      false.pos.y.lim <- 1
+      false.pos.y.lim <- 0.3
       diff <- 0.3 ## distance between GT and PL/PLINK
       OUT <- NULL ## for storing means
       
@@ -653,21 +885,22 @@ for(d in demos){
       par(mar = c(5.1,6.1,4.1,2.1))
       # plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'False positive rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
       plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'False positive rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
-        axis(2, at = c(0, 0.1, 0.2, 0.3), labels = c('0.0','0.1','0.2','0.3'), cex.axis = text.size)
-        axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
-        x <- 1
-        for(c in unique(pl.true.v.called$covg)){
-          temp <- pl.true.v.called[pl.true.v.called$covg == c,]
-          f <- sample(c(-100:100), length(unique(temp$id)))
-          f <- f/shrink+x
-          points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
-          points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
-          suppressWarnings(arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
-                                  y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
-                                  lwd = 2, col = pl.col, code=3, angle=90, length=0.1))
-          OUT <- rbind(OUT, c(x, mean(temp$false.pos.rate), 1))
-          x <- x+1
-        }
+      axis(2, at = c(0, 0.1, 0.2, 0.3), labels = c('0.0','0.1','0.2','0.3'), cex.axis = text.size)
+      axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
+      x <- 1
+      for(c in unique(pl.true.v.called$covg)){
+        temp <- pl.true.v.called[pl.true.v.called$covg == c,]
+        f <- sample(c(-100:100), length(unique(temp$id)))
+        f <- f/shrink+x
+        points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
+        suppressWarnings(arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
+                                y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
+                                lwd = 2, col = pl.col, code=3, angle=90, length=0.1))
+        OUT <- rbind(OUT, c(x, mean(temp$false.pos.rate), 1))
+        x <- x+1
+        
+      }
       
       x <- 1-diff
       for(c in unique(gt.true.v.called$covg)){
@@ -1104,6 +1337,9 @@ for(d in demos){
       points(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = alpha(froh.stats$pl.temp.col, alph))
       for(c in unique(froh.stats$covg)){
         mod <- lm(froh.stats[froh.stats$covg == c, 'pl.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+        # suppressWarnings(clipplot(abline(mod, col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1]),
+        #                           xlim = c(min(froh.stats[froh.stats$covg == c, 'true.froh']), 
+        #                                    max(froh.stats[froh.stats$covg == c, 'true.froh']))))
         new.vals <- predict(mod, newdata = new.dat, interval = 'confidence', level = 0.95)
         new.vals <- new.vals[order(new.vals[,1]),]
         
@@ -1124,6 +1360,9 @@ for(d in demos){
       points(froh.stats$true.froh, froh.stats$gt.froh, pch = 19, col = alpha(froh.stats$gt.temp.col, alph))
       for(c in unique(froh.stats$covg)){
         mod <- lm(froh.stats[froh.stats$covg == c, 'gt.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+        # suppressWarnings(clipplot(abline(mod, col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1]),
+        #                           xlim = c(min(froh.stats[froh.stats$covg == c, 'true.froh']), 
+        #                                    max(froh.stats[froh.stats$covg == c, 'true.froh']))))
         new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
         new.vals <- new.vals[order(new.vals[,1]),]
         ## CI polygon
@@ -1142,6 +1381,9 @@ for(d in demos){
       points(froh.stats$true.froh, froh.stats$plink.froh, pch = 19, col = alpha(froh.stats$plink.temp.col, alph))
       for(c in unique(froh.stats$covg)){
         mod <- lm(froh.stats[froh.stats$covg == c, 'plink.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+        # suppressWarnings(clipplot(abline(mod, col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1]),
+        #                           xlim = c(min(froh.stats[froh.stats$covg == c, 'true.froh']), 
+        #                                    max(froh.stats[froh.stats$covg == c, 'true.froh']))))
         new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
         new.vals <- new.vals[order(new.vals[,1]),]
         ## CI polygon
@@ -1218,18 +1460,15 @@ for(d in demos){
     
     ##### >>> 4A. Statistics: comparing true vs. called f(ROH) slopes and intercepts #####
     ## reformat data for lm
-    dat <- rbind(cbind(froh.stats[, c('id','covg','true.froh')], call.froh = froh.stats$pl.froh, 
-                       method = rep('PL', length(unique(froh.stats$id)))),
-                 cbind(froh.stats[, c('id','covg','true.froh')], call.froh = froh.stats$gt.froh, 
-                       method = rep('GT', length(unique(froh.stats$id)))),
-                 cbind(froh.stats[, c('id','covg','true.froh')], call.froh = froh.stats$plink.froh, 
-                       method = rep('PLINK', length(unique(froh.stats$id)))))
+    dat <- rbind(cbind(froh.stats[, c('id','covg','true.froh')], call.froh = froh.stats$pl.froh, method = rep('PL', 50)),
+                 cbind(froh.stats[, c('id','covg','true.froh')], call.froh = froh.stats$gt.froh, method = rep('GT', 50)),
+                 cbind(froh.stats[, c('id','covg','true.froh')], call.froh = froh.stats$plink.froh, method = rep('PLINK', 50)))
     for(c in 1:4){
       dat[,c] <- as.numeric(dat[,c])
     }
     
     ## check assumptions and some stats
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_truefROH_vs_callfROH_lm_assumptions.pdf'), width = 10, height = 10)
+    pdf(paste0('../figures/',d,'/',d,'_',h,'_test.pdf'), width = 10, height = 10)
     par(mfrow = c(2,2))
     OUT <- NULL ## for saving statsy info
     for(m in unique(dat$method)){
@@ -1281,15 +1520,12 @@ for(d in demos){
     ##### >>> 4B. Plotting true f(ROH) vs. called - true f(ROH) #####
     dat$diff <- dat$call.froh - dat$true.froh
     alph <- 0.5
-    y.min <- -0.7
-    y.max <- 0.7
     
     pdf(paste0('../figures/',d,'/',d,'_',h,'_true_vs_diff.pdf'), width = 6, height = 5)
     
     ## PL 
     sub <- dat[dat$method == 'PL',]
-    plot(sub$true.froh, sub$diff, col = 'transparent', xlab = 'True f(ROH)', ylab = 'Called f(ROH) - True f(ROH)', 
-         main = 'Likelihoods', ylim = c(y.min, y.max))
+    plot(sub$true.froh, sub$diff, col = 'transparent', xlab = 'True f(ROH)', ylab = 'Called f(ROH) - True f(ROH)', main = 'Likelihoods')
     abline(h = 0, lty = 2, col = 'grey')
     x <- 1
     for(c in sort(unique(sub$covg))){
@@ -1298,12 +1534,11 @@ for(d in demos){
       abline(lm(temp$dif ~ temp$true.froh), col = pl.cols[x])
       x <- x+1
     }
-    legend('topleft', col = alpha(pl.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 19, bg = 'white')
+    legend('bottomleft', col = alpha(pl.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 19, bg = 'white')
     
     ## GT
     sub <- dat[dat$method == 'GT',]
-    plot(sub$true.froh, sub$diff, col = 'transparent', xlab = 'True f(ROH)', ylab = 'Called f(ROH) - True f(ROH)', 
-         main = 'Genotypes', ylim = c(y.min, y.max))
+    plot(sub$true.froh, sub$diff, col = 'transparent', xlab = 'True f(ROH)', ylab = 'Called f(ROH) - True f(ROH)', main = 'Genotypes')
     abline(h = 0, lty = 2, col = 'grey')
     x <- 1
     for(c in sort(unique(sub$covg))){
@@ -1316,8 +1551,7 @@ for(d in demos){
     
     ## PLINK 
     sub <- dat[dat$method == 'PLINK',]
-    plot(sub$true.froh, sub$diff, col = 'transparent', xlab = 'True f(ROH)', ylab = 'Called f(ROH) - True f(ROH)', 
-         main = 'PLINK', ylim = c(y.min, y.max))
+    plot(sub$true.froh, sub$diff, col = 'transparent', xlab = 'True f(ROH)', ylab = 'Called f(ROH) - True f(ROH)', main = 'PLINK')
     abline(h = 0, lty = 2, col = 'grey')
     x <- 1
     for(c in sort(unique(sub$covg))){
@@ -1344,19 +1578,14 @@ for(d in demos){
     ymax <- 1
     xmin <- 1.85
     xmax <- 6.15
-    n <- length(unique(froh.stats$id))
     
     OUT <- NULL
     for(c in sort(unique(froh.stats$covg))){
       save <- c(c, 
-                mean(froh.stats[froh.stats$covg == c, 'true.froh']), 
-                sd(froh.stats[froh.stats$covg == c, 'true.froh'])/sqrt(n),
-                mean(froh.stats[froh.stats$covg == c, 'pl.froh']), 
-                sd(froh.stats[froh.stats$covg == c, 'pl.froh'])/sqrt(n),
-                mean(froh.stats[froh.stats$covg == c, 'gt.froh']), 
-                sd(froh.stats[froh.stats$covg == c, 'gt.froh'])/sqrt(n),
-                mean(froh.stats[froh.stats$covg == c, 'plink.froh']), 
-                sd(froh.stats[froh.stats$covg == c, 'plink.froh'])/sqrt(n))
+                mean(froh.stats[froh.stats$covg == c, 'true.froh']), sd(froh.stats[froh.stats$covg == c, 'true.froh'])/sqrt(n),
+                mean(froh.stats[froh.stats$covg == c, 'pl.froh']), sd(froh.stats[froh.stats$covg == c, 'pl.froh'])/sqrt(n),
+                mean(froh.stats[froh.stats$covg == c, 'gt.froh']), sd(froh.stats[froh.stats$covg == c, 'gt.froh'])/sqrt(n),
+                mean(froh.stats[froh.stats$covg == c, 'plink.froh']), sd(froh.stats[froh.stats$covg == c, 'plink.froh'])/sqrt(n))
       OUT <- rbind(OUT, save)
     }
     OUT <- as.data.frame(OUT)
@@ -1851,7 +2080,137 @@ for(d in demos){
       k <- k+1
     }
     
-
+    
+    ##### 5A. Plotting f(ROH) across coverage levels, bootstrapping 95% CIs by subsampling 15 #####
+    k <- 1
+    while(k==1){
+      n <- 15 ## number of individuals to subsample
+      reps <- 1000 ## number of bootstrap replicates
+      
+      OUT <- NULL
+      i <- 1
+      while(i <= reps){
+        for(c in unique(froh.stats$covg)){
+          pl.mean <- mean(froh.stats[froh.stats$covg == c, 'pl.froh'])
+          gt.mean <- mean(froh.stats[froh.stats$covg == c, 'gt.froh'])
+          plink.mean <- mean(froh.stats[froh.stats$covg == c, 'plink.froh'])
+          save <- c(c, pl.mean, gt.mean, plink.mean)
+          OUT <- rbind(OUT, save)
+        }
+        i <- i+1
+      }
+      bs.res <- as.data.frame(OUT)
+      colnames(bs.res) <- c('covg','pl.mean','gt.mean','plink.mean')
+      
+      ## calculate and save 95% quantiles for means
+      OUT1 <- NULL
+      for(c in sort(unique(bs.res$covg))){
+        sub <- bs.res[bs.res$covg == c,]
+        pl.lo <- quantile(sub$pl.mean, probs = c(0.025, 0.975))[1]
+        pl.hi <- quantile(sub$pl.mean, probs = c(0.025, 0.975))[2]
+        gt.lo <- quantile(sub$gt.mean, probs = c(0.025, 0.975))[1]
+        gt.hi <- quantile(sub$gt.mean, probs = c(0.025, 0.975))[2]
+        plink.lo <- quantile(sub$plink.mean, probs = c(0.025, 0.975))[1]
+        plink.hi <- quantile(sub$plink.mean, probs = c(0.025, 0.975))[2]
+        save <- c(c, pl.lo, pl.hi, gt.lo, gt.hi, plink.lo, plink.hi)
+        OUT1 <- rbind(OUT1, save)
+      }
+      quants <- as.data.frame(OUT1)
+      colnames(quants) <- c('covg','pl.lo','pl.hi','gt.lo','gt.hi','plink.lo','plink.hi')
+      
+      ## get overall means for n=100 at each covg level
+      OUT <- NULL
+      for(c in sort(unique(froh.stats$covg))){
+        save <- c(c, 
+                  mean(froh.stats[froh.stats$covg == c, 'true.froh']), sd(froh.stats[froh.stats$covg == c, 'true.froh'])/sqrt(n),
+                  mean(froh.stats[froh.stats$covg == c, 'pl.froh']), sd(froh.stats[froh.stats$covg == c, 'pl.froh'])/sqrt(n),
+                  mean(froh.stats[froh.stats$covg == c, 'gt.froh']), sd(froh.stats[froh.stats$covg == c, 'gt.froh'])/sqrt(n),
+                  mean(froh.stats[froh.stats$covg == c, 'plink.froh']), sd(froh.stats[froh.stats$covg == c, 'plink.froh'])/sqrt(n))
+        OUT <- rbind(OUT, save)
+      }
+      OUT <- as.data.frame(OUT)
+      colnames(OUT) <- c('covg','mean.true','se.true','mean.pl','se.pl','mean.gt','se.gt','mean.plink','se.plink')
+      
+      quants$mean.true <- OUT$mean.true
+      write.csv(quants, '../data/3_methods_results/covg_fROH_simulated_bootstrapped_95_CIs.csv')
+      
+      ## plotting
+      alph <- 1  ## 1 for n = 30, 0.5 for n = 100
+      bg.alph <- 0.25 ## for plot with mean lines +/- CIs (matches empirical)
+      lwd <- 1.5
+      pt.size <- 1.5
+      err.wid <- 0.05
+      
+      txt.size <- 1.25
+      ymin <- 0
+      ymax <- 1
+      xmin <- 1.85
+      xmax <- 6.15
+      
+      pdf(paste0('../figures/',d,'/',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_bootstrapped_95CIs.pdf'), width = 10, height = 4)
+      par(mfrow=c(1,3))
+      
+      ## GT 
+      plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+           xaxt = 'n', xlab = 'Coverage', main = 'Genotypes - simulated', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+      axis(1, at = c(2,3,4,5,6), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
+      axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5), labels = c('0.0','0.1','0.2','0.3','0.4','0.5'), cex.axis = txt.size)
+      ## plotting 15 example lines using the last n=15 sampled above for bootstrapping
+      for(i in unique(froh.stats$id)){
+        temp <- froh.stats[froh.stats$id == i,]
+        temp <- temp[order(temp$covg),]
+        lines(c(2:6), c(temp$gt.froh), col = alpha(gt.col, bg.alph))
+      }  
+      abline(h = OUT$mean.true, lty = 2)
+      lines(c(2:6), c(OUT$mean.gt), col = gt.col, lwd = lwd)
+      points(c(2:6), OUT$mean.gt, pch = 19, col = gt.col, cex = pt.size)
+      arrows(x0 = c(2:6), x1 = c(2:6), y0 = quants$gt.lo,
+             y1 = quants$gt.hi,
+             lwd = lwd, col = gt.col, code=3, angle=90, length= err.wid)
+      
+      ## PL 
+      plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+           xaxt = 'n', xlab = 'Coverage', main = 'Likelihoods - simulated', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+      axis(1, at = c(2,3,4,5,6), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
+      axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5), labels = c('0.0','0.1','0.2','0.3','0.4','0.5'), cex.axis = txt.size)
+      ## plotting 15 example lines using the last n=15 sampled above for bootstrapping
+      for(i in unique(froh.stats$id)){
+        temp <- froh.stats[froh.stats$id == i,]
+        temp <- temp[order(temp$covg),]
+        lines(c(2:6), c(temp$pl.froh), col = alpha(pl.col, bg.alph))
+      }  
+      abline(h = OUT$mean.true, lty = 2)
+      lines(c(2:6), c(OUT$mean.pl), col = pl.col, lwd = lwd)
+      points(c(2:6), OUT$mean.pl, pch = 19, col = pl.col, cex = pt.size)
+      arrows(x0 = c(2:6), x1 = c(2:6), y0 = quants$pl.lo,
+             y1 = quants$pl.hi,
+             lwd = lwd, col = pl.col, code=3, angle=90, length= err.wid)
+      
+      ## PLINK 
+      plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+           xaxt = 'n', xlab = 'Coverage', main = 'PLINK - simulated', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+      axis(1, at = c(2,3,4,5,6), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
+      axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5), labels = c('0.0','0.1','0.2','0.3','0.4','0.5'), cex.axis = txt.size)
+      ## plotting 15 example lines using the last n=15 sampled above for bootstrapping
+      for(i in unique(froh.stats$id)){
+        temp <- froh.stats[froh.stats$id == i,]
+        temp <- temp[order(temp$covg),]
+        lines(c(2:6), c(temp$plink.froh), col = alpha(plink.col, bg.alph))
+      }  
+      abline(h = OUT$mean.true, lty = 2)
+      lines(c(2:6), c(OUT$mean.plink), col = plink.col, lwd = lwd)
+      points(c(2:6), OUT$mean.plink, pch = 19, col = plink.col, cex = pt.size)
+      arrows(x0 = c(2:6), x1 = c(2:6), y0 = quants$plink.lo,
+             y1 = quants$plink.hi,
+             lwd = lwd, col = plink.col, code=3, angle=90, length= err.wid)
+      
+      dev.off()
+      
+      k <- k+1
+    }
+    
+    
+    
     ##### 93. Looking at BCFtools ROH quality measure #####
     gt.overlap$prop.true <- gt.overlap$true.len/gt.overlap$len
     pl.overlap$prop.true <- pl.overlap$true.len/pl.overlap$len
@@ -2425,7 +2784,7 @@ for(d in demos){
     b2 <- 1e6
     b3 <- 2e6
     
-    n <- length(unique(froh.stats$id))
+    n <- 50
     
     k <- 1
     while(k == 1){
@@ -2868,7 +3227,7 @@ for(d in demos){
             OUT1 <- rbind(OUT1, save1)
           }
         }
-        plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c,'X'), ylim = c(1, y.max), 
+        plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c), ylim = c(1, y.max), 
              cex.axis = txt.size, cex.lab = txt.size, xaxt = 'n', ylab = '')
         points(OUT[,2], OUT[,3], col = alpha(gt.col, alph), pch = 19, cex = pt.sz)
         axis(1, at = seq(from = 0, to = x.max, by = 1e6), labels = seq(from = 0, to = x.max, by = 1e6)/1e6, cex.axis = txt.size)
@@ -2897,7 +3256,7 @@ for(d in demos){
             OUT1 <- rbind(OUT1, save1)
           }
         }
-        plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c,'X'), ylim = c(1, y.max), 
+        plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c), ylim = c(1, y.max), 
              cex.axis = txt.size, cex.lab = txt.size, xaxt = 'n', ylab = '')
         points(OUT[,2], OUT[,3], col = alpha(pl.col, alph), pch = 19, cex = pt.sz)
         axis(1, at = seq(from = 0, to = x.max, by = 1e6), labels = seq(from = 0, to = x.max, by = 1e6)/1e6, cex.axis = txt.size)
@@ -2926,7 +3285,7 @@ for(d in demos){
             OUT1 <- rbind(OUT1, save1)
           }
         }
-        plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c,'X'), ylim = c(1, y.max), 
+        plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c), ylim = c(1, y.max), 
              cex.axis = txt.size, cex.lab = txt.size, xaxt = 'n', ylab = '')
         points(OUT[,2], OUT[,3], col = alpha(plink.col, alph), pch = 19, cex = pt.sz)
         axis(1, at = seq(from = 0, to = x.max, by = 1e6), labels = seq(from = 0, to = x.max, by = 1e6)/1e6, cex.axis = txt.size)
@@ -3604,70 +3963,70 @@ for(d in demos){
     dev.off()
     
     ##### >>> 99A. Plotting individual true ROHs and called ROHs for all 3 analyses and coverage levels - specific individual and window #####
-#     wid <- 3 ## line widths in plot ~ or ~
-#     hit <- 0.1 ## polygon height
-#     xmin <- 1.5e7
-#     xmax <- 2.5e7
-# 
-#     # pdf(paste0('../figures/',d,'/',d,'_',h,'_individual_true_and_called_ROHs_across_chromosome.pdf'), width = 15, height = 7)
-#     par(mar = c(5.1, 5.1, 4.1, 2.1))
-#     for(i in unique(true.rohs$id)){
-#       sub.pl <- bcf.pl.res[bcf.pl.res$id == i,]
-#       sub.gt <- bcf.gt.res[bcf.gt.res$id == i,]
-#       sub.pk <- plink.res[plink.res$id == i,]
-#       sub.true <- true.rohs[true.rohs$id == i,]
-#       plot(0,0, ylim = c(1, 16), col = 'transparent', yaxt = 'n', xlab = 'Chromosome position (bp)', ylab = '', main = i, 
-#            xlim = c(xmin, xmax))
-#       lines(x = c(-2e6, 40e6), y = c(1.5, 1.5), lty = 2)
-#       lines(x = c(-2e6, 40e6), y = c(6.5, 6.5), lty = 2)
-#       lines(x = c(-2e6, 40e6), y = c(11.5, 11.5), lty = 2)
-#       axis(2, at = c(1:16), labels = c('True','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
-#       for(r in 1:nrow(sub.true)){
-#         # lines(x = c(sub.true$start[r], sub.true$end[r]), y = c(1, 1), col = 'black', lwd = wid)
-#         polygon(x = c(sub.true$start[r], sub.true$end[r], sub.true$end[r], sub.true$start[r]), y = c(1, 1, 18, 18),
-#                 col = alpha('lightgrey', 0.3), border = NA)
-#         polygon(x = c(sub.true$start[r], sub.true$end[r], sub.true$end[r], sub.true$start[r]), y = c(1-hit, 1-hit, 1+hit, 1+hit),
-#                 col = 'black', border = NA)
-#       }
-#       y <- 2
-#       for(c in c(5, 10, 15, 30, 50)){
-#         temp <- sub.pl[sub.pl$covg == c,]
-#         if(nrow(temp) > 0){
-#           for(r in 1:nrow(temp)){
-#             # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = pl.col, lwd = wid)
-#             polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-#                     col = pl.col, border = NA)
-#           }
-#         }
-#         y <- y+1
-#       }
-#       for(c in c(5, 10, 15, 30, 50)){
-#         temp <- sub.gt[sub.gt$covg == c,]
-#         if(nrow(temp) > 0){
-#           for(r in 1:nrow(temp)){
-#             # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = gt.col, lwd = wid)
-#             polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-#                     col = gt.col, border = NA)
-#           }
-#         }
-#         y <- y+1
-#       }
-#       for(c in c(5, 10, 15, 30, 50)){
-#         temp <- sub.pk[sub.pk$covg == c,]
-#         if(nrow(temp) > 0){
-#           for(r in 1:nrow(temp)){
-#             # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = plink.col, lwd = wid)
-#             polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-#                     col = plink.col, border = NA)
-#           }
-#         }
-#         y <- y+1
-#       }
-#       mtext('PLINK', side = 2, line = 3, at = 14)
-#       mtext('BCFtools\nGenotypes', side = 2, line = 3, at = 9)
-#       mtext('BCFtools\nLikelihoods', side = 2, line = 3, at = 4)
-#     }
-#     dev.off()
+    wid <- 3 ## line widths in plot ~ or ~
+    hit <- 0.1 ## polygon height
+    xmin <- 1.5e7
+    xmax <- 2.5e7
+
+    # pdf(paste0('../figures/',d,'/',d,'_',h,'_individual_true_and_called_ROHs_across_chromosome.pdf'), width = 15, height = 7)
+    par(mar = c(5.1, 5.1, 4.1, 2.1))
+    for(i in unique(true.rohs$id)){
+      sub.pl <- bcf.pl.res[bcf.pl.res$id == i,]
+      sub.gt <- bcf.gt.res[bcf.gt.res$id == i,]
+      sub.pk <- plink.res[plink.res$id == i,]
+      sub.true <- true.rohs[true.rohs$id == i,]
+      plot(0,0, ylim = c(1, 16), col = 'transparent', yaxt = 'n', xlab = 'Chromosome position (bp)', ylab = '', main = i, 
+           xlim = c(xmin, xmax))
+      lines(x = c(-2e6, 40e6), y = c(1.5, 1.5), lty = 2)
+      lines(x = c(-2e6, 40e6), y = c(6.5, 6.5), lty = 2)
+      lines(x = c(-2e6, 40e6), y = c(11.5, 11.5), lty = 2)
+      axis(2, at = c(1:16), labels = c('True','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
+      for(r in 1:nrow(sub.true)){
+        # lines(x = c(sub.true$start[r], sub.true$end[r]), y = c(1, 1), col = 'black', lwd = wid)
+        polygon(x = c(sub.true$start[r], sub.true$end[r], sub.true$end[r], sub.true$start[r]), y = c(1, 1, 18, 18),
+                col = alpha('lightgrey', 0.3), border = NA)
+        polygon(x = c(sub.true$start[r], sub.true$end[r], sub.true$end[r], sub.true$start[r]), y = c(1-hit, 1-hit, 1+hit, 1+hit),
+                col = 'black', border = NA)
+      }
+      y <- 2
+      for(c in c(5, 10, 15, 30, 50)){
+        temp <- sub.pl[sub.pl$covg == c,]
+        if(nrow(temp) > 0){
+          for(r in 1:nrow(temp)){
+            # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = pl.col, lwd = wid)
+            polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+                    col = pl.col, border = NA)
+          }
+        }
+        y <- y+1
+      }
+      for(c in c(5, 10, 15, 30, 50)){
+        temp <- sub.gt[sub.gt$covg == c,]
+        if(nrow(temp) > 0){
+          for(r in 1:nrow(temp)){
+            # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = gt.col, lwd = wid)
+            polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+                    col = gt.col, border = NA)
+          }
+        }
+        y <- y+1
+      }
+      for(c in c(5, 10, 15, 30, 50)){
+        temp <- sub.pk[sub.pk$covg == c,]
+        if(nrow(temp) > 0){
+          for(r in 1:nrow(temp)){
+            # lines(x = c(temp$start[r], temp$end[r]), y = c(y, y), col = plink.col, lwd = wid)
+            polygon(x = c(temp$start[r], temp$end[r], temp$end[r], temp$start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+                    col = plink.col, border = NA)
+          }
+        }
+        y <- y+1
+      }
+      mtext('PLINK', side = 2, line = 3, at = 14)
+      mtext('BCFtools\nGenotypes', side = 2, line = 3, at = 9)
+      mtext('BCFtools\nLikelihoods', side = 2, line = 3, at = 4)
+    }
+    dev.off()
   }
 }
 

@@ -15,42 +15,42 @@ for(true.fn in true.fns){
   
   ## set up output files
   PLINK.OUT <- matrix(c('id','covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk',
-                        'len','true.len','true.roh.id','called.roh.id','n.snps'), nrow = 1)
-  write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
-              sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE)
+                        'len','true.len','true.roh.id','called.roh.id','n.snps','overlap.start','overlap.end'), nrow = 1)
+  suppressWarnings(write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
+              sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE))
   
   OUT <- matrix(c('id','covg','phwh','phwm','phws','phzd','phzg',
                   'phwt','phzs','phzk','true.froh','call.froh'), nrow = 1)
-  write.table(OUT, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.txt'),
-              sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE)
+  suppressWarnings(write.table(OUT, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.txt'),
+              sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE))
   
   froh.stats <- matrix(c('id','true.froh','call.froh','abs.diff','combo','covg',
                          'phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.csv(froh.stats, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.csv'), row.names = FALSE, col.names = FALSE)
+  suppressWarnings(write.csv(froh.stats, paste0(rnd,'/',demo,'_PLINK_individual_froh_results.csv'),
+                             row.names = FALSE, col.names = FALSE))
   
   OUT1 <- matrix(c('mean.true.froh','mean.called.froh','sd.diff','group','covg',
                    'phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.csv(OUT1, paste0(rnd,'/',demo,'_population_froh_results_SA.csv'), 
-            row.names = FALSE, col.names = FALSE)
+  suppressWarnings(write.csv(OUT1, paste0(rnd,'/',demo,'_population_froh_results_SA.csv'), 
+            row.names = FALSE, col.names = FALSE))
   
   froh.stats <- matrix(c('id','true.froh','call.froh','covg','phwh','phwm','phws',
                          'phzd','phzg','phwt','phzs','phzk'), nrow = 1)
-  write.csv(froh.stats, paste0(rnd,'/',demo,'_individual_froh_results_SA.csv'), 
-            row.names = FALSE, col.names = FALSE)
+  suppressWarnings(write.csv(froh.stats, paste0(rnd,'/',demo,'_individual_froh_results_SA.csv'), 
+            row.names = FALSE, col.names = FALSE))
     
   ##### Read in known/true heterozygosity + ROH information #####
   true.rohs <- read.table(paste0('../slim_true_data/',true.fn))
-  colnames(true.rohs) <- c('id','start','end','length')
+  colnames(true.rohs) <- c('id','start','end','length','true.roh.id')
   true.rohs <- true.rohs[true.rohs$length >= 100000,] ### only keeping true ROHs >= 100 kb because that's all we're evaluating the ability to call
-  ## create unique ROH ID for linking true ROHs to called ROHs
-  ns <- c(1:nrow(true.rohs))
-  true.rohs$true.roh.id <- ns
   chrom.len <- 30e6
+  if(demo == 'decline'){
+    true.rohs <- true.rohs[true.rohs$id %notin% c(33,48),]
+  }
   
   ##### Read in ROH calling results #####
   ## PLINK (written from 02b_summarize_plink_output.R)
   plink.res <- read.table(paste0(rnd,'/',demo,'_PLINK_all_coordinates.txt'), header = TRUE)
-  plink.res$called.roh.id <- c(1:nrow(plink.res))
   plink.res$id <- gsub('i','',plink.res$id)
   
   ## create combo variable to loop over
@@ -64,9 +64,15 @@ for(true.fn in true.fns){
                             plink.res[,12],'-',
                             plink.res[,13])
   
+  if(demo == 'decline'){
+    plink.res <- plink.res[plink.res$id %notin% c(33,48),]
+  }
+  
   ##### Loop over param setting combos, writing ROHverlap results as it goes #####
   for(c in unique(plink.res$combo)){
+    
     print(paste0(demo,' - ',c))
+    
     ##### 2. ROH identification -- PLINK results #####
     ## Output: for each true ROH, identify all overlapping called ROHs. Each instance
     ## of overlap will occupy one line in the output matrix. The output matrix will contain:
@@ -90,14 +96,16 @@ for(true.fn in true.fns){
           for(t in 1:nrow(temp)){                                            ## for each called ROH,
             len <- temp$end[t] - temp$start[t] + 1                           ## calculate its length,
             true.len <- temp$end[t] - s + 1                                  ## length of overlap with the focal true ROH
-            save <- c(temp$id[t], temp$covg[t], temp$phwh[t], temp$phwm[t], temp$phws[t],
-                                 temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
-                                 len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t])
+            save <- c(temp$id[t], temp$covg[t], temp$phwh[t], temp$phwm[t], temp$phws[t], 
+                      temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t], 
+                      len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t],
+                      s, temp$end[t])
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
         write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
-                    sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
+                    sep = '\t', row.names = FALSE, col.names = !file.exists(paste0(rnd,'/',demo,'_PLINK_overlap_results.txt')), 
+                    quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
         ## called ROHs beginning inside of a true ROH, ending outside
         if(nrow(sub.plink[sub.plink$start >= s & sub.plink$start <= e & sub.plink$end > e,]) > 0){
@@ -106,13 +114,15 @@ for(true.fn in true.fns){
             len <- temp$end[t] - temp$start[t] + 1                           ## calculate its length,
             true.len <- e - temp$start[t] + 1                                ## length of overlap with the focal true ROH
             save <- c(temp$id[t], temp$covg[t], temp$phwh[t], temp$phwm[t], temp$phws[t],
-                                 temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
-                                 len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t])
+                      temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
+                      len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t],
+                      temp$start[t], e)
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
         write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
-                    sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
+                    sep = '\t', row.names = FALSE, col.names = !file.exists(paste0(rnd,'/',demo,'_PLINK_overlap_results.txt')), 
+                    quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
         ## called ROHs completely covering a true ROH
         if(nrow(sub.plink[sub.plink$start < s & sub.plink$end > e,]) > 0){
@@ -121,13 +131,15 @@ for(true.fn in true.fns){
             len <- temp$end[t] - temp$start[t] + 1                           ## calculate its length,
             true.len <- e - s + 1                                            ## length of overlap with the focal true ROH,
             save <- c(temp$id[t], temp$covg[t], temp$phwh[t], temp$phwm[t], temp$phws[t],
-                                 temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
-                                 len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t])
+                      temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
+                      len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t],
+                      s, e)
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
         write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
-                    sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
+                    sep = '\t', row.names = FALSE, col.names = !file.exists(paste0(rnd,'/',demo,'_PLINK_overlap_results.txt')), 
+                    quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
         ## called ROHs completely within a true ROH
         if(nrow(sub.plink[sub.plink$start >= s & sub.plink$end <= e,]) > 0){
@@ -136,13 +148,15 @@ for(true.fn in true.fns){
             len <- temp$end[t] - temp$start[t] + 1                           ## calculate its length,
             true.len <- len                                                  ## length of overlap with the focal true ROH,
             save <- c(temp$id[t], temp$covg[t], temp$phwh[t], temp$phwm[t], temp$phws[t],
-                                 temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
-                                 len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t])
+                      temp$phzd[t], temp$phzg[t], temp$phwt[t], temp$phzs[t], temp$phzk[t],
+                      len, true.len, true.sub$true.roh.id[r], temp$called.roh.id[t], temp$n.snps[t],
+                      temp$start[t], temp$end[t])
             PLINK.OUT <- rbind(PLINK.OUT, save)
           }
         }
         write.table(PLINK.OUT, paste0(rnd,'/',demo,'_PLINK_overlap_results.txt'),
-                    sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
+                    sep = '\t', row.names = FALSE, col.names = !file.exists(paste0(rnd,'/',demo,'_PLINK_overlap_results.txt')), 
+                    quote = FALSE, append = TRUE)
         PLINK.OUT <- NULL
       }
     }
@@ -236,3 +250,4 @@ for(true.fn in true.fns){
   write.csv(froh.stats[,c(1:3,6:ncol(froh.stats))], paste0(rnd,'/',demo,'_individual_froh_results_SA.csv'), 
             row.names = FALSE, append = TRUE)
 }
+

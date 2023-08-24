@@ -10,7 +10,10 @@ rnd <- 'round1'
 demos <- unique(do.call(rbind, strsplit(fns, split = '_'))[,1])
 
 for(d in demos){
-  OUT <- matrix(c('id','start','end','n.snps','covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk'), nrow = 1)
+  print(d)
+  called.roh.id.counter <- 1
+  
+  OUT <- matrix(c('id','start','end','n.snps','covg','phwh','phwm','phws','phzd','phzg','phwt','phzs','phzk','called.roh.id'), nrow = 1)
   write.table(OUT, paste0(rnd,'/',d,'_PLINK_all_coordinates.txt'),
               quote = FALSE, row.names = FALSE, sep='\t', col.names = FALSE)
   
@@ -28,6 +31,8 @@ for(d in demos){
     phzk <- vars[22]
     covg <- vars[4]
     dat <- read.table(paste0('plink_round1/',f), header=TRUE)
+    s.id <- called.roh.id.counter
+    e.id <- called.roh.id.counter + nrow(dat) - 1 
     if(nrow(dat) > 0){
       dat <- dat[,c(1,7,8,10)]
       dat$covg <- covg
@@ -39,8 +44,12 @@ for(d in demos){
       dat$phwt <- phwt
       dat$phzs <- phzs
       dat$phzk <- phzk
+      dat$called.roh.id <- c(s.id:e.id)
+
       write.table(dat, paste0(rnd,'/',d,'_PLINK_all_coordinates.txt'),
                   append = TRUE, quote = FALSE, row.names = FALSE, sep='\t', col.names = FALSE)
+      
+      called.roh.id.counter <- called.roh.id.counter + nrow(dat)
     }
   }
 }

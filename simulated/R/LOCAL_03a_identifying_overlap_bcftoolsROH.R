@@ -11,14 +11,11 @@ true.fns <- list.files(path = 'slim_true_data/', pattern = 'roh_coords')
 for(t in true.fns){
   demo <- unlist(strsplit(t, split = '_'))[1]
   demo.res <- res[res$demo == demo,]
-  demo.res$called.roh.id <- c(1:nrow(demo.res))
-  
+
   ##### Read in known/true heterozygosity + ROH information #####
   true.rohs <- read.table(paste0('slim_true_data/',t))
-  colnames(true.rohs) <- c('id','start','end','length')
+  colnames(true.rohs) <- c('id','start','end','length','true.roh.id')
   true.rohs <- true.rohs[true.rohs$length >= 100000,] ### only keeping true ROHs >= 100 kb because that's all we're evaluating the ability to call
-  ## create unique ROH ID for linking true ROHs to called ROHs
-  true.rohs$true.roh.id <- c(1:nrow(true.rohs))
   chrom.len <- 30e6
   
   BCF.OUT <- matrix(c('method','covg','hmm','id','len','true.len','true.roh.id',
@@ -76,7 +73,6 @@ for(t in true.fns){
                 BCF.OUT <- rbind(BCF.OUT, save)
               }
             }
-            sub.bcf[sub.bcf$start >= s & sub.bcf$end <= e,]
             ## called ROHs completely within a true ROH
             if(nrow(sub.bcf[sub.bcf$start >= s & sub.bcf$end <= e,]) > 0){
               temp <- sub.bcf[sub.bcf$start >= s & sub.bcf$end <= e,]
