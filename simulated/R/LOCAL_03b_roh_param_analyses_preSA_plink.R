@@ -5,7 +5,7 @@ library(grDevices)
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/plink_output/')
 
 ## 
-rnd <- 'round1'
+rnd <- 'round2'
 
 ##### Loop over demographic scenarios #####
 true.fns <- list.files('../slim_true_data/', pattern = 'true_roh_coords')
