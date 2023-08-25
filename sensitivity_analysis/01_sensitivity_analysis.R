@@ -39,6 +39,7 @@ setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/sensitivit
 ## define rounds to be analyzed
 rds <- list.dirs()
 rds <- rds[grep('round', rds)]
+rds <- rds[1]
 
 for(rd.dir in rds){
   rd <- gsub('./', '', rd.dir)
