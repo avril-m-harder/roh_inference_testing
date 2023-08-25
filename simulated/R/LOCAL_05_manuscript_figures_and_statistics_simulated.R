@@ -27,8 +27,10 @@ true.fns <- list.files(path = 'slim_true_data/', pattern = 'true_roh_coords')
 demos <- do.call(rbind, strsplit(true.fns, split = '_'))[,1]
 
 for(d in demos){
+  dir.create(paste0('../figures/',d), showWarnings = FALSE)
   for(h in c('vtrained','defaults')){
     print(paste0(d,' - ',h))
+    figure.ct <- 1
     ##### 1A. Read in data and summary files #####
     ### True ROH information
     true.rohs <- read.table(paste0('slim_true_data/',d,'_true_roh_coords.txt'))
@@ -108,7 +110,8 @@ for(d in demos){
     alph <- 0.4
     x.max <- max(true.rohs$length, bcf.gt.res$length, bcf.pl.res$length, plink.res$length)
     
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_ROH_length_histograms.pdf'), width = 6, height = 5)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_ROH_length_histograms.pdf'), width = 6, height = 5)
+    figure.ct <- figure.ct + 1
     
     ## true ROHs
     hist(true.rohs$length, breaks = 50, xlab = 'True ROH length', main = 'True simulated data', xlim = c(100e3, x.max))
@@ -142,7 +145,8 @@ for(d in demos){
     maximum <- max(bcf.gt.res$length, bcf.pl.res$length, plink.res$length)
     y.max <- max(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh)
     
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_cumulative_fROH_figures_simulated.pdf'), width = 20, height = 12)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_cumulative_fROH_figures_simulated.pdf'), width = 20, height = 12)
+    figure.ct <- figure.ct + 1
     par(mfrow = c(3, 5))
     
     ## Genotypes
@@ -340,7 +344,8 @@ for(d in demos){
       false.pos.y.lim <- 0.3
       
       ##### >>>>> False positives #####
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_PL_false_pos_rates.pdf'), width = 5, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_PL_false_pos_rates.pdf'), width = 5, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', 
            ylab = 'False positive rate', col = 'transparent', main = 'Genotype likelihoods', xlim = c(0.5,5.5), 
@@ -361,7 +366,8 @@ for(d in demos){
         }
       dev.off()  
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_GT_false_pos_rates.pdf'), width = 5, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_GT_false_pos_rates.pdf'), width = 5, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(gt.true.v.called$covg, gt.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', 
            ylab = 'False positive rate', col = 'transparent', main = 'Genotypes only', xlim = c(0.5,5.5), 
@@ -382,7 +388,8 @@ for(d in demos){
       }
       dev.off()
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_PLINK_false_pos_rates.pdf'), width = 5, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_PLINK_false_pos_rates.pdf'), width = 5, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(plink.true.v.called$covg, plink.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', 
            ylab = 'False positive rate', col = 'transparent', main = 'PLINK', xlim = c(0.5,5.5), 
@@ -403,7 +410,8 @@ for(d in demos){
       dev.off()
       
       ##### >>>>> False negatives #####
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_PL_false_neg_rates.pdf'), width = 5, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_PL_false_neg_rates.pdf'), width = 5, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(pl.true.v.called$covg, pl.true.v.called$false.neg.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'False negative rate', col = 'transparent', main = 'Genotype likelihoods', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
@@ -421,7 +429,8 @@ for(d in demos){
       }
       dev.off()
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_GT_false_neg_rates.pdf'), width = 5, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_GT_false_neg_rates.pdf'), width = 5, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(gt.true.v.called$covg, gt.true.v.called$false.neg.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'False negative rate', col = 'transparent', main = 'Genotypes only', xlim = c(0.5,5.5), cex.axis = text.size, cex.lab = text.size, xaxt = 'n')
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
@@ -439,7 +448,8 @@ for(d in demos){
       }
       dev.off()
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_PLINK_false_neg_rates.pdf'), width = 5, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_PLINK_false_neg_rates.pdf'), width = 5, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(plink.true.v.called$covg, plink.true.v.called$false.neg.rate, ylim = c(0,1), xlab = 'Coverage', ylab = 'False negative rate', col = 'transparent', main = 'PLINK', xlim = c(0.5,5.5), xaxt = 'n', cex.axis = text.size, cex.lab = text.size)
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
@@ -494,7 +504,8 @@ for(d in demos){
       poly.alph <- 0.4
       wid <- 2
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_true_fROH_vs_pos_neg_rates.pdf'), width = 7, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_true_fROH_vs_pos_neg_rates.pdf'), width = 7, height = 6)
+      figure.ct <- figure.ct + 1
       par(mai = c(1.02,0.82,0.82,1.42))
       ## PL
       plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
@@ -649,7 +660,8 @@ for(d in demos){
       diff <- 0.3 ## distance between GT and PL/PLINK
       OUT <- NULL ## for storing means
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_3_methods_false_pos_rates.pdf'), width = 8, height = 4.75)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_3_methods_false_pos_rates.pdf'), width = 8, height = 4.75)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       # plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'False positive rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
       plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'False positive rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
@@ -717,7 +729,8 @@ for(d in demos){
     
     i <- 1
     while(i == 1){ ## a loop just to make all the separate plots write with 1 command
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_3_methods_false_neg_rates.pdf'), width = 8, height = 4.75)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_3_methods_false_neg_rates.pdf'), width = 8, height = 4.75)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(pl.true.v.called$covg, pl.true.v.called$false.neg.rate, ylim = c(0, 1), xlab = 'Coverage', ylab = 'False negative rate', col = 'transparent', main = 'False negative rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
@@ -836,7 +849,8 @@ for(d in demos){
       diff <- 0.3 ## distance between GT and PL/PLINK
       OUT <- NULL ## for storing means
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_3_methods_false_pos_rates.pdf'), width = 8, height = 4.75)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_3_methods_false_pos_rates.pdf'), width = 8, height = 4.75)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       # plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'False positive rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
       plot(pl.true.v.called$covg, pl.true.v.called$false.pos.rate, ylim = c(0, false.pos.y.lim), xlab = 'Coverage', ylab = 'False positive rate', col = 'transparent', main = 'False positive rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
@@ -922,7 +936,8 @@ for(d in demos){
       
       dev.off()
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_3_methods_false_neg_rates.pdf'), width = 8, height = 4.75)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_3_methods_false_neg_rates.pdf'), width = 8, height = 4.75)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1,6.1,4.1,2.1))
       plot(pl.true.v.called$covg, pl.true.v.called$false.neg.rate, ylim = c(0, 1), xlab = 'Coverage', ylab = 'False negative rate', col = 'transparent', main = 'False negative rates', xlim = c(0.65,5.35), cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
       axis(1, at = c(1:5), labels = c('5X','10X','15X','30X','50X'), cex.axis = text.size)
@@ -1095,7 +1110,8 @@ for(d in demos){
       
       new.dat <- data.frame(true.froh=c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]))) ## new data for prediction
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_true_vs_called_fROH.pdf'), width = 4, height = 12)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_true_vs_called_fROH.pdf'), width = 4, height = 12)
+      figure.ct <- figure.ct + 1
       par(mfrow = c(3,1))
       
       plot(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = 'transparent', main = 'Genotype likelihoods', 
@@ -1159,7 +1175,8 @@ for(d in demos){
     
     new.dat <- data.frame(true.froh=c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]))) ## new data for prediction
     ## all on single plot for stats viz
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_all_methods_true_vs_called_fROH.pdf'), width = 7, height = 7)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_all_methods_true_vs_called_fROH.pdf'), width = 7, height = 7)
+    figure.ct <- figure.ct + 1
     plot(c(froh.stats$true.froh, froh.stats$true.froh, froh.stats$true.froh), 
          c(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh), pch = 19, col = 'transparent', main = 'All methods', 
          xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size)
@@ -1229,7 +1246,8 @@ for(d in demos){
     }
     
     ## check assumptions and some stats
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_truefROH_vs_callfROH_lm_assumptions.pdf'), width = 10, height = 10)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_truefROH_vs_callfROH_lm_assumptions.pdf'), width = 10, height = 10)
+    figure.ct <- figure.ct + 1
     par(mfrow = c(2,2))
     OUT <- NULL ## for saving statsy info
     for(m in unique(dat$method)){
@@ -1276,7 +1294,7 @@ for(d in demos){
     }
     dev.off()
     # colnames(OUT) <- c('method','covg','adj.r2','p.val','int.lo.lim','int','int.up.lim','slope.lo.lim','slope','slope.up.lim')
-    # write.csv(OUT, paste0('../figures/',d,'/',d,'_true_v_callfROH_stats.csv', row.names = FALSE)
+    # write.csv(OUT, paste0('../figures/',d,'/',figure.ct,'_',d,'_true_v_callfROH_stats.csv', row.names = FALSE)
     
     ##### >>> 4B. Plotting true f(ROH) vs. called - true f(ROH) #####
     dat$diff <- dat$call.froh - dat$true.froh
@@ -1284,7 +1302,8 @@ for(d in demos){
     y.min <- -0.7
     y.max <- 0.7
     
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_true_vs_diff.pdf'), width = 6, height = 5)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_true_vs_diff.pdf'), width = 6, height = 5)
+    figure.ct <- figure.ct + 1
     
     ## PL 
     sub <- dat[dat$method == 'PL',]
@@ -1365,7 +1384,8 @@ for(d in demos){
     
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'.pdf'), width = 10, height = 4)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'.pdf'), width = 10, height = 4)
+      figure.ct <- figure.ct + 1
       par(mfrow=c(1,3))
       plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
            xaxt = 'n', xlab = 'Coverage', main = 'Genotypes - simulated', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
@@ -1417,7 +1437,8 @@ for(d in demos){
       dev.off()
       
       ### background individual lines + means and 95% CIs
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_means_95CIs.pdf'), width = 10, height = 4)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_means_95CIs.pdf'), width = 10, height = 4)
+      figure.ct <- figure.ct + 1
       par(mfrow=c(1,3))
       
       ## GT 
@@ -1499,7 +1520,8 @@ for(d in demos){
       dev.off()
       
       ### background individual lines + means and 83% CIs
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_means_83CIs.pdf'), width = 10, height = 4)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_means_83CIs.pdf'), width = 10, height = 4)
+      figure.ct <- figure.ct + 1
       par(mfrow=c(1,3))
       
       ## GT 
@@ -1594,7 +1616,8 @@ for(d in demos){
     
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_REL_TO_MEAN.pdf'), width = 10, height = 4)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_simulated_coverage_vs_fROH_indivlines_n',n,'_REL_TO_MEAN.pdf'), width = 10, height = 4)
+      figure.ct <- figure.ct + 1
       par(mfrow=c(1,3))
       
       ## GT
@@ -1856,7 +1879,8 @@ for(d in demos){
     gt.overlap$prop.true <- gt.overlap$true.len/gt.overlap$len
     pl.overlap$prop.true <- pl.overlap$true.len/pl.overlap$len
     
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_roh_quality_measure_test.pdf'), width = 12, height = 5)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_roh_quality_measure_test.pdf'), width = 12, height = 5)
+    figure.ct <- figure.ct + 1
     par(mfrow = c(1,2))
     for(c in sort(unique(gt.overlap$covg))){
       sub <- gt.overlap[gt.overlap$covg == c,]
@@ -1892,7 +1916,8 @@ for(d in demos){
     
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'.pdf'), width = 16, height = 12)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'.pdf'), width = 16, height = 12)
+      figure.ct <- figure.ct + 1
       par(mfrow = c(3,4))
       
       ## GT
@@ -2136,7 +2161,8 @@ for(d in demos){
     
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals.pdf'), width = 12, height = 10)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals.pdf'), width = 12, height = 10)
+      figure.ct <- figure.ct + 1
       par(mfrow = c(3,4), mar = c(2.5, 2.5, 0.6, 0.6))
       
       ## GT
@@ -2429,7 +2455,8 @@ for(d in demos){
     
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals_all3methods.pdf'), width = 6, height = 5)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals_all3methods.pdf'), width = 6, height = 5)
+      figure.ct <- figure.ct + 1
       
       ## GT
       OUT <- NULL
@@ -2600,7 +2627,8 @@ for(d in demos){
     ## --- 95% CIs are comically small, may need to calculate a different way?
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals_separate_method_plots_95CIs.pdf'), width = 8, height = 5.5)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals_separate_method_plots_95CIs.pdf'), width = 8, height = 5.5)
+      figure.ct <- figure.ct + 1
       
       ymin <- -0.5
       ymax <- 0.5
@@ -2718,7 +2746,7 @@ for(d in demos){
     }
     
     ### Create true f(ROH) bin distributions
-    # pdf(paste0('../figures/',d,'/',d,'_',h,'_dists.pdf'), width = 4, height = 4)
+    # pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_dists.pdf'), width = 4, height = 4)
     # plot(density(true.roh.bins$true.b1), xlab = 'True f(ROH) - bin 1', xlim = c(-0.02, 0.25), xaxt = 'n')
     #   polygon(density(true.roh.bins$true.b1), col = 'grey')
     #   axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.07)
@@ -2747,26 +2775,27 @@ for(d in demos){
     bin.pal <- colorRampPalette(c(min.bin.col, max.bin.col))
     bin.cols <- bin.pal(4)
     alph <- 0.6
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_dists_single_plot.pdf'), width = 8, height = 5)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_dists_single_plot.pdf'), width = 8, height = 5)
+    figure.ct <- figure.ct + 1
     plot(density(true.roh.bins$true.b3), xlab = 'True f(ROH)', xlim = c(-0.02, 1.0), col = 'transparent', 
          cex.axis = text.size, cex.lab = text.size, zero.line = FALSE)
-    polygon(density(true.roh.bins$true.b4), col = alpha(bin.cols[4], alph), border = NA)
-    lines(density(true.roh.bins$true.b4), col = bin.cols[4])
-    polygon(density(true.roh.bins$true.b3), col = alpha(bin.cols[3], alph), border = NA)
-    lines(density(true.roh.bins$true.b3), col = bin.cols[3])
-    polygon(density(true.roh.bins$true.b2), col = alpha(bin.cols[2], alph), border = NA)
-    lines(density(true.roh.bins$true.b2), col = bin.cols[2])
-    polygon(density(true.roh.bins$true.b1), col = alpha(bin.cols[1], alph), border = NA)
-    lines(density(true.roh.bins$true.b1), col = bin.cols[1])
-    abline(v = mean(true.roh.bins$true.b1), col = bin.cols[1], lty = 2, lwd = 2)
-    abline(v = mean(true.roh.bins$true.b2), col = bin.cols[2], lty = 2, lwd = 2)
-    abline(v = mean(true.roh.bins$true.b3), col = bin.cols[3], lty = 2, lwd = 2)
-    abline(v = mean(true.roh.bins$true.b4), col = bin.cols[4], lty = 2, lwd = 2)
-    legend('topright', legend = c('Short','Intermediate','Long','Very long'), fill = c(alpha(bin.cols[1], alph), 
-                                                                                       alpha(bin.cols[2], alph),
-                                                                                       alpha(bin.cols[3], alph),
-                                                                                       alpha(bin.cols[4], alph)),
-           border = c(bin.cols[1:4]), inset = 0.05, bty = 'n', cex = text.size)
+      polygon(density(true.roh.bins$true.b4), col = alpha(bin.cols[4], alph), border = NA)
+      lines(density(true.roh.bins$true.b4), col = bin.cols[4])
+      polygon(density(true.roh.bins$true.b3), col = alpha(bin.cols[3], alph), border = NA)
+      lines(density(true.roh.bins$true.b3), col = bin.cols[3])
+      polygon(density(true.roh.bins$true.b2), col = alpha(bin.cols[2], alph), border = NA)
+      lines(density(true.roh.bins$true.b2), col = bin.cols[2])
+      polygon(density(true.roh.bins$true.b1), col = alpha(bin.cols[1], alph), border = NA)
+      lines(density(true.roh.bins$true.b1), col = bin.cols[1])
+      abline(v = mean(true.roh.bins$true.b1), col = bin.cols[1], lty = 2, lwd = 2)
+      abline(v = mean(true.roh.bins$true.b2), col = bin.cols[2], lty = 2, lwd = 2)
+      abline(v = mean(true.roh.bins$true.b3), col = bin.cols[3], lty = 2, lwd = 2)
+      abline(v = mean(true.roh.bins$true.b4), col = bin.cols[4], lty = 2, lwd = 2)
+      legend('topright', legend = c('Short','Intermediate','Long','Very long'), fill = c(alpha(bin.cols[1], alph), 
+                                                                                         alpha(bin.cols[2], alph),
+                                                                                         alpha(bin.cols[3], alph),
+                                                                                         alpha(bin.cols[4], alph)),
+             border = c(bin.cols[1:4]), inset = 0.05, bty = 'n', cex = text.size)
     dev.off()
     
     
@@ -2791,38 +2820,39 @@ for(d in demos){
     # abline(v = mean(true.roh.bins$true.b4), lty = 2, lwd = 3)
     # dev.off()
     
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_hists.pdf'), width = 6, height = 6)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_hists.pdf'), width = 6, height = 6)
+    figure.ct <- figure.ct + 1
     par(mar = c(6.1, 6.1, 4.1, 2.1))
     hist((true.roh.bins$true.b1), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
-    axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
-    axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
-    axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
-    axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
-    abline(v = mean(true.roh.bins$true.b1), lty = 2, lwd = 5)
+      axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+      axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+      axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
+      axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+      abline(v = mean(true.roh.bins$true.b1), lty = 2, lwd = 5)
     hist((true.roh.bins$true.b2), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
-    axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
-    axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
-    axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
-    axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
-    abline(v = mean(true.roh.bins$true.b2), lty = 2, lwd = 5)
+      axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+      axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+      axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
+      axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+      abline(v = mean(true.roh.bins$true.b2), lty = 2, lwd = 5)
     hist((true.roh.bins$true.b3), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
-    axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
-    axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
-    axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
-    axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
-    abline(v = mean(true.roh.bins$true.b3), lty = 2, lwd = 5)
+      axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+      axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+      axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3)
+      axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+      abline(v = mean(true.roh.bins$true.b3), lty = 2, lwd = 5)
     hist((true.roh.bins$true.b4), xlab = '', xlim = c(-0.02, 0.25), xaxt = 'n', ylim = c(0, 100), yaxt = 'n', ylab = '', breaks = 5, main='')
-    axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
-    axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
-    axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3) 
-    axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
-    abline(v = mean(true.roh.bins$true.b4), lty = 2, lwd = 5)
+      axis(1, at = c(0, 0.1, 0.2), label = rep('', 3), tck = -0.04, lwd = 3)
+      axis(1, at = c(0, 0.1, 0.2), cex.axis = text.size*3, line = 2.5, lwd = 0)
+      axis(2, at = c(0, 50, 100), label = rep('', 3), tck = -0.07, lwd = 3) 
+      axis(2, at = c(0, 100), cex.axis = text.size*3, line = 0.9, lwd = 0)
+      abline(v = mean(true.roh.bins$true.b4), lty = 2, lwd = 5)
     dev.off()
     
     
     # text.size <- 1.75
     # lwd <- 2
-    # pdf(paste0('../figures/',d,'/',d,'_',h,'_combined_hists.pdf'), width = 8, height = 5.5)
+    # pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_combined_hists.pdf'), width = 8, height = 5.5)
     # hist(true.roh.bins$true.b1, xlim = c(0, 0.2), ylim = c(0, 100), breaks = 10, cex.axis = text.size, cex.lab = text.size)
     #   hist(true.roh.bins$true.b2, add = TRUE, breaks = 10)
     #   hist(true.roh.bins$true.b3, add = TRUE, breaks = 10)
@@ -2847,7 +2877,8 @@ for(d in demos){
     OUT1 <- NULL
     t <- 1
     while(t == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_truelength_vs_numcalled.pdf'), width=14, height=10)  ## usually 16, 12
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_truelength_vs_numcalled.pdf'), width=14, height=10)  
+      figure.ct <- figure.ct + 1
       par(mfrow=c(3,6), mar=c(4.1,1.1,2.1,2.1))
       
       ## GT
@@ -2953,7 +2984,7 @@ for(d in demos){
     # m <- 'PLINK'
     # par(mfrow = c(2,2))
     # ## model Poisson regression using glm()
-    # pdf(paste0('../figures/',d,'/',d,'_',h,'_test.pdf'))
+    # pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_test.pdf'))
     # par(mfrow = c(2,2))
     # for(c in unique(dat$covg)){
     #   for(m in unique(dat$method)){
@@ -3051,7 +3082,8 @@ for(d in demos){
     k <- 1
     while(k == 1){
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_lumping_plots.pdf'), width = 6, height = 6)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_lumping_plots.pdf'), width = 6, height = 6)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1, 5.1, 4.1, 4.1))
       
       overlaps <- overlaps[overlaps$covg == 15,]
@@ -3152,7 +3184,8 @@ for(d in demos){
     k <- 1
     while(k == 1){
       
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_lumping_plots.pdf'), width = 6.2, height = 4.5)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_lumping_plots.pdf'), width = 6.2, height = 4.5)
+      figure.ct <- figure.ct + 1
       par(mar = c(5.1, 5.1, 4.1, 4.1))
       
       b <- 1
@@ -3319,30 +3352,31 @@ for(d in demos){
     k <- 1
     while(k == 1){
       ## Genotypes
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_SI_lumping_figure_panels.pdf'), width = 5, height = 5)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_SI_lumping_figure_panels.pdf'), width = 5, height = 5)
+      figure.ct <- figure.ct + 1
       plot(0,0, xlim = c(1,4), ylim = c(1, ymax), col = 'transparent', xaxt = 'n', ylab = '', xlab = '', main = 'Genotypes',
            cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
-      axis(1, at = c(1:4), cex.axis = txt.size, label = c('Short','Intermediate','Long','Very long'))
-      axis(2, at = c(1:ymax), cex.axis = txt.size)
-      x <- 5
-      for(c in sort(unique(overlaps$covg), decreasing = TRUE)){
-        sub <- overlaps[overlaps$covg == c & overlaps$method == 1,]
-        lines(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
-                                mean(sub[sub$bin == 2, 'num.true']),
-                                mean(sub[sub$bin == 3, 'num.true']),
-                                mean(sub[sub$bin == 4, 'num.true'])),
-              col = alpha(gt.cols[x], ln.alph))
-        points(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
-                                 mean(sub[sub$bin == 2, 'num.true']),
-                                 mean(sub[sub$bin == 3, 'num.true']),
-                                 mean(sub[sub$bin == 4, 'num.true'])),
-               pch = 23, bg = gt.cols[x], col = outline.col, cex = mean.size, lwd = lwd)
-        x <- x-1
-      }
-      legend('topleft', pch = 23, pt.bg = gt.cols, col = gt.cols, cex = text.size, pt.cex = mean.size, lwd = 1, pt.lwd = lwd,
-             legend = c('5X','10X','15X','30X','50X'), bty = 'n')
-      legend('topleft', pch = 23, pt.bg = gt.cols, col = outline.col, cex = text.size, pt.cex = mean.size, pt.lwd = lwd,
-             legend = c('','','','',''), bty = 'n', inset = c(pt.offset, 0))
+        axis(1, at = c(1:4), cex.axis = txt.size, label = c('Short','Intermediate','Long','Very long'))
+        axis(2, at = c(1:ymax), cex.axis = txt.size)
+        x <- 5
+        for(c in sort(unique(overlaps$covg), decreasing = TRUE)){
+          sub <- overlaps[overlaps$covg == c & overlaps$method == 1,]
+          lines(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                                  mean(sub[sub$bin == 2, 'num.true']),
+                                  mean(sub[sub$bin == 3, 'num.true']),
+                                  mean(sub[sub$bin == 4, 'num.true'])),
+                col = alpha(gt.cols[x], ln.alph))
+          points(x = c(1:4), y = c(mean(sub[sub$bin == 1, 'num.true']),
+                                   mean(sub[sub$bin == 2, 'num.true']),
+                                   mean(sub[sub$bin == 3, 'num.true']),
+                                   mean(sub[sub$bin == 4, 'num.true'])),
+                 pch = 23, bg = gt.cols[x], col = outline.col, cex = mean.size, lwd = lwd)
+          x <- x-1
+        }
+        legend('topleft', pch = 23, pt.bg = gt.cols, col = gt.cols, cex = text.size, pt.cex = mean.size, lwd = 1, pt.lwd = lwd,
+               legend = c('5X','10X','15X','30X','50X'), bty = 'n')
+        legend('topleft', pch = 23, pt.bg = gt.cols, col = outline.col, cex = text.size, pt.cex = mean.size, pt.lwd = lwd,
+               legend = c('','','','',''), bty = 'n', inset = c(pt.offset, 0))
       
       ## Likelihoods
       plot(0,0, xlim = c(1,4), ylim = c(1, ymax), col = 'transparent', xaxt = 'n', ylab = '', xlab = '', main = 'Likelihoods',
@@ -3405,7 +3439,8 @@ for(d in demos){
     
     t <- 1
     while(t == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_ROHspecificlengthcomps_scatterplot.pdf'), width=16, height=12)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_ROHspecificlengthcomps_scatterplot.pdf'), width=16, height=12)
+      figure.ct <- figure.ct + 1
       par(mfrow=c(3,6), mar=c(4.1,3.1,2.1,2.1))
       ## PL 
       for(c in sort(unique(pl.overlap$covg))){
@@ -3456,7 +3491,8 @@ for(d in demos){
     
     t <- 1
     while(t == 1){
-      pdf(paste0('../figures/',d,'/',d,'_',h,'_ROHspecificlengthcomps_lineplot.pdf'), width=16, height=12)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_ROHspecificlengthcomps_lineplot.pdf'), width=16, height=12)
+      figure.ct <- figure.ct + 1
       par(mfrow=c(3,6), mar=c(4.1,3.1,2.1,2.1))
       ## PL 
       for(c in sort(unique(pl.overlap$covg))){
@@ -3523,7 +3559,8 @@ for(d in demos){
     gt.true.v.called[gt.true.v.called$covg == 50, 'temp.colour'] <- cols[5] 
     pl.true.v.called[pl.true.v.called$covg == 50, 'temp.colour'] <- cols[5] 
     
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_true_fROH_vs_false_pos_and_neg_rates.pdf'), width = 7, height = 6)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_true_fROH_vs_false_pos_and_neg_rates.pdf'), width = 7, height = 6)
+    figure.ct <- figure.ct + 1
     par(xpd = TRUE, mar = c(5.1, 4.1, 4.1, 4.1))
     plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, pch = 19, col = plink.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'PLINK')
     legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
@@ -3544,7 +3581,8 @@ for(d in demos){
     ##### 99. Plotting individual true ROHs and called ROHs for all 3 analyses and coverage levels #####
     wid <- 3 ## line widths in plot ~ or ~
     hit <- 0.1 ## polygon height
-    pdf(paste0('../figures/',d,'/',d,'_',h,'_individual_true_and_called_ROHs_across_chromosome.pdf'), width = 15, height = 7)
+    pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_individual_true_and_called_ROHs_across_chromosome.pdf'), width = 15, height = 7)
+    figure.ct <- figure.ct + 1
     par(mar = c(5.1, 5.1, 4.1, 2.1))
     for(i in sort(as.numeric(unique(bcf.pl.res$id)))){
       sub.pl <- bcf.pl.res[bcf.pl.res$id == i,]
@@ -3609,7 +3647,7 @@ for(d in demos){
 #     xmin <- 1.5e7
 #     xmax <- 2.5e7
 # 
-#     # pdf(paste0('../figures/',d,'/',d,'_',h,'_individual_true_and_called_ROHs_across_chromosome.pdf'), width = 15, height = 7)
+#     # pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_individual_true_and_called_ROHs_across_chromosome.pdf'), width = 15, height = 7)
 #     par(mar = c(5.1, 5.1, 4.1, 2.1))
 #     for(i in unique(true.rohs$id)){
 #       sub.pl <- bcf.pl.res[bcf.pl.res$id == i,]
