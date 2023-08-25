@@ -1115,7 +1115,8 @@ for(d in demos){
       par(mfrow = c(3,1))
       
       plot(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = 'transparent', main = 'Genotype likelihoods', 
-           xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size)
+           xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size,
+           xlim = c(0,1), ylim = c(0, 1))
       abline(0,1, lty = 2)
       points(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = alpha(froh.stats$pl.temp.col, alph))
       for(c in unique(froh.stats$covg)){
@@ -1135,7 +1136,8 @@ for(d in demos){
       legend('topleft', col = pl.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0.02, bty = 'n', cex = txt.size)
       
       plot(froh.stats$true.froh, froh.stats$gt.froh, pch = 19, col = 'transparent', main = 'Genotypes only', 
-           xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size)
+           xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size,
+           xlim = c(0,1), ylim = c(0, 1))
       abline(0,1, lty = 2)  
       points(froh.stats$true.froh, froh.stats$gt.froh, pch = 19, col = alpha(froh.stats$gt.temp.col, alph))
       for(c in unique(froh.stats$covg)){
@@ -1153,7 +1155,8 @@ for(d in demos){
       legend('topleft', col = gt.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0.02, bty = 'n', cex = txt.size)
       
       plot(froh.stats$true.froh, froh.stats$plink.froh, pch = 19, col = 'transparent', main = 'PLINK', 
-           xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size)
+           xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size,
+           xlim = c(0,1), ylim = c(0, 1))
       abline(0,1, lty = 2)
       points(froh.stats$true.froh, froh.stats$plink.froh, pch = 19, col = alpha(froh.stats$plink.temp.col, alph))
       for(c in unique(froh.stats$covg)){
