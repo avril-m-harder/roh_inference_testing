@@ -357,8 +357,8 @@ for(d in demos){
           temp <- pl.true.v.called[pl.true.v.called$covg == c,]
           f <- sample(c(-100:100), length(unique(temp$id)))
           f <- f/shrink+x
-          points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
-          points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
+          points(f, temp$false.pos.rate, pch = 16, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+          points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 16, col = pl.col)
           suppressWarnings(arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10), 
                                   y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10),
                                   lwd = 2, col = pl.col, code=3, angle=90, length=0.1))
@@ -379,8 +379,8 @@ for(d in demos){
         temp <- gt.true.v.called[gt.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = gt.col)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 16, col = gt.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10), 
                y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10),
                lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
@@ -401,8 +401,8 @@ for(d in demos){
         temp <- plink.true.v.called[plink.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.pos.rate), pch = 19, col = plink.col)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.pos.rate), pch = 16, col = plink.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate) - sd(temp$false.pos.rate)/10), y1 = (mean(temp$false.pos.rate) + sd(temp$false.pos.rate)/10),
                lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
         x <- x+1
@@ -420,8 +420,8 @@ for(d in demos){
         temp <- pl.true.v.called[pl.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 19, col = pl.col)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 16, col = pl.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10), 
                y1 = (mean(temp$false.neg.rate, na.rm = TRUE) + sd(temp$false.neg.rate, na.rm = TRUE)/10),
                lwd = 2, col = pl.col, code=3, angle=90, length=0.1)
@@ -439,8 +439,8 @@ for(d in demos){
         temp <- gt.true.v.called[gt.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 19, col = gt.col)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 16, col = gt.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10), 
                y1 = (mean(temp$false.neg.rate, na.rm = TRUE) + sd(temp$false.neg.rate, na.rm = TRUE)/10),
                lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
@@ -458,8 +458,8 @@ for(d in demos){
         temp <- plink.true.v.called[plink.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.neg.rate), pch = 19, col = plink.col)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.neg.rate), pch = 16, col = plink.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate) - sd(temp$false.neg.rate)/10), y1 = (mean(temp$false.neg.rate) + sd(temp$false.neg.rate)/10),
                lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
         x <- x+1
@@ -508,7 +508,7 @@ for(d in demos){
       figure.ct <- figure.ct + 1
       par(mai = c(1.02,0.82,0.82,1.42))
       ## PL
-      plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
+      plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 16,
            xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
       for(c in unique(pl.true.v.called$covg)){
         sub <- pl.true.v.called[pl.true.v.called$covg == c,]
@@ -528,10 +528,10 @@ for(d in demos){
               col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
       }
       par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+      legend('right', pch = 16, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
       par(xpd = FALSE)
       
-      plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 19,
+      plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, col = alpha(pl.true.v.called$temp.colour, alph), pch = 16,
            xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Likelihoods', cex.lab = text.size, cex.axis = text.size)
       for(c in unique(pl.true.v.called$covg)){
         sub <- pl.true.v.called[pl.true.v.called$covg == c,]
@@ -551,11 +551,11 @@ for(d in demos){
               col = pl.true.v.called[pl.true.v.called$covg == c, 'temp.colour'][1])
       }
       par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+      legend('right', pch = 16, col = c(alpha(pl.cols[1], alph), alpha(pl.cols[2], alph), alpha(pl.cols[3], alph), alpha(pl.cols[4], alph), alpha(pl.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
       par(xpd = FALSE)
       
       ## GT
-      plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
+      plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 16,
            xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
       for(c in unique(gt.true.v.called$covg)){
         sub <- gt.true.v.called[gt.true.v.called$covg == c,]
@@ -575,10 +575,10 @@ for(d in demos){
               col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
       }
       par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+      legend('right', pch = 16, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
       par(xpd = FALSE)
       
-      plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 19,
+      plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, col = alpha(gt.true.v.called$temp.colour, alph), pch = 16,
            xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
       for(c in unique(gt.true.v.called$covg)){
         sub <- gt.true.v.called[gt.true.v.called$covg == c,]
@@ -598,11 +598,11 @@ for(d in demos){
               col = gt.true.v.called[gt.true.v.called$covg == c, 'temp.colour'][1])
       }
       par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+      legend('right', pch = 16, col = c(alpha(gt.cols[1], alph), alpha(gt.cols[2], alph), alpha(gt.cols[3], alph), alpha(gt.cols[4], alph), alpha(gt.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
       par(xpd = FALSE)
       
       ## PLINK
-      plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
+      plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 16,
            xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False negative rate', main = 'Genotypes', cex.lab = text.size, cex.axis = text.size)
       for(c in unique(plink.true.v.called$covg)){
         sub <- plink.true.v.called[plink.true.v.called$covg == c,]
@@ -622,10 +622,10 @@ for(d in demos){
               col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
       }
       par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+      legend('right', pch = 16, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
       par(xpd = FALSE)
       
-      plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 19,
+      plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, col = alpha(plink.true.v.called$temp.colour, alph), pch = 16,
            xlab = substitute(paste('True ',italic('F')[ROH])), ylab = 'False positive rate', main = 'PLINK', cex.lab = text.size, cex.axis = text.size)
       for(c in unique(plink.true.v.called$covg)){
         sub <- plink.true.v.called[plink.true.v.called$covg == c,]
@@ -641,7 +641,7 @@ for(d in demos){
               col = plink.true.v.called[plink.true.v.called$covg == c, 'temp.colour'][1])
       }
       par(xpd = TRUE)
-      legend('right', pch = 19, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
+      legend('right', pch = 16, col = c(alpha(plink.cols[1], alph), alpha(plink.cols[2], alph), alpha(plink.cols[3], alph), alpha(plink.cols[4], alph), alpha(plink.cols[5], alph)), legend = c('5X','10X','15X','30X','50X'), inset = -0.2, cex = text.size)
       par(xpd = FALSE)
       
       k <- k+1
@@ -672,8 +672,8 @@ for(d in demos){
           temp <- pl.true.v.called[pl.true.v.called$covg == c,]
           f <- sample(c(-100:100), length(unique(temp$id)))
           f <- f/shrink+x
-          points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
-          points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = pl.col)
+          points(f, temp$false.pos.rate, pch = 16, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+          points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 16, col = pl.col)
           suppressWarnings(arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
                                   y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
                                   lwd = 2, col = pl.col, code=3, angle=90, length=0.1))
@@ -686,8 +686,8 @@ for(d in demos){
         temp <- gt.true.v.called[gt.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = gt.col)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 16, col = gt.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
                y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
                lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
@@ -700,8 +700,8 @@ for(d in demos){
         temp <- plink.true.v.called[plink.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 19, col = plink.col)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.pos.rate, na.rm = TRUE), pch = 16, col = plink.col)
         arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
                y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
                lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
@@ -740,8 +740,8 @@ for(d in demos){
         temp <- pl.true.v.called[pl.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 19, col = pl.col)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 16, col = pl.col)
         
         ## SEs
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10), 
@@ -768,8 +768,8 @@ for(d in demos){
         temp <- gt.true.v.called[gt.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 19, col = gt.col)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 16, col = gt.col)
         
         ## SEs
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10), 
@@ -795,8 +795,8 @@ for(d in demos){
         temp <- plink.true.v.called[plink.true.v.called$covg == c,]
         f <- sample(c(-100:100), length(unique(temp$id)))
         f <- f/shrink+x
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
-        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 19, col = plink.col)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+        points(x, mean(temp$false.neg.rate, na.rm = TRUE), pch = 16, col = plink.col)
         
         ## SEs
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10), 
@@ -869,8 +869,8 @@ for(d in demos){
                 col = alpha(pl.col, poly.alph), border = NA)
         
         lines(x = c(x-diff/2, x+diff/2), y = c(median(temp$false.pos.rate, na.rm = TRUE), median(temp$false.pos.rate, na.rm = TRUE))
-              , pch = 19, col = pl.col, lwd = 2)
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+              , pch = 16, col = pl.col, lwd = 2)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
         #        y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
         #        lwd = 2, col = pl.col, code=3, angle=90, length=0.1)
@@ -891,8 +891,8 @@ for(d in demos){
                                                                              quantile(temp$false.pos.rate, probs = c(low.q, hi.q))[2]),
                 col = alpha(gt.col, poly.alph), border = NA)
         lines(x = c(x-diff/2.2, x+diff/2.2), y = c(median(temp$false.pos.rate, na.rm = TRUE), median(temp$false.pos.rate, na.rm = TRUE))
-              , pch = 19, col = gt.col, lwd = 2)
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+              , pch = 16, col = gt.col, lwd = 2)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
         #        y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
         #        lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
@@ -911,8 +911,8 @@ for(d in demos){
                                                                              quantile(temp$false.pos.rate, probs = c(low.q, hi.q))[2]),
                 col = alpha(plink.col, poly.alph), border = NA)
         lines(x = c(x-diff/2.2, x+diff/2.2), y = c(median(temp$false.pos.rate, na.rm = TRUE), median(temp$false.pos.rate, na.rm = TRUE))
-              , pch = 19, col = plink.col, lwd = 2)
-        points(f, temp$false.pos.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+              , pch = 16, col = plink.col, lwd = 2)
+        points(f, temp$false.pos.rate, pch = 16, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.pos.rate, na.rm = TRUE) - sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96), 
         #        y1 = (mean(temp$false.pos.rate, na.rm = TRUE) + sd(temp$false.pos.rate, na.rm = TRUE)/10*1.96),
         #        lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
@@ -955,8 +955,8 @@ for(d in demos){
                 col = alpha(pl.col, poly.alph), border = NA)
         
         lines(x = c(x-diff/2.2, x+diff/2.2), y = c(median(temp$false.neg.rate, na.rm = TRUE), median(temp$false.neg.rate, na.rm = TRUE))
-              , pch = 19, col = pl.col, lwd = 2)
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
+              , pch = 16, col = pl.col, lwd = 2)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(pl.col, alph), cex = 0.5) ## add individual points
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10*1.96), 
         #        y1 = (mean(temp$false.neg.rate, na.rm = TRUE) + sd(temp$false.neg.rate, na.rm = TRUE)/10*1.96),
         #        lwd = 2, col = pl.col, code=3, angle=90, length=0.1)
@@ -977,8 +977,8 @@ for(d in demos){
                                                                              quantile(temp$false.neg.rate, probs = c(low.q, hi.q))[2]),
                 col = alpha(gt.col, poly.alph), border = NA)
         lines(x = c(x-diff/2.2, x+diff/2.2), y = c(median(temp$false.neg.rate, na.rm = TRUE), median(temp$false.neg.rate, na.rm = TRUE))
-              , pch = 19, col = gt.col, lwd = 2)
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
+              , pch = 16, col = gt.col, lwd = 2)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(gt.col, alph), cex = 0.5) ## add individual points
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10*1.96), 
         #        y1 = (mean(temp$false.neg.rate, na.rm = TRUE) + sd(temp$false.neg.rate, na.rm = TRUE)/10*1.96),
         #        lwd = 2, col = gt.col, code=3, angle=90, length=0.1)
@@ -997,8 +997,8 @@ for(d in demos){
                                                                              quantile(temp$false.neg.rate, probs = c(low.q, hi.q))[2]),
                 col = alpha(plink.col, poly.alph), border = NA)
         lines(x = c(x-diff/2.2, x+diff/2.2), y = c(median(temp$false.neg.rate, na.rm = TRUE), median(temp$false.neg.rate, na.rm = TRUE))
-              , pch = 19, col = plink.col, lwd = 2)
-        points(f, temp$false.neg.rate, pch = 19, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
+              , pch = 16, col = plink.col, lwd = 2)
+        points(f, temp$false.neg.rate, pch = 16, col = alpha(plink.col, alph), cex = 0.5) ## add individual points
         # arrows(x0 = x, x1 = x, y0 = (mean(temp$false.neg.rate, na.rm = TRUE) - sd(temp$false.neg.rate, na.rm = TRUE)/10*1.96), 
         #        y1 = (mean(temp$false.neg.rate, na.rm = TRUE) + sd(temp$false.neg.rate, na.rm = TRUE)/10*1.96),
         #        lwd = 2, col = plink.col, code=3, angle=90, length=0.1)
@@ -1114,11 +1114,11 @@ for(d in demos){
       figure.ct <- figure.ct + 1
       par(mfrow = c(3,1))
       
-      plot(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = 'transparent', main = 'Genotype likelihoods', 
+      plot(froh.stats$true.froh, froh.stats$pl.froh, pch = 16, col = 'transparent', main = 'Genotype likelihoods', 
            xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size,
            xlim = c(0,1), ylim = c(0, 1))
       abline(0,1, lty = 2)
-      points(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = alpha(froh.stats$pl.temp.col, alph))
+      points(froh.stats$true.froh, froh.stats$pl.froh, pch = 16, col = alpha(froh.stats$pl.temp.col, alph))
       for(c in unique(froh.stats$covg)){
         mod <- lm(froh.stats[froh.stats$covg == c, 'pl.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
         new.vals <- predict(mod, newdata = new.dat, interval = 'confidence', level = 0.95)
@@ -1135,11 +1135,11 @@ for(d in demos){
       }
       legend('topleft', col = pl.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0.02, bty = 'n', cex = txt.size)
       
-      plot(froh.stats$true.froh, froh.stats$gt.froh, pch = 19, col = 'transparent', main = 'Genotypes only', 
+      plot(froh.stats$true.froh, froh.stats$gt.froh, pch = 16, col = 'transparent', main = 'Genotypes only', 
            xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size,
            xlim = c(0,1), ylim = c(0, 1))
       abline(0,1, lty = 2)  
-      points(froh.stats$true.froh, froh.stats$gt.froh, pch = 19, col = alpha(froh.stats$gt.temp.col, alph))
+      points(froh.stats$true.froh, froh.stats$gt.froh, pch = 16, col = alpha(froh.stats$gt.temp.col, alph))
       for(c in unique(froh.stats$covg)){
         mod <- lm(froh.stats[froh.stats$covg == c, 'gt.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
         new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
@@ -1154,11 +1154,11 @@ for(d in demos){
       }
       legend('topleft', col = gt.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0.02, bty = 'n', cex = txt.size)
       
-      plot(froh.stats$true.froh, froh.stats$plink.froh, pch = 19, col = 'transparent', main = 'PLINK', 
+      plot(froh.stats$true.froh, froh.stats$plink.froh, pch = 16, col = 'transparent', main = 'PLINK', 
            xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size,
            xlim = c(0,1), ylim = c(0, 1))
       abline(0,1, lty = 2)
-      points(froh.stats$true.froh, froh.stats$plink.froh, pch = 19, col = alpha(froh.stats$plink.temp.col, alph))
+      points(froh.stats$true.froh, froh.stats$plink.froh, pch = 16, col = alpha(froh.stats$plink.temp.col, alph))
       for(c in unique(froh.stats$covg)){
         mod <- lm(froh.stats[froh.stats$covg == c, 'plink.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
         new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
@@ -1181,10 +1181,10 @@ for(d in demos){
     pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_all_methods_true_vs_called_fROH.pdf'), width = 7, height = 7)
     figure.ct <- figure.ct + 1
     plot(c(froh.stats$true.froh, froh.stats$true.froh, froh.stats$true.froh), 
-         c(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh), pch = 19, col = 'transparent', main = 'All methods', 
+         c(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh), pch = 16, col = 'transparent', main = 'All methods', 
          xlab = 'True f(ROH)', ylab = 'Called f(ROH)', cex.axis = txt.size, cex.lab = txt.size)
     abline(0,1, lty = 2)
-    points(froh.stats$true.froh, froh.stats$pl.froh, pch = 19, col = alpha(froh.stats$pl.temp.col, alph))
+    points(froh.stats$true.froh, froh.stats$pl.froh, pch = 16, col = alpha(froh.stats$pl.temp.col, alph))
     for(c in unique(froh.stats$covg)){
       mod <- lm(froh.stats[froh.stats$covg == c, 'pl.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
       # suppressWarnings(clipplot(abline(mod, col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1]),
@@ -1200,7 +1200,7 @@ for(d in demos){
       lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid,
             col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1])
     }
-    points(froh.stats$true.froh, froh.stats$gt.froh, pch = 19, col = alpha(froh.stats$gt.temp.col, alph))
+    points(froh.stats$true.froh, froh.stats$gt.froh, pch = 16, col = alpha(froh.stats$gt.temp.col, alph))
     for(c in unique(froh.stats$covg)){
       mod <- lm(froh.stats[froh.stats$covg == c, 'gt.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
       # suppressWarnings(clipplot(abline(mod, col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1]),
@@ -1216,7 +1216,7 @@ for(d in demos){
       lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid,
             col = froh.stats[froh.stats$covg == c, 'gt.temp.col'][1])
     }
-    points(froh.stats$true.froh, froh.stats$plink.froh, pch = 19, col = alpha(froh.stats$plink.temp.col, alph))
+    points(froh.stats$true.froh, froh.stats$plink.froh, pch = 16, col = alpha(froh.stats$plink.temp.col, alph))
     for(c in unique(froh.stats$covg)){
       mod <- lm(froh.stats[froh.stats$covg == c, 'plink.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
       # suppressWarnings(clipplot(abline(mod, col = froh.stats[froh.stats$covg == c, 'pl.temp.col'][1]),
@@ -1316,11 +1316,11 @@ for(d in demos){
     x <- 1
     for(c in sort(unique(sub$covg))){
       temp <- sub[sub$covg == c,]
-      points(temp$true.froh, temp$diff, col = alpha(pl.cols[x], alph), pch = 19)
+      points(temp$true.froh, temp$diff, col = alpha(pl.cols[x], alph), pch = 16)
       abline(lm(temp$dif ~ temp$true.froh), col = pl.cols[x])
       x <- x+1
     }
-    legend('topleft', col = alpha(pl.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 19, bg = 'white')
+    legend('topleft', col = alpha(pl.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 16, bg = 'white')
     
     ## GT
     sub <- dat[dat$method == 'GT',]
@@ -1330,11 +1330,11 @@ for(d in demos){
     x <- 1
     for(c in sort(unique(sub$covg))){
       temp <- sub[sub$covg == c,]
-      points(temp$true.froh, temp$diff, col = alpha(gt.cols[x], alph), pch = 19)
+      points(temp$true.froh, temp$diff, col = alpha(gt.cols[x], alph), pch = 16)
       abline(lm(temp$dif ~ temp$true.froh), col = gt.cols[x])
       x <- x+1
     }
-    legend('topright', col = alpha(gt.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 19, bg = 'white')
+    legend('topright', col = alpha(gt.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 16, bg = 'white')
     
     ## PLINK 
     sub <- dat[dat$method == 'PLINK',]
@@ -1344,11 +1344,11 @@ for(d in demos){
     x <- 1
     for(c in sort(unique(sub$covg))){
       temp <- sub[sub$covg == c,]
-      points(temp$true.froh, temp$diff, col = alpha(plink.cols[x], alph), pch = 19)
+      points(temp$true.froh, temp$diff, col = alpha(plink.cols[x], alph), pch = 16)
       abline(lm(temp$dif ~ temp$true.froh), col = plink.cols[x])
       x <- x+1
     }
-    legend('topright', col = alpha(plink.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 19, bg = 'white')
+    legend('topright', col = alpha(plink.cols, alph), legend = c('5X','10X','15X','30X','50X'), pch = 16, bg = 'white')
     dev.off()  
     
     
@@ -1400,8 +1400,8 @@ for(d in demos){
         temp <- temp[order(temp$covg),]
         # lines(c(1:2), c(temp$true.froh[1], temp$gt.froh[1]), col = alpha('black', alph))
         lines(c(2:6), c(temp$gt.froh), col = alpha(gt.col, alph))
-        points(c(2:6), c(temp$gt.froh), pch = 19, col = alpha(gt.col, pt.alph))
-        # points(1, temp$true.froh[1], pch = 19, col = 'black')
+        points(c(2:6), c(temp$gt.froh), pch = 16, col = alpha(gt.col, pt.alph))
+        # points(1, temp$true.froh[1], pch = 16, col = 'black')
         lines(c(2:6), OUT$mean.gt, col = gt.col, lwd = lwd)
         points(c(2:6), OUT$mean.gt, col = gt.col, pch = 23, bg = 'white', cex = 1.5)
       }  
@@ -1416,8 +1416,8 @@ for(d in demos){
         temp <- temp[order(temp$covg),]
         # lines(c(1:2), c(temp$true.froh[1], temp$pl.froh[1]), col = alpha('black', alph))
         lines(c(2:6), c(temp$pl.froh), col = alpha(pl.col, alph))
-        points(c(2:6), c(temp$pl.froh), pch = 19, col = alpha(pl.col, pt.alph))
-        # points(1, temp$true.froh[1], pch = 19, col = 'black')
+        points(c(2:6), c(temp$pl.froh), pch = 16, col = alpha(pl.col, pt.alph))
+        # points(1, temp$true.froh[1], pch = 16, col = 'black')
         lines(c(2:6), OUT$mean.pl, col = pl.col, lwd = lwd)
         points(c(2:6), OUT$mean.pl, col = pl.col, pch = 23, bg = 'white', cex = 1.5)
       }
@@ -1432,8 +1432,8 @@ for(d in demos){
         temp <- temp[order(temp$covg),]
         # lines(c(1:2), c(temp$true.froh[1], temp$plink.froh[1]), col = alpha('black', alph))
         lines(c(2:6), c(temp$plink.froh), col = alpha(plink.col, alph))
-        points(c(2:6), c(temp$plink.froh), pch = 19, col = alpha(plink.col, pt.alph))
-        # points(1, temp$true.froh[1], pch = 19, col = 'black')
+        points(c(2:6), c(temp$plink.froh), pch = 16, col = alpha(plink.col, pt.alph))
+        # points(1, temp$true.froh[1], pch = 16, col = 'black')
         lines(c(2:6), OUT$mean.plink, col = plink.col, lwd = lwd)
         points(c(2:6), OUT$mean.plink, col = plink.col, pch = 23, bg = 'white', cex = 1.5)
       }
@@ -1458,13 +1458,13 @@ for(d in demos){
       }  
       
       # lines(c(1,2), c(OUT$mean.true[1], OUT$mean.gt[1]), lwd = lwd)
-      # points(1, OUT$mean.true[1], pch = 19, col = 'black', cex = pt.size)
+      # points(1, OUT$mean.true[1], pch = 16, col = 'black', cex = pt.size)
       # arrows(x0 = 1, x1 = 1, y0 = c(OUT$mean.true[1] - OUT$se.true[1]*1.96),
       #        y1 = c(OUT$mean.true[1] + OUT$se.true[1]*1.96),
       #        lwd = lwd, col = 'black', code=3, angle=90, length= err.wid)
       
       lines(c(2:6), c(OUT$mean.gt), col = gt.col, lwd = lwd)
-      points(c(2:6), OUT$mean.gt, pch = 19, col = gt.col, cex = pt.size)
+      points(c(2:6), OUT$mean.gt, pch = 16, col = gt.col, cex = pt.size)
       arrows(x0 = c(2:6), x1 = c(2:6), y0 = c(OUT$mean.gt - OUT$se.gt*1.96),
              y1 = c(OUT$mean.gt + OUT$se.gt*1.96),
              lwd = lwd, col = gt.col, code=3, angle=90, length= err.wid)
@@ -1483,13 +1483,13 @@ for(d in demos){
       }  
       
       # lines(c(1,2), c(OUT$mean.true[1], OUT$mean.pl[1]), lwd = lwd)
-      # points(1, OUT$mean.true[1], pch = 19, col = 'black', cex = pt.size)
+      # points(1, OUT$mean.true[1], pch = 16, col = 'black', cex = pt.size)
       # arrows(x0 = 1, x1 = 1, y0 = c(OUT$mean.true[1] - OUT$se.true[1]*1.96),
       #        y1 = c(OUT$mean.true[1] + OUT$se.true[1]*1.96),
       #        lwd = lwd, col = 'black', code=3, angle=90, length= err.wid)
       
       lines(c(2:6), c(OUT$mean.pl), col = pl.col, lwd = lwd)
-      points(c(2:6), OUT$mean.pl, pch = 19, col = pl.col, cex = pt.size)
+      points(c(2:6), OUT$mean.pl, pch = 16, col = pl.col, cex = pt.size)
       arrows(x0 = c(2:6), x1 = c(2:6), y0 = c(OUT$mean.pl - OUT$se.pl*1.96),
              y1 = c(OUT$mean.pl + OUT$se.pl*1.96),
              lwd = lwd, col = pl.col, code=3, angle=90, length= err.wid)
@@ -1508,13 +1508,13 @@ for(d in demos){
       }  
       
       # lines(c(1,2), c(OUT$mean.true[1], OUT$mean.plink[1]), lwd = lwd)
-      # points(1, OUT$mean.true[1], pch = 19, col = 'black', cex = pt.size)
+      # points(1, OUT$mean.true[1], pch = 16, col = 'black', cex = pt.size)
       # arrows(x0 = 1, x1 = 1, y0 = c(OUT$mean.true[1] - OUT$se.true[1]*1.96),
       #        y1 = c(OUT$mean.true[1] + OUT$se.true[1]*1.96),
       #        lwd = lwd, col = 'black', code=3, angle=90, length= err.wid)
       
       lines(c(2:6), c(OUT$mean.plink), col = plink.col, lwd = lwd)
-      points(c(2:6), OUT$mean.plink, pch = 19, col = plink.col, cex = pt.size)
+      points(c(2:6), OUT$mean.plink, pch = 16, col = plink.col, cex = pt.size)
       arrows(x0 = c(2:6), x1 = c(2:6), y0 = c(OUT$mean.plink - OUT$se.plink*1.96),
              y1 = c(OUT$mean.plink + OUT$se.plink*1.96),
              lwd = lwd, col = plink.col, code=3, angle=90, length= err.wid)
@@ -1541,13 +1541,13 @@ for(d in demos){
       }  
       
       # lines(c(1,2), c(OUT$mean.true[1], OUT$mean.gt[1]), lwd = lwd)
-      # points(1, OUT$mean.true[1], pch = 19, col = 'black', cex = pt.size)
+      # points(1, OUT$mean.true[1], pch = 16, col = 'black', cex = pt.size)
       # arrows(x0 = 1, x1 = 1, y0 = c(OUT$mean.true[1] - OUT$se.true[1]*1.37),
       #        y1 = c(OUT$mean.true[1] + OUT$se.true[1]*1.37),
       #        lwd = lwd, col = 'black', code=3, angle=90, length= err.wid)
       
       lines(c(2:6), c(OUT$mean.gt), col = gt.col, lwd = lwd)
-      points(c(2:6), OUT$mean.gt, pch = 19, col = gt.col, cex = pt.size)
+      points(c(2:6), OUT$mean.gt, pch = 16, col = gt.col, cex = pt.size)
       arrows(x0 = c(2:6), x1 = c(2:6), y0 = c(OUT$mean.gt - OUT$se.gt*1.37),
              y1 = c(OUT$mean.gt + OUT$se.gt*1.37),
              lwd = lwd, col = gt.col, code=3, angle=90, length= err.wid)
@@ -1566,13 +1566,13 @@ for(d in demos){
       }  
       
       # lines(c(1,2), c(OUT$mean.true[1], OUT$mean.pl[1]), lwd = lwd)
-      # points(1, OUT$mean.true[1], pch = 19, col = 'black', cex = pt.size)
+      # points(1, OUT$mean.true[1], pch = 16, col = 'black', cex = pt.size)
       # arrows(x0 = 1, x1 = 1, y0 = c(OUT$mean.true[1] - OUT$se.true[1]*1.37),
       #        y1 = c(OUT$mean.true[1] + OUT$se.true[1]*1.37),
       #        lwd = lwd, col = 'black', code=3, angle=90, length= err.wid)
       
       lines(c(2:6), c(OUT$mean.pl), col = pl.col, lwd = lwd)
-      points(c(2:6), OUT$mean.pl, pch = 19, col = pl.col, cex = pt.size)
+      points(c(2:6), OUT$mean.pl, pch = 16, col = pl.col, cex = pt.size)
       arrows(x0 = c(2:6), x1 = c(2:6), y0 = c(OUT$mean.pl - OUT$se.pl*1.37),
              y1 = c(OUT$mean.pl + OUT$se.pl*1.37),
              lwd = lwd, col = pl.col, code=3, angle=90, length= err.wid)
@@ -1591,13 +1591,13 @@ for(d in demos){
       }  
       
       # lines(c(1,2), c(OUT$mean.true[1], OUT$mean.plink[1]), lwd = lwd)
-      # points(1, OUT$mean.true[1], pch = 19, col = 'black', cex = pt.size)
+      # points(1, OUT$mean.true[1], pch = 16, col = 'black', cex = pt.size)
       # arrows(x0 = 1, x1 = 1, y0 = c(OUT$mean.true[1] - OUT$se.true[1]*1.37),
       #        y1 = c(OUT$mean.true[1] + OUT$se.true[1]*1.37),
       #        lwd = lwd, col = 'black', code=3, angle=90, length= err.wid)
       
       lines(c(2:6), c(OUT$mean.plink), col = plink.col, lwd = lwd)
-      points(c(2:6), OUT$mean.plink, pch = 19, col = plink.col, cex = pt.size)
+      points(c(2:6), OUT$mean.plink, pch = 16, col = plink.col, cex = pt.size)
       arrows(x0 = c(2:6), x1 = c(2:6), y0 = c(OUT$mean.plink - OUT$se.plink*1.37),
              y1 = c(OUT$mean.plink + OUT$se.plink*1.37),
              lwd = lwd, col = plink.col, code=3, angle=90, length= err.wid)
@@ -1641,14 +1641,14 @@ for(d in demos){
         ## plotting 5X - 50X
         lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$gt.froh[1]), col = alpha('black', alph))
         lines(c(2:6), c(temp$gt.froh), col = alpha(gt.col, alph))
-        points(c(2:6), c(temp$gt.froh), pch = 19, col = gt.col)
+        points(c(2:6), c(temp$gt.froh), pch = 16, col = gt.col)
         
         ## only plotting 15X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$gt.froh[3]), col = alpha('black', alph))
         # lines(c(2:4), c(temp$gt.froh[3:5]), col = alpha(gt.col, alph))
-        # points(c(2:4), c(temp$gt.froh[3:5]), pch = 19, col = gt.col)
+        # points(c(2:4), c(temp$gt.froh[3:5]), pch = 16, col = gt.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       }  
       
       ## PL
@@ -1669,14 +1669,14 @@ for(d in demos){
         ## plotting 5X - 50X
         lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$pl.froh[1]), col = alpha('black', alph))
         lines(c(2:6), c(temp$pl.froh), col = alpha(pl.col, alph))
-        points(c(2:6), c(temp$pl.froh), pch = 19, col = pl.col)
+        points(c(2:6), c(temp$pl.froh), pch = 16, col = pl.col)
         
         ## only plotting 15X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$pl.froh[3]), col = alpha('black', alph))
         # lines(c(2:4), c(temp$pl.froh[3:5]), col = alpha(pl.col, alph))
-        # points(c(2:4), c(temp$pl.froh[3:5]), pch = 19, col = pl.col)
+        # points(c(2:4), c(temp$pl.froh[3:5]), pch = 16, col = pl.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       }  
       
       ## PLINK
@@ -1697,14 +1697,14 @@ for(d in demos){
         ## plotting 5X - 50X
         lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$plink.froh[1]), col = alpha('black', alph))
         lines(c(2:6), c(temp$plink.froh), col = alpha(plink.col, alph))
-        points(c(2:6), c(temp$plink.froh), pch = 19, col = plink.col)
+        points(c(2:6), c(temp$plink.froh), pch = 16, col = plink.col)
         
         ## only plotting 15X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$plink.froh[3]), col = alpha('black', alph))
         # lines(c(2:4), c(temp$plink.froh[3:5]), col = alpha(plink.col, alph))
-        # points(c(2:4), c(temp$plink.froh[3:5]), pch = 19, col = plink.col)
+        # points(c(2:4), c(temp$plink.froh[3:5]), pch = 16, col = plink.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       } 
       
       
@@ -1726,14 +1726,14 @@ for(d in demos){
         ## plotting 5X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$gt.froh[1]), col = alpha('black', alph))
         # lines(c(2:6), c(temp$gt.froh), col = alpha(gt.col, alph))
-        # points(c(2:6), c(temp$gt.froh), pch = 19, col = gt.col)
+        # points(c(2:6), c(temp$gt.froh), pch = 16, col = gt.col)
         
         ## only plotting 15X - 50X
         lines(c(1,4), c((temp$true.froh[1] - MEANS[1]), temp$gt.froh[3]), col = alpha('black', alph))
         lines(c(4:6), c(temp$gt.froh[3:5]), col = alpha(gt.col, alph))
-        points(c(4:6), c(temp$gt.froh[3:5]), pch = 19, col = gt.col)
+        points(c(4:6), c(temp$gt.froh[3:5]), pch = 16, col = gt.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       }  
       
       ## PL
@@ -1754,14 +1754,14 @@ for(d in demos){
         ## plotting 5X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$pl.froh[1]), col = alpha('black', alph))
         # lines(c(2:6), c(temp$pl.froh), col = alpha(pl.col, alph))
-        # points(c(2:6), c(temp$pl.froh), pch = 19, col = pl.col)
+        # points(c(2:6), c(temp$pl.froh), pch = 16, col = pl.col)
         
         ## only plotting 15X - 50X
         lines(c(1,4), c((temp$true.froh[1] - MEANS[1]), temp$pl.froh[3]), col = alpha('black', alph))
         lines(c(4:6), c(temp$pl.froh[3:5]), col = alpha(pl.col, alph))
-        points(c(4:6), c(temp$pl.froh[3:5]), pch = 19, col = pl.col)
+        points(c(4:6), c(temp$pl.froh[3:5]), pch = 16, col = pl.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       }  
       
       ## PLINK
@@ -1782,14 +1782,14 @@ for(d in demos){
         ## plotting 5X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$plink.froh[1]), col = alpha('black', alph))
         # lines(c(2:6), c(temp$plink.froh), col = alpha(plink.col, alph))
-        # points(c(2:6), c(temp$plink.froh), pch = 19, col = plink.col)
+        # points(c(2:6), c(temp$plink.froh), pch = 16, col = plink.col)
         
         ## only plotting 15X - 50X
         lines(c(1,4), c((temp$true.froh[1] - MEANS[1]), temp$plink.froh[3]), col = alpha('black', alph))
         lines(c(4:6), c(temp$plink.froh[3:5]), col = alpha(plink.col, alph))
-        points(c(4:6), c(temp$plink.froh[3:5]), pch = 19, col = plink.col)
+        points(c(4:6), c(temp$plink.froh[3:5]), pch = 16, col = plink.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       } 
       
       ## GT
@@ -1810,13 +1810,13 @@ for(d in demos){
         ## plotting 5X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$gt.froh[1]), col = alpha('black', alph))
         # lines(c(2:6), c(temp$gt.froh), col = alpha(gt.col, alph))
-        # points(c(2:6), c(temp$gt.froh), pch = 19, col = gt.col)
+        # points(c(2:6), c(temp$gt.froh), pch = 16, col = gt.col)
         
         ## only plotting 15X - 50X
         lines(c(1,6), c((temp$true.froh[1] - MEANS[1]), temp$gt.froh[5]), col = alpha('black', alph))
-        points(c(6), c(temp$gt.froh[5]), pch = 19, col = gt.col)
+        points(c(6), c(temp$gt.froh[5]), pch = 16, col = gt.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       }  
       
       ## PL
@@ -1837,13 +1837,13 @@ for(d in demos){
         ## plotting 5X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$pl.froh[1]), col = alpha('black', alph))
         # lines(c(2:6), c(temp$pl.froh), col = alpha(pl.col, alph))
-        # points(c(2:6), c(temp$pl.froh), pch = 19, col = pl.col)
+        # points(c(2:6), c(temp$pl.froh), pch = 16, col = pl.col)
         
         ## only plotting 15X - 50X
         lines(c(1,6), c((temp$true.froh[1] - MEANS[1]), temp$pl.froh[5]), col = alpha('black', alph))
-        points(c(6), c(temp$pl.froh[5]), pch = 19, col = pl.col)
+        points(c(6), c(temp$pl.froh[5]), pch = 16, col = pl.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       }  
       
       ## PLINK
@@ -1864,13 +1864,13 @@ for(d in demos){
         ## plotting 5X - 50X
         # lines(c(1:2), c((temp$true.froh[1] - MEANS[1]), temp$plink.froh[1]), col = alpha('black', alph))
         # lines(c(2:6), c(temp$plink.froh), col = alpha(plink.col, alph))
-        # points(c(2:6), c(temp$plink.froh), pch = 19, col = plink.col)
+        # points(c(2:6), c(temp$plink.froh), pch = 16, col = plink.col)
         
         ## only plotting 15X - 50X
         lines(c(1,6), c((temp$true.froh[1] - MEANS[1]), temp$plink.froh[5]), col = alpha('black', alph))
-        points(c(6), c(temp$plink.froh[5]), pch = 19, col = plink.col)
+        points(c(6), c(temp$plink.froh[5]), pch = 16, col = plink.col)
         
-        points(1, (temp$true.froh[1] - MEANS[1]), pch = 19, col = 'black')
+        points(1, (temp$true.froh[1] - MEANS[1]), pch = 16, col = 'black')
       } 
       
       dev.off()
@@ -1887,9 +1887,9 @@ for(d in demos){
     par(mfrow = c(1,2))
     for(c in sort(unique(gt.overlap$covg))){
       sub <- gt.overlap[gt.overlap$covg == c,]
-      plot(sub$prop.true, sub$roh.call.quality, pch = 19, cex = 0.5, col = alpha('blue', 0.2), main = paste0('GT - ',c),
+      plot(sub$prop.true, sub$roh.call.quality, pch = 16, cex = 0.5, col = alpha('blue', 0.2), main = paste0('GT - ',c),
            xlab = 'Proportion of called ROH that overlaps true ROH(s)', ylab = 'ROH call quality score')
-      plot(sub$len, sub$prop.true, pch = 19, col = alpha('blue', 0.2), cex = 0.5, main = paste0('GT - ',c),
+      plot(sub$len, sub$prop.true, pch = 16, col = alpha('blue', 0.2), cex = 0.5, main = paste0('GT - ',c),
            xlab = 'Called ROH length', ylab = 'Proportion of called ROH that overlaps true ROH(s)')
       pts <- seq(1,4e6,1e3)
       pts <- cbind(pts, (1e5/pts))
@@ -1898,9 +1898,9 @@ for(d in demos){
     
     for(c in sort(unique(pl.overlap$covg))){
       sub <- pl.overlap[pl.overlap$covg == c,]
-      plot(sub$prop.true, sub$roh.call.quality, pch = 19, cex = 0.5, col = alpha('blue', 0.2), main = paste0('PL - ',c),
+      plot(sub$prop.true, sub$roh.call.quality, pch = 16, cex = 0.5, col = alpha('blue', 0.2), main = paste0('PL - ',c),
            xlab = 'Proportion of called ROH that overlaps true ROH(s)', ylab = 'ROH call quality score')
-      plot(sub$len, sub$prop.true, pch = 19, col = alpha('blue', 0.2), cex = 0.5, main = paste0('PL - ',c),
+      plot(sub$len, sub$prop.true, pch = 16, col = alpha('blue', 0.2), cex = 0.5, main = paste0('PL - ',c),
            xlab = 'Called ROH length', ylab = 'Proportion of called ROH that overlaps true ROH(s)')
       pts <- seq(1,4e6,1e3)
       pts <- cbind(pts, (1e5/pts))
@@ -1953,9 +1953,9 @@ for(d in demos){
       for(i in unique(gt.frohs$id)){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, temp$bin1.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin1.froh, pch = 19, col = gt.col)
+        points(c(2:6), temp$bin1.froh, pch = 16, col = gt.col)
         lines(c(2:6), temp$bin1.froh, col = alpha(gt.col, alph))
       }
       ## bin 2
@@ -1966,9 +1966,9 @@ for(d in demos){
       for(i in unique(gt.frohs$id)){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, temp$bin2.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin2.froh, pch = 19, col = gt.col)
+        points(c(2:6), temp$bin2.froh, pch = 16, col = gt.col)
         lines(c(2:6), temp$bin2.froh, col = alpha(gt.col, alph))
       }
       ## bin 3
@@ -1979,9 +1979,9 @@ for(d in demos){
       for(i in unique(gt.frohs$id)){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, temp$bin3.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin3.froh, pch = 19, col = gt.col)
+        points(c(2:6), temp$bin3.froh, pch = 16, col = gt.col)
         lines(c(2:6), temp$bin3.froh, col = alpha(gt.col, alph))
       }
       ## bin 4
@@ -1992,9 +1992,9 @@ for(d in demos){
       for(i in unique(gt.frohs$id)){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b3, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b3, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length > b3, 'length'])/chrom.len, temp$bin4.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin4.froh, pch = 19, col = gt.col)
+        points(c(2:6), temp$bin4.froh, pch = 16, col = gt.col)
         lines(c(2:6), temp$bin4.froh, col = alpha(gt.col, alph))
       }
       
@@ -2027,9 +2027,9 @@ for(d in demos){
       for(i in unique(pl.frohs$id)){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, temp$bin1.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin1.froh, pch = 19, col = pl.col)
+        points(c(2:6), temp$bin1.froh, pch = 16, col = pl.col)
         lines(c(2:6), temp$bin1.froh, col = alpha(pl.col, alph))
       }
       ## bin 2
@@ -2040,9 +2040,9 @@ for(d in demos){
       for(i in unique(pl.frohs$id)){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, temp$bin2.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin2.froh, pch = 19, col = pl.col)
+        points(c(2:6), temp$bin2.froh, pch = 16, col = pl.col)
         lines(c(2:6), temp$bin2.froh, col = alpha(pl.col, alph))
       }
       ## bin 3
@@ -2053,9 +2053,9 @@ for(d in demos){
       for(i in unique(pl.frohs$id)){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, temp$bin3.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin3.froh, pch = 19, col = pl.col)
+        points(c(2:6), temp$bin3.froh, pch = 16, col = pl.col)
         lines(c(2:6), temp$bin3.froh, col = alpha(pl.col, alph))
       }
       ## bin 4
@@ -2066,9 +2066,9 @@ for(d in demos){
       for(i in unique(pl.frohs$id)){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b3, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b3, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length > b3, 'length'])/chrom.len, temp$bin4.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin4.froh, pch = 19, col = pl.col)
+        points(c(2:6), temp$bin4.froh, pch = 16, col = pl.col)
         lines(c(2:6), temp$bin4.froh, col = alpha(pl.col, alph))
       }
       
@@ -2101,9 +2101,9 @@ for(d in demos){
       for(i in unique(plink.frohs$id)){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len, temp$bin1.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin1.froh, pch = 19, col = plink.col)
+        points(c(2:6), temp$bin1.froh, pch = 16, col = plink.col)
         lines(c(2:6), temp$bin1.froh, col = alpha(plink.col, alph))
       }
       ## bin 2
@@ -2114,9 +2114,9 @@ for(d in demos){
       for(i in unique(plink.frohs$id)){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len, temp$bin2.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin2.froh, pch = 19, col = plink.col)
+        points(c(2:6), temp$bin2.froh, pch = 16, col = plink.col)
         lines(c(2:6), temp$bin2.froh, col = alpha(plink.col, alph))
       }
       ## bin 3
@@ -2127,9 +2127,9 @@ for(d in demos){
       for(i in unique(plink.frohs$id)){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len, temp$bin3.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin3.froh, pch = 19, col = plink.col)
+        points(c(2:6), temp$bin3.froh, pch = 16, col = plink.col)
         lines(c(2:6), temp$bin3.froh, col = alpha(plink.col, alph))
       }
       ## bin 4
@@ -2140,9 +2140,9 @@ for(d in demos){
       for(i in unique(plink.frohs$id)){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
-        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b3, 'length'])/chrom.len, pch = 19, col = 'black')
+        points(1, sum(true.rohs[true.rohs$id == i & true.rohs$length >= b3, 'length'])/chrom.len, pch = 16, col = 'black')
         lines(x = c(1,2), y = c(sum(true.rohs[true.rohs$id == i & true.rohs$length > b3, 'length'])/chrom.len, temp$bin4.froh[1]), col = alpha('black', alph))
-        points(c(2:6), temp$bin4.froh, pch = 19, col = plink.col)
+        points(c(2:6), temp$bin4.froh, pch = 16, col = plink.col)
         lines(c(2:6), temp$bin4.froh, col = alpha(plink.col, alph))
       }
       
@@ -2201,7 +2201,7 @@ for(d in demos){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len
-        points(c(2:6), temp$bin1.froh - true.val, pch = 19, col = alpha(gt.col, pt.alph))
+        points(c(2:6), temp$bin1.froh - true.val, pch = 16, col = alpha(gt.col, pt.alph))
         lines(c(2:6), temp$bin1.froh - true.val, col = alpha(gt.col, ln.alph))
       }
       ## bin 2
@@ -2216,7 +2216,7 @@ for(d in demos){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len
-        points(c(2:6), temp$bin2.froh - true.val, pch = 19, col = alpha(gt.col, pt.alph))
+        points(c(2:6), temp$bin2.froh - true.val, pch = 16, col = alpha(gt.col, pt.alph))
         lines(c(2:6), temp$bin2.froh - true.val, col = alpha(gt.col, ln.alph))
       }
       ## bin 3
@@ -2231,7 +2231,7 @@ for(d in demos){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len
-        points(c(2:6), temp$bin3.froh - true.val, pch = 19, col = alpha(gt.col, pt.alph))
+        points(c(2:6), temp$bin3.froh - true.val, pch = 16, col = alpha(gt.col, pt.alph))
         lines(c(2:6), temp$bin3.froh - true.val, col = alpha(gt.col, ln.alph))
       }
       ## bin 4
@@ -2246,7 +2246,7 @@ for(d in demos){
         temp <- gt.frohs[gt.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length > b3, 'length'])/chrom.len
-        points(c(2:6), temp$bin4.froh - true.val, pch = 19, col = alpha(gt.col, pt.alph))
+        points(c(2:6), temp$bin4.froh - true.val, pch = 16, col = alpha(gt.col, pt.alph))
         lines(c(2:6), temp$bin4.froh - true.val, col = alpha(gt.col, ln.alph))
       }
       
@@ -2282,7 +2282,7 @@ for(d in demos){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len
-        points(c(2:6), temp$bin1.froh - true.val, pch = 19, col = alpha(pl.col, pt.alph))
+        points(c(2:6), temp$bin1.froh - true.val, pch = 16, col = alpha(pl.col, pt.alph))
         lines(c(2:6), temp$bin1.froh - true.val, col = alpha(pl.col, ln.alph))
       }
       ## bin 2
@@ -2297,7 +2297,7 @@ for(d in demos){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len
-        points(c(2:6), temp$bin2.froh - true.val, pch = 19, col = alpha(pl.col, pt.alph))
+        points(c(2:6), temp$bin2.froh - true.val, pch = 16, col = alpha(pl.col, pt.alph))
         lines(c(2:6), temp$bin2.froh - true.val, col = alpha(pl.col, ln.alph))
       }
       ## bin 3
@@ -2312,7 +2312,7 @@ for(d in demos){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len
-        points(c(2:6), temp$bin3.froh - true.val, pch = 19, col = alpha(pl.col, pt.alph))
+        points(c(2:6), temp$bin3.froh - true.val, pch = 16, col = alpha(pl.col, pt.alph))
         lines(c(2:6), temp$bin3.froh - true.val, col = alpha(pl.col, ln.alph))
       }
       ## bin 4
@@ -2327,7 +2327,7 @@ for(d in demos){
         temp <- pl.frohs[pl.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length > b3, 'length'])/chrom.len
-        points(c(2:6), temp$bin4.froh - true.val, pch = 19, col = alpha(pl.col, pt.alph))
+        points(c(2:6), temp$bin4.froh - true.val, pch = 16, col = alpha(pl.col, pt.alph))
         lines(c(2:6), temp$bin4.froh - true.val, col = alpha(pl.col, ln.alph))
       }
       
@@ -2363,7 +2363,7 @@ for(d in demos){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length < b1, 'length'])/chrom.len
-        points(c(2:6), temp$bin1.froh - true.val, pch = 19, col = alpha(plink.col, pt.alph))
+        points(c(2:6), temp$bin1.froh - true.val, pch = 16, col = alpha(plink.col, pt.alph))
         lines(c(2:6), temp$bin1.froh - true.val, col = alpha(plink.col, ln.alph))
       }
       ## bin 2
@@ -2378,7 +2378,7 @@ for(d in demos){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length >= b1 & true.rohs$length < b2, 'length'])/chrom.len
-        points(c(2:6), temp$bin2.froh - true.val, pch = 19, col = alpha(plink.col, pt.alph))
+        points(c(2:6), temp$bin2.froh - true.val, pch = 16, col = alpha(plink.col, pt.alph))
         lines(c(2:6), temp$bin2.froh - true.val, col = alpha(plink.col, ln.alph))
       }
       ## bin 3
@@ -2393,7 +2393,7 @@ for(d in demos){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length >= b2 & true.rohs$length < b3, 'length'])/chrom.len
-        points(c(2:6), temp$bin3.froh - true.val, pch = 19, col = alpha(plink.col, pt.alph))
+        points(c(2:6), temp$bin3.froh - true.val, pch = 16, col = alpha(plink.col, pt.alph))
         lines(c(2:6), temp$bin3.froh - true.val, col = alpha(plink.col, ln.alph))
       }
       ## bin 4
@@ -2408,7 +2408,7 @@ for(d in demos){
         temp <- plink.frohs[plink.frohs$id == i,]
         temp <- temp[order(temp$covg),]
         true.val <- sum(true.rohs[true.rohs$id == i & true.rohs$length > b3, 'length'])/chrom.len
-        points(c(2:6), temp$bin4.froh - true.val, pch = 19, col = alpha(plink.col, pt.alph))
+        points(c(2:6), temp$bin4.froh - true.val, pch = 16, col = alpha(plink.col, pt.alph))
         lines(c(2:6), temp$bin4.froh - true.val, col = alpha(plink.col, ln.alph))
       }
       
@@ -2565,7 +2565,7 @@ for(d in demos){
         xs <- orig.xs
         columns <- c(18, 19, 20, 21)
         lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], ln.alph))
-        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], pt.alph), pch = 19)
+        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], pt.alph), pch = 16)
         for(l in c(1:4)){
           column <- columns[l]
           arrows(x0 = xs[l], x1 = xs[l], y0 = (mean(temp[,column], na.rm = TRUE) - sd(temp[,column], na.rm = TRUE)),
@@ -2587,7 +2587,7 @@ for(d in demos){
         
         xs <- orig.xs - diff
         lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], ln.alph))
-        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], pt.alph), pch = 19)
+        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], pt.alph), pch = 16)
         for(l in c(1:4)){
           column <- columns[l]
           arrows(x0 = xs[l], x1 = xs[l], y0 = (mean(temp[,column], na.rm = TRUE) - sd(temp[,column], na.rm = TRUE)),
@@ -2611,7 +2611,7 @@ for(d in demos){
         
         xs <- orig.xs + diff
         lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], ln.alph))
-        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], pt.alph), pch = 19)
+        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], pt.alph), pch = 16)
         for(l in c(1:4)){
           column <- columns[l]
           arrows(x0 = xs[l], x1 = xs[l], y0 = (mean(temp[,column], na.rm = TRUE) - sd(temp[,column], na.rm = TRUE)),
@@ -2666,7 +2666,7 @@ for(d in demos){
         xs <- orig.xs + offsets[col]
         columns <- c(18, 19, 20, 21)
         lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], ln.alph), lwd = lwd)
-        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], pt.alph), pch = 19, cex = pt.cex)
+        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(gt.cols[col], pt.alph), pch = 16, cex = pt.cex)
         for(l in c(1:4)){
           column <- columns[l]
           ## 95% CIs (inappropriate for large sample sizes)
@@ -2680,7 +2680,7 @@ for(d in demos){
         }    
         col <- col+1
       }
-      legend('top', legend = c('5X','10X','15X','30X','50X'), col = gt.cols, pch = 19, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
+      legend('top', legend = c('5X','10X','15X','30X','50X'), col = gt.cols, pch = 16, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
       
       ## PL
       plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
@@ -2702,7 +2702,7 @@ for(d in demos){
         xs <- orig.xs + offsets[col]
         columns <- c(18, 19, 20, 21)
         lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], ln.alph), lwd = lwd)
-        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], pt.alph), pch = 19, cex = pt.cex)
+        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(pl.cols[col], pt.alph), pch = 16, cex = pt.cex)
         for(l in c(1:4)){
           column <- columns[l]
           arrows(x0 = xs[l], x1 = xs[l], y0 = quantile(temp[,column], probs = c(0.025,0.975))[1],
@@ -2711,7 +2711,7 @@ for(d in demos){
         }    
         col <- col+1
       }
-      legend('top', legend = c('5X','10X','15X','30X','50X'), col = pl.cols, pch = 19, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
+      legend('top', legend = c('5X','10X','15X','30X','50X'), col = pl.cols, pch = 16, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
       
       ## PLINK
       plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), 
@@ -2733,7 +2733,7 @@ for(d in demos){
         xs <- orig.xs + offsets[col]
         columns <- c(18, 19, 20, 21)
         lines(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], ln.alph), lwd = lwd)
-        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], pt.alph), pch = 19, cex = pt.cex)
+        points(xs, c(mean(temp$b1.diff), mean(temp$b2.diff), mean(temp$b3.diff), mean(temp$b4.diff)), col = alpha(plink.cols[col], pt.alph), pch = 16, cex = pt.cex)
         for(l in c(1:4)){
           column <- columns[l]
           arrows(x0 = xs[l], x1 = xs[l], y0 = quantile(temp[,column], probs = c(0.025,0.975))[1],
@@ -2742,7 +2742,7 @@ for(d in demos){
         }    
         col <- col+1
       }
-      legend('top', legend = c('5X','10X','15X','30X','50X'), col = plink.cols, pch = 19, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
+      legend('top', legend = c('5X','10X','15X','30X','50X'), col = plink.cols, pch = 16, bty = 'n', cex = text.size, pt.cex = pt.cex, horiz = TRUE, x.intersp = 0.7)
       
       dev.off()
       k <- k+1 
@@ -2904,7 +2904,7 @@ for(d in demos){
         }
         plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c,'X'), ylim = c(1, y.max), 
              cex.axis = txt.size, cex.lab = txt.size, xaxt = 'n', ylab = '')
-        points(OUT[,2], OUT[,3], col = alpha(gt.col, alph), pch = 19, cex = pt.sz)
+        points(OUT[,2], OUT[,3], col = alpha(gt.col, alph), pch = 16, cex = pt.sz)
         axis(1, at = seq(from = 0, to = x.max, by = 1e6), labels = seq(from = 0, to = x.max, by = 1e6)/1e6, cex.axis = txt.size)
         ## for counts with >= 5 points, plot True ROH length mean +/- SD
         for(ct in as.numeric(names(table(OUT[,3])[which(table(OUT[,3]) >= 5)]))){
@@ -2933,7 +2933,7 @@ for(d in demos){
         }
         plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c,'X'), ylim = c(1, y.max), 
              cex.axis = txt.size, cex.lab = txt.size, xaxt = 'n', ylab = '')
-        points(OUT[,2], OUT[,3], col = alpha(pl.col, alph), pch = 19, cex = pt.sz)
+        points(OUT[,2], OUT[,3], col = alpha(pl.col, alph), pch = 16, cex = pt.sz)
         axis(1, at = seq(from = 0, to = x.max, by = 1e6), labels = seq(from = 0, to = x.max, by = 1e6)/1e6, cex.axis = txt.size)
         ## for counts with >= 5 points, plot True ROH length mean +/- SD
         for(ct in as.numeric(names(table(OUT[,3])[which(table(OUT[,3]) >= 5)]))){
@@ -2962,7 +2962,7 @@ for(d in demos){
         }
         plot(1,1, col='transparent', xlim=c(1e5, x.max), xlab='Called ROH length (Mb)', main=paste0(c,'X'), ylim = c(1, y.max), 
              cex.axis = txt.size, cex.lab = txt.size, xaxt = 'n', ylab = '')
-        points(OUT[,2], OUT[,3], col = alpha(plink.col, alph), pch = 19, cex = pt.sz)
+        points(OUT[,2], OUT[,3], col = alpha(plink.col, alph), pch = 16, cex = pt.sz)
         axis(1, at = seq(from = 0, to = x.max, by = 1e6), labels = seq(from = 0, to = x.max, by = 1e6)/1e6, cex.axis = txt.size)
         ## for counts with >= 5 points, plot True ROH length mean +/- SD
         for(ct in as.numeric(names(table(OUT[,3])[which(table(OUT[,3]) >= 5)]))){
@@ -3101,7 +3101,7 @@ for(d in demos){
       axis(2, at = c(1:2), cex.axis = text.size*3, line = 0.7, lwd = 0)
       for(m in unique(sub$method)){
         temp <- sub[sub$method == m,]
-        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 19, cex = pt.size)
+        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 16, cex = pt.size)
         lines(x = c(m-width, m+width), y = c(mean(temp$num.true), mean(temp$num.true)), lwd = 8, col = temp$color[1])
       }
       
@@ -3115,7 +3115,7 @@ for(d in demos){
       axis(2, at = c(1:3), cex.axis = text.size*3, line = 0.7, lwd = 0)
       for(m in unique(sub$method)){
         temp <- sub[sub$method == m,]
-        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 19, cex = pt.size)
+        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 16, cex = pt.size)
         lines(x = c(m-width, m+width), y = c(mean(temp$num.true), mean(temp$num.true)), lwd = 8, col = temp$color[1])
       }
       
@@ -3129,7 +3129,7 @@ for(d in demos){
       axis(2, at = c(1:5), cex.axis = text.size*3, line = 0.7, lwd = 0)
       for(m in unique(sub$method)){
         temp <- sub[sub$method == m,]
-        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 19, cex = pt.size)
+        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 16, cex = pt.size)
         lines(x = c(m-width, m+width), y = c(mean(temp$num.true), mean(temp$num.true)), lwd = 8, col = temp$color[1])
       }
       
@@ -3143,7 +3143,7 @@ for(d in demos){
       axis(2, at = c(2,4,6,8), cex.axis = text.size*3, line = 0.7, lwd = 0)
       for(m in unique(sub$method)){
         temp <- sub[sub$method == m,]
-        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 19, cex = pt.size)
+        points(temp$method, temp$num.true, col = alpha(temp$color[1], alph), pch = 16, cex = pt.size)
         lines(x = c(m-width, m+width), y = c(mean(temp$num.true), mean(temp$num.true)), lwd = 8, col = temp$color[1])
       }
       
@@ -3206,28 +3206,28 @@ for(d in demos){
           sub1 <- sub[sub$method == m,]
           if(m == 1){
             cols <- gt.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 2){
             cols <- pl.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 3){
             cols <- plink.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
         }
         x <- x+1
       }
-      legend('topright', pch = 19, col = plink.cols, pt.cex = pt.size, legend = c('5X','10X','15X','30X','50X'), cex = text.size, bty = 'n')
-      legend('topright', pch = 19, col = pl.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.17,0), bty = 'n')
-      legend('topright', pch = 19, col = gt.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.235,0), bty = 'n')
+      legend('topright', pch = 16, col = plink.cols, pt.cex = pt.size, legend = c('5X','10X','15X','30X','50X'), cex = text.size, bty = 'n')
+      legend('topright', pch = 16, col = pl.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.17,0), bty = 'n')
+      legend('topright', pch = 16, col = gt.cols, pt.cex = pt.size, legend = c('','','','',''), cex = text.size, inset = c(0.235,0), bty = 'n')
       
       b <- 2
       temp <- overlaps[overlaps$bin == b,]
@@ -3244,19 +3244,19 @@ for(d in demos){
           sub1 <- sub[sub$method == m,]
           if(m == 1){
             cols <- gt.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 2){
             cols <- pl.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 3){
             cols <- plink.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
@@ -3279,19 +3279,19 @@ for(d in demos){
           sub1 <- sub[sub$method == m,]
           if(m == 1){
             cols <- gt.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 2){
             cols <- pl.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 3){
             cols <- plink.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
@@ -3314,19 +3314,19 @@ for(d in demos){
           sub1 <- sub[sub$method == m,]
           if(m == 1){
             cols <- gt.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 2){
             cols <- pl.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
           if(m == 3){
             cols <- plink.cols
-            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 19, cex = pt.size)
+            points(sub1$method + diffs[x], sub1$num.true, col = alpha(cols[x], nrow(sub1)/tot), pch = 16, cex = pt.size)
             lines(x = c(m+diffs[x]-width, m+diffs[x]+width), y = c(mean(sub1$num.true), mean(sub1$num.true)), lwd = lwd, col = outline.col)
             points(m+diffs[x], mean(sub1$num.true), pch = 23, bg = cols[x], col = outline.col, cex = mean.size, lwd = lwd)
           }
@@ -3454,7 +3454,7 @@ for(d in demos){
         sub <- pl.overlap[pl.overlap$covg == c,]
         plot(1,1, col='transparent', xlim=c(1e5, y.max), xlab='True length', main=paste0(c), ylim = c(1e5, y.max))
         for(i in 1:nrow(sub)){ ## for each called ROH that overlaps a true ROH, draw a line connecting its length to the length of the true ROH it overlaps
-          points(true.rohs[true.rohs$true.roh.id == sub$true.roh.id[i], 'length'], sub$len[i], col=alpha(pl.col, alph), pch = 19, cex = 0.5)
+          points(true.rohs[true.rohs$true.roh.id == sub$true.roh.id[i], 'length'], sub$len[i], col=alpha(pl.col, alph), pch = 16, cex = 0.5)
         }
         abline(0,1, lty = 2, lwd = 0.5)
       }
@@ -3467,7 +3467,7 @@ for(d in demos){
         sub <- gt.overlap[gt.overlap$covg == c,]
         plot(1,1, col='transparent', xlim=c(1e5, y.max), xlab='True length', main=paste0(c), ylim = c(1e5, y.max))
         for(i in 1:nrow(sub)){ ## for each called ROH that overlaps a true ROH, draw a line connecting its length to the length of the true ROH it overlaps
-          points(true.rohs[true.rohs$true.roh.id == sub$true.roh.id[i], 'length'], sub$len[i], col=alpha(gt.col, alph), pch = 19, cex = 0.5)
+          points(true.rohs[true.rohs$true.roh.id == sub$true.roh.id[i], 'length'], sub$len[i], col=alpha(gt.col, alph), pch = 16, cex = 0.5)
         }
         abline(0,1, lty = 2, lwd = 0.5)
       }
@@ -3480,7 +3480,7 @@ for(d in demos){
         sub <- plink.overlap[plink.overlap$covg == c,]
         plot(1,1, col='transparent', xlim=c(1e5, y.max), xlab='True length', main=paste0(c), ylim = c(1e5, y.max))
         for(i in 1:nrow(sub)){ ## for each called ROH that overlaps a true ROH, draw a line connecting its length to the length of the true ROH it overlaps
-          points(true.rohs[true.rohs$true.roh.id == sub$true.roh.id[i], 'length'], sub$len[i], col=alpha(plink.col, alph), pch = 19, cex = 0.5)
+          points(true.rohs[true.rohs$true.roh.id == sub$true.roh.id[i], 'length'], sub$len[i], col=alpha(plink.col, alph), pch = 16, cex = 0.5)
         }
         abline(0,1, lty = 2, lwd = 0.5)
       }
@@ -3565,20 +3565,20 @@ for(d in demos){
     pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_true_fROH_vs_false_pos_and_neg_rates.pdf'), width = 7, height = 6)
     figure.ct <- figure.ct + 1
     par(xpd = TRUE, mar = c(5.1, 4.1, 4.1, 4.1))
-    plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, pch = 19, col = plink.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'PLINK')
-    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
-    plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, pch = 19, col = pl.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'Genotype likelihoods')
-    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
-    plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, pch = 19, col = gt.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'Genotypes only')
-    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
+    plot(plink.true.v.called$true.froh, plink.true.v.called$false.pos.rate, pch = 16, col = plink.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'PLINK')
+    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 16, inset = c(-0.15, 0))
+    plot(pl.true.v.called$true.froh, pl.true.v.called$false.pos.rate, pch = 16, col = pl.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'Genotype likelihoods')
+    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 16, inset = c(-0.15, 0))
+    plot(gt.true.v.called$true.froh, gt.true.v.called$false.pos.rate, pch = 16, col = gt.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False positive rate', main = 'Genotypes only')
+    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 16, inset = c(-0.15, 0))
     
     
-    plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, pch = 19, col = plink.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False negative rate', main = 'PLINK')
-    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
-    plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, pch = 19, col = gt.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False negative rate', main = 'Genotype likelihoods')
-    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
-    plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, pch = 19, col = pl.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False negative rate', main = 'Genotypes only')
-    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 19, inset = c(-0.15, 0))
+    plot(plink.true.v.called$true.froh, plink.true.v.called$false.neg.rate, pch = 16, col = plink.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False negative rate', main = 'PLINK')
+    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 16, inset = c(-0.15, 0))
+    plot(pl.true.v.called$true.froh, pl.true.v.called$false.neg.rate, pch = 16, col = gt.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False negative rate', main = 'Genotype likelihoods')
+    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 16, inset = c(-0.15, 0))
+    plot(gt.true.v.called$true.froh, gt.true.v.called$false.neg.rate, pch = 16, col = pl.true.v.called$temp.colour, xlab = 'True f(ROH)', ylab = 'False negative rate', main = 'Genotypes only')
+    legend('topright', col = cols, legend = c('5X','10X','15X','30X','50X'), pch = 16, inset = c(-0.15, 0))
     dev.off()
     
     ##### 99. Plotting individual true ROHs and called ROHs for all 3 analyses and coverage levels #####
