@@ -341,9 +341,11 @@ for(rd.dir in rds){
         par(xpd = TRUE)
         legend('right', inset = c(-0.26, 0), lty = c(1:max), pch = pchs[c(1:max)], 
                legend = unique(cov.df.iter[,s]), col = colour, title = s, bty = 'n')
+      dev.off()
 
       ## Variation in called f(ROH) across variable settings
       x.max <- max + 0.25
+      pdf(paste0('../../figures/simulated/',rd.dir,'/',d,'/',d,'_simulated_',rd,'_',c,'X_callfROH_by_value.pdf'), width = 6, height = 5)
       par(mar = c(5.1, 5.1, 4.1, 2.1), xpd = FALSE)
 
       plot(0,0, xlim = c(0.75, x.max), ylim = c(plot.min, plot.max), col = 'transparent', 
@@ -355,6 +357,7 @@ for(rd.dir in rds){
           points(jitter(rep(v, nrow(sub)), amount = 0.15), sub$call.froh, col = alpha(colour, alph), pch = pchs[v], cex = pt.size)
           points(v, mean(sub$call.froh), pch = 23, col = 'black', bg = colour, cex = pt.size + 0.5, lwd = 2)
         }
+      dev.off()
 
      ## Correlation of called f(ROH) values across parameter values
      panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
@@ -376,6 +379,7 @@ for(rd.dir in rds){
        OUT <- cbind(OUT, cov.df.iter[which(cov.df.iter[,col] == p), 'call.froh'])
      }
      colnames(OUT) <- c('id', sets)
+     pdf(paste0('../../figures/simulated/',rd.dir,'/',d,'/',d,'_simulated_',rd,'_',c,'X_setting_correlations.pdf'), width = 6, height = 5)
      pairs(OUT[,which(colnames(OUT) != 'id')], pch = 16, col = alpha(colour, alph), 
            upper.panel = panel.cor,
            gap=0, row1attop = FALSE)
