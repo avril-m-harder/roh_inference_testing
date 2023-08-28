@@ -16,6 +16,7 @@ library(dplyr)
 library(DataCombine)
 library(sensitivity)
 library(reshape2)
+library(TeachingDemos)
 `%notin%` <- Negate(`%in%`)
 
 ## color settings (1 per parameter)
@@ -51,12 +52,24 @@ for(rd.dir in rds){
   for(d in demos){
     if (!file.exists(paste0('../../figures/simulated/',rd.dir,'/',d,'/'))){
       dir.create(paste0('../../figures/simulated/',rd.dir,'/',d,'/'))
+    }
       
-      df.iter <- read.csv(paste0(rd.dir,'/',d,'_individual_froh_results_',rd,'.csv'), header = T)
-      ## phzk and phzd not varied, remove from analysis
-      df.iter <- df.iter[, -c(which(colnames(df.iter) %in% c('phzk','phzd','abs.diff','group')))]
-      df.iter$covg <- as.numeric(gsub('x', '', df.iter$covg))
-      
+    df.iter <- read.csv(paste0(rd.dir,'/',d,'_individual_froh_results_',rd,'.csv'), header = T)
+    ## phzk and phzd not varied, remove from analysis
+    df.iter <- df.iter[, -c(which(colnames(df.iter) %in% c('phzk','phzd','abs.diff','group')))]
+    df.iter$covg <- as.numeric(gsub('x', '', df.iter$covg))
+    
+    ## check how many variables are.. variable
+    ct <- 0
+    VAR <- NULL
+    for(s in c('phwh','phwm','phws','phzg','phwt','phzs')){
+      if(length(table(df.iter[,s])) > 1){
+        ct <- ct+1
+        VAR <- c(VAR, s)
+      }
+    }
+    ## if >1 parameter had variable settings, go ahead and do the sensitivity analysis.
+    if(ct > 1){
       g <- 1 ## set starting group number so that each coverage level has unique group numbers
       for(c in sort(unique(df.iter$covg))){
         cov.df.iter <- df.iter[df.iter$covg == c,]
@@ -156,8 +169,12 @@ for(rd.dir in rds){
         xmin <- 0.85
         xmax <- max + 0.15
         
-        if(length(unique(origMelt1$Variables)) > 2){
+        if(length(unique(origMelt1$Variables)) > 3){
           pdf(paste0('../../figures/simulated/',rd.dir,'/',d,'/',d,'_simulated_',rd,'_',c,'X_paramvsSRC.pdf'), width = 6, height = 5)
+        } else if(length(unique(origMelt1$Variables)) == 3){
+          pdf(paste0('../../figures/simulated/',rd.dir,'/',d,'/',d,'_simulated_',rd,'_',c,'X_paramvsSRC.pdf'), width = 4.5, height = 5)
+          xmin <- 0.65
+          xmax <- max + 0.35
         } else{
           pdf(paste0('../../figures/simulated/',rd.dir,'/',d,'/',d,'_simulated_',rd,'_',c,'X_paramvsSRC.pdf'), width = 3, height = 5)
           xmin <- 0.65
@@ -256,10 +273,118 @@ for(rd.dir in rds){
                lwd = 1, col = pal[4], code=3, angle=90, length=0)
         dev.off()
       }
+    ## otherwise, just make some plots to examine the single variable parameter setting
+    } else{
+      for(c in unique(df.iter$covg)){
+      cov.df.iter <- df.iter[df.iter$covg == c,]
+      
+      ## for each combination, calculate the difference between called and true f(ROH) for each individual,
+      ## write results to a file, and clean up
+      for(r in 1:nrow(cov.df.iter)){
+        cov.df.iter$group[r] <- paste(unlist(cov.df.iter[r, c(4:10)]), collapse = '_')
+      }
+      key <- cbind(unique(cov.df.iter$group), seq(g, g+length(unique(cov.df.iter$group))-1))
+      colnames(key) <- c('group','group.num')
+      cov.df.iter <- merge(cov.df.iter, key, by = 'group')
+      cov.df.iter <- cov.df.iter[,-1]
+      cov.df.iter$group.num <- as.numeric(cov.df.iter$group.num)
+      OUT <- NULL
+      for(g in unique(cov.df.iter$group.num)){
+        sub <- cov.df.iter[cov.df.iter$group.num == g,]
+        m.abs <- mean(abs(sub$true.froh - sub$call.froh))
+        m <- mean(sub$true.froh - sub$call.froh) ## if true is > called, on average, result will be positive
+        sd.abs <- sd(abs(sub$true.froh - sub$call.froh))
+        sd <- sd(sub$true.froh - sub$call.froh)
+        save <- c(c, g, m, sd, m.abs, sd.abs)
+        OUT <- rbind(OUT, save)
+      }
+      colnames(OUT) <- c('covg','group.num','mean.true.minus.call','sd','mean.abs.diff','sd.abs.diff')
+      if(c == sort(unique(df.iter$covg))[1]){
+        write.table(OUT, paste0(rd.dir,'/',d,'_',rd,'_true_vs_called_fROH_indiv_data.txt'),
+                    row.names = FALSE, quote = FALSE, sep = '\t')
+      } else{
+        write.table(OUT, paste0(rd.dir,'/',d,'_',rd,'_true_vs_called_fROH_indiv_data.txt'),
+                    row.names = FALSE, quote = FALSE, sep = '\t', append = TRUE)
+      }
+      rm(OUT, m, m.abs, r, save, sd, sd.abs, sub)
+      
+      # Mean and SD for each ind (calculated over all settings combos with ROH calls for each ind)
+      mean.iter1 <- ddply(cov.df.iter, "id", summarise, meanTrue=mean(true.froh), sdTrue=sd(true.froh),
+                          meanCall=mean(call.froh), sdCall=sd(call.froh))
+      
+      ## True vs. called f(ROH)
+      pdf(paste0('../../figures/simulated/',rd.dir,'/',d,'/',d,'_simulated_',rd,'_',c,'X_truevscalledfroh.pdf'), width = 6, height = 5)
+      par(mar = c(5.1, 5.1, 4.1, 6.1), xpd = FALSE)
+      
+      x <- 1
+      colour <- cols[cols[,2] == s, 1]
+      pchs <- c(16, 17, 15, 18, 3, 4)
+      sets <- sort(unique(cov.df.iter[,s]))
+      plot.min <- min(cov.df.iter$true.froh, cov.df.iter$call.froh)
+      plot.max <- max(cov.df.iter$true.froh, cov.df.iter$call.froh)
+      max <- length(unique(cov.df.iter[,s]))
+      text.size <- 1.25
+      alph <- 0.6
+      pt.size <- 1
+      
+      plot(0,0, xlim = c(plot.min, plot.max), ylim = c(plot.min, plot.max), 
+           xlab = substitute(paste('True ',italic('F')[ROH])), 
+           ylab = substitute(paste('Called ',italic('F')[ROH])), col = 'transparent', 
+           cex.axis = text.size, cex.lab = text.size, main = paste0(rd,' - ',c,'X'))
+        abline(0, 1, lty = 2)
+        for(v in 1:max){
+          sub <- cov.df.iter[which(cov.df.iter[,s] == sets[v]),]
+          points(sub$true.froh, sub$call.froh, col = alpha(colour, alph), pch = pchs[v], cex = pt.size)
+          suppressWarnings(clipplot(abline(lm(sub$call.froh ~ sub$true.froh), col = colour, lty = v), 
+                   xlim = c(min(sub$true.froh), max(sub$true.froh))))
+        }
+        par(xpd = TRUE)
+        legend('right', inset = c(-0.26, 0), lty = c(1:max), pch = pchs[c(1:max)], 
+               legend = unique(cov.df.iter[,s]), col = colour, title = s, bty = 'n')
+
+      ## Variation in called f(ROH) across variable settings
+      x.max <- max + 0.25
+      par(mar = c(5.1, 5.1, 4.1, 2.1), xpd = FALSE)
+
+      plot(0,0, xlim = c(0.75, x.max), ylim = c(plot.min, plot.max), col = 'transparent', 
+           cex.axis = text.size, cex.lab = text.size, main = paste0(rd,' - ',c,'X\n',s), xlab = '', xaxt = 'n',
+           ylab = substitute(paste('Called ',italic('F')[ROH])))
+        axis(1, at = c(1:max), cex.axis = text.size, labels = sets)
+        for(v in 1:max){
+          sub <- cov.df.iter[which(cov.df.iter[,s] == sets[v]),]
+          points(jitter(rep(v, nrow(sub)), amount = 0.15), sub$call.froh, col = alpha(colour, alph), pch = pchs[v], cex = pt.size)
+          points(v, mean(sub$call.froh), pch = 23, col = 'black', bg = colour, cex = pt.size + 0.5, lwd = 2)
+        }
+
+     ## Correlation of called f(ROH) values across parameter values
+     panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+     {
+       usr <- par("usr"); on.exit(par(usr))
+       par(usr = c(0, 1, 0, 1))
+       r <- abs(cor(x, y))
+       txt <- format(c(r, 0.123456789), digits = digits)[1]
+       txt <- paste0(prefix, txt)
+       if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+       text(0.5, 0.5, txt, cex = 1.5)
+     }
+     
+     OUT <- NULL
+     cov.df.iter <- cov.df.iter[order(cov.df.iter$id),]
+     OUT <- cbind(OUT, unique(cov.df.iter$id))
+     col <- which(colnames(cov.df.iter) == s)
+     for(p in sets){
+       OUT <- cbind(OUT, cov.df.iter[which(cov.df.iter[,col] == p), 'call.froh'])
+     }
+     colnames(OUT) <- c('id', sets)
+     pairs(OUT[,which(colnames(OUT) != 'id')], pch = 16, col = alpha(colour, alph), 
+           upper.panel = panel.cor,
+           gap=0, row1attop = FALSE)
+     dev.off()
     }
-    if(file.exists(paste0('../../figures/simulated/',rd.dir,'/',d,'/'))){
-      print(paste0('Already processed: ',rd,' - ',d))
-    }
+  }  
+  if(file.exists(paste0('../../figures/simulated/',rd.dir,'/',d,'/'))){
+    print(paste0('Already processed: ',rd,' - ',d))
+  }
   }
 }
 
