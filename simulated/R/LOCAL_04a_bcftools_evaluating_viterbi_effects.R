@@ -12,6 +12,17 @@ lt.pl.col <- ghibli_palette('PonyoLight')[2]
 min.covg.col <- ghibli_palette('PonyoMedium')[6]
 max.covg.col <- ghibli_palette('PonyoMedium')[1]
 
+pl.pal <- colorRampPalette(c(lt.pl.col, max.covg.col))
+pl.cols <- pl.pal(5)
+gt.pal <- colorRampPalette(c(gt.col, max.covg.col))
+gt.cols <- gt.pal(5)
+
+## easier than find+replace
+pl.col <- pl.cols[3]
+lt.pl.col <- pl.cols[1]
+gt.col <- gt.cols[3]
+lt.gt.col <- gt.cols[1]
+
 `%notin%` <- Negate(`%in%`)
 
 ##### Read in all ROH-calling results #####
@@ -103,11 +114,11 @@ for(c in 5:ncol(dat)){
 }
 
 ## plot results
-pt.alph <- 0.9
+pt.alph <- 0.7
 cex.text <- 1.25
 demo.names <- cbind(c('bottle','decline','large-2000','small','large-1000'),
-                    c('Bottlenecked population','Long-term declining population','Long-term large population',
-                      'Long-term small population','Long-term large population'))
+                    c('Bottlenecked population','Declining population','Large population',
+                      'Small population','Large population'))
 
 OUT <- NULL ## place to store correlation coefficients
 
@@ -165,7 +176,7 @@ for(d in unique(dat$demo)){
           points(sub$true.froh, sub$v.froh, pch = 17, col = alpha(lt.colour, pt.alph))
           suppressWarnings(clipplot(abline(lm(sub$v.froh ~ sub$true.froh), col=lt.colour), 
                                     xlim = c(min(sub$true.froh), max(sub$true.froh))))
-          legend('topleft', pch = c(16, 17), col = c(colour, lt.colour), 
+          legend('topleft', pch = c(16, 17), col = c(alpha(colour, pt.alph), alpha(lt.colour, pt.alph)), 
                  legend = c('Default','Viterbi-trained'), inset = 0.02, cex = cex.text)
           text(x = 0.05, y = 0.75, labels = covg.name, font = 3, cex = cex.text)
           if(m == 'GT'){
@@ -224,12 +235,12 @@ for(d in unique(dat$demo)){
             (sub[sub$method == 'GT', 'mean.d.froh.diff'][c] + sub[sub$method == 'GT', 'sd.d.froh.diff'][c])),
             col = gt.col, lwd = 2)
     }
-    points(seq(2, 10, 2), sub[sub$method == 'GT', 'mean.v.froh.diff'], pch = 17, col = gt.col)
+    points(seq(2, 10, 2), sub[sub$method == 'GT', 'mean.v.froh.diff'], pch = 17, col = lt.gt.col)
     for(c in 1:5){
       lines(c((c*2), (c*2)), 
             c((sub[sub$method == 'GT', 'mean.v.froh.diff'][c] - sub[sub$method == 'GT', 'sd.v.froh.diff'][c]),
               (sub[sub$method == 'GT', 'mean.v.froh.diff'][c] + sub[sub$method == 'GT', 'sd.v.froh.diff'][c])),
-            col = gt.col, lwd = 2)
+            col = lt.gt.col, lwd = 2)
     }
     points(seq(11, 19, 2), sub[sub$method == 'PL', 'mean.d.froh.diff'], pch = 16, col = pl.col)
     for(c in 6:10){
@@ -238,12 +249,12 @@ for(d in unique(dat$demo)){
               (sub[sub$method == 'PL', 'mean.d.froh.diff'][c-5] + sub[sub$method == 'PL', 'sd.d.froh.diff'][c-5])),
             col = pl.col, lwd = 2)
     }
-    points(seq(12, 20, 2), sub[sub$method == 'PL', 'mean.v.froh.diff'], pch = 17, col = pl.col)
+    points(seq(12, 20, 2), sub[sub$method == 'PL', 'mean.v.froh.diff'], pch = 17, col = lt.pl.col)
     for(c in 6:10){
       lines(c((c*2), (c*2)), 
             c((sub[sub$method == 'PL', 'mean.v.froh.diff'][c-5] - sub[sub$method == 'PL', 'sd.v.froh.diff'][c-5]),
               (sub[sub$method == 'PL', 'mean.v.froh.diff'][c-5] + sub[sub$method == 'PL', 'sd.v.froh.diff'][c-5])),
-            col = pl.col, lwd = 2)
+            col = lt.pl.col, lwd = 2)
     }
     axis(1, at = seq(1.5, 19.5, 2), labels = c('5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'))
     par(xpd = TRUE)
@@ -257,7 +268,7 @@ for(d in unique(dat$demo)){
   par(xpd = FALSE)
   plot(0, 0, col = 'transparent', xlim = c(1, 20), 
        # ylim = c(0, max(c(sub$mean.def.true.call.ratio+sub$sd.def.true.call.ratio, sub$mean.vit.true.call.ratio+sub$sd.vit.true.call.ratio))),
-       ylim = c(1, 5.2),
+       ylim = c(0.9, 5.1),
        xaxt = 'n', ylab = '', xlab = '', main = d)
   abline(v = 10.5, lty = 2, col = 'darkgrey')
   points(seq(1, 9, 2), sub[sub$method == 'GT', 'mean.def.true.call.ratio'], pch = 16, col = gt.col)
@@ -267,12 +278,12 @@ for(d in unique(dat$demo)){
             (sub[sub$method == 'GT', 'mean.def.true.call.ratio'][c] + sub[sub$method == 'GT', 'sd.def.true.call.ratio'][c])),
           col = gt.col, lwd = 2)
   }
-  points(seq(2, 10, 2), sub[sub$method == 'GT', 'mean.vit.true.call.ratio'], pch = 17, col = gt.col)
+  points(seq(2, 10, 2), sub[sub$method == 'GT', 'mean.vit.true.call.ratio'], pch = 17, col = lt.gt.col)
   for(c in 1:5){
     lines(c((c*2), (c*2)), 
           c((sub[sub$method == 'GT', 'mean.vit.true.call.ratio'][c] - sub[sub$method == 'GT', 'sd.vit.true.call.ratio'][c]),
             (sub[sub$method == 'GT', 'mean.vit.true.call.ratio'][c] + sub[sub$method == 'GT', 'sd.vit.true.call.ratio'][c])),
-          col = gt.col, lwd = 2)
+          col = lt.gt.col, lwd = 2)
   }
   points(seq(11, 19, 2), sub[sub$method == 'PL', 'mean.def.true.call.ratio'], pch = 16, col = pl.col)
   for(c in 6:10){
@@ -281,12 +292,12 @@ for(d in unique(dat$demo)){
             (sub[sub$method == 'PL', 'mean.def.true.call.ratio'][c-5] + sub[sub$method == 'PL', 'sd.def.true.call.ratio'][c-5])),
           col = pl.col, lwd = 2)
   }
-  points(seq(12, 20, 2), sub[sub$method == 'PL', 'mean.vit.true.call.ratio'], pch = 17, col = pl.col)
+  points(seq(12, 20, 2), sub[sub$method == 'PL', 'mean.vit.true.call.ratio'], pch = 17, col = lt.pl.col)
   for(c in 6:10){
     lines(c((c*2), (c*2)), 
           c((sub[sub$method == 'PL', 'mean.vit.true.call.ratio'][c-5] - sub[sub$method == 'PL', 'sd.vit.true.call.ratio'][c-5]),
             (sub[sub$method == 'PL', 'mean.vit.true.call.ratio'][c-5] + sub[sub$method == 'PL', 'sd.vit.true.call.ratio'][c-5])),
-          col = pl.col, lwd = 2)
+          col = lt.pl.col, lwd = 2)
   }
   axis(1, at = seq(1.5, 19.5, 2), labels = c('5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'))
   par(xpd = TRUE)
