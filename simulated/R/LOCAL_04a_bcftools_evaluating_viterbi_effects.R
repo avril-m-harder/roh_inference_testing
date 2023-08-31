@@ -39,7 +39,6 @@ b.4 <- 2e6
 
 OUT <- NULL
 
-### remove when final data sets are in place:
 for(t in true.fns){
   demo <- unlist(strsplit(t, split = '_'))[1]
   print(demo)
@@ -140,6 +139,11 @@ for(d in unique(dat$demo)){
       }
       sub <- dat[dat$demo == d & dat$method == m & dat$covg == c,]
       
+      min.x <- min(sub$true.froh, sub$d.froh, sub$v.froh)
+      max.x <- max(sub$true.froh, sub$d.froh, sub$v.froh)
+      min.y <- min(sub$true.froh, sub$d.froh, sub$v.froh)
+      max.y <- max(sub$true.froh, sub$d.froh, sub$v.froh)
+      
       scen.name <- demo.names[which(demo.names[,1] == d), 2]
       covg.name <- gsub('x','X',c)
       if(c == '05x'){
@@ -163,7 +167,9 @@ for(d in unique(dat$demo)){
       ## true f(ROH) vs. default and viterbi f(ROH)s
       if(c == '05x'){
         par(mar = c(5.1, 2.6, 3.1, 2.1), xpd = FALSE)
-        plot(0, 0, xlim = c(0, 1), ylim = c(0, 1), 
+        plot(0, 0, 
+             xlim = c(min.x, max.x), 
+             ylim = c(min.y, max.y), 
              pch = 16, col = 'transparent',
              main = '',
              xlab=expression('True ' * italic('F')['ROH']),
@@ -178,7 +184,7 @@ for(d in unique(dat$demo)){
                                     xlim = c(min(sub$true.froh), max(sub$true.froh))))
           legend('topleft', pch = c(16, 17), col = c(alpha(colour, pt.alph), alpha(lt.colour, pt.alph)), 
                  legend = c('Default','Viterbi-trained'), inset = 0.02, cex = cex.text)
-          text(x = 0.05, y = 0.75, labels = covg.name, font = 3, cex = cex.text)
+          text(x = (min.x + (max.x - min.x)*0.05), y = (min.y + (max.y - min.y)*0.75), labels = covg.name, font = 3, cex = cex.text)
           if(m == 'GT'){
             mtext(text = paste0(scen.name,'\n',method.name), 
                   adj = 0, cex = cex.text*.75, font = 3, line = 0.5)
@@ -188,7 +194,9 @@ for(d in unique(dat$demo)){
           }
       } else{
         par(mar = c(5.1, 2.6, 3.1, 2.1), xpd = FALSE)
-        plot(0, 0, xlim = c(0, 1), ylim = c(0, 1), 
+        plot(0, 0, 
+             xlim = c(min.x, max.x), 
+             ylim = c(min.y, max.y), 
              pch = 16, col = 'transparent',
              main = '',
              xlab=expression('True ' * italic('F')['ROH']),
@@ -202,7 +210,7 @@ for(d in unique(dat$demo)){
           points(sub$true.froh, sub$v.froh, pch = 17, col = alpha(lt.colour, pt.alph))
           suppressWarnings(clipplot(abline(lm(sub$v.froh ~ sub$true.froh), col=lt.colour), 
                                     xlim = c(min(sub$true.froh), max(sub$true.froh))))
-          text(x = 0.05, y = 0.97, labels = covg.name, font = 3, cex = cex.text)
+          text(x = (min.x + (max.x - min.x)*0.05), y = (min.y + (max.y - min.y)*0.98), labels = covg.name, font = 3, cex = cex.text)
       }
     }
   }

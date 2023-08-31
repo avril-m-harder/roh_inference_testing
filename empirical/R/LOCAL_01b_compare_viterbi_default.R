@@ -1,6 +1,29 @@
 library(scales)
+library(ghibli)
+library(TeachingDemos)
 
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/empirical/data/')
+
+### set colors
+gt.col <- ghibli_palette('PonyoMedium')[4]
+lt.gt.col <- ghibli_palette('PonyoLight')[4]
+pl.col <- ghibli_palette('PonyoMedium')[2]
+lt.pl.col <- ghibli_palette('PonyoLight')[2]
+min.covg.col <- ghibli_palette('PonyoMedium')[6]
+max.covg.col <- ghibli_palette('PonyoMedium')[1]
+
+pl.pal <- colorRampPalette(c(lt.pl.col, max.covg.col))
+pl.cols <- pl.pal(5)
+gt.pal <- colorRampPalette(c(gt.col, max.covg.col))
+gt.cols <- gt.pal(5)
+
+## can set up defaults/vtrained colors instead of focusing on coverage-based shades
+pl.def.col <- pl.cols[3]
+pl.vit.col <- pl.cols[1]
+gt.def.col <- gt.cols[3]
+gt.vit.col <- gt.cols[1]
+
+`%notin%` <- Negate(`%in%`)
 
 ## tas dev chrom data
 chroms <- read.table('mSarHar1.11_autosomes.txt', sep = '\t', header = TRUE)
@@ -14,7 +37,7 @@ b.2 <- 500e3
 b.3 <- 1e6
 b.4 <- 2e6
 
-bin.names <- c('short ROHs','intermediate ROHs','long ROHs','very long ROHs')
+bin.names <- c('Short','Intermediate','Long','Very long')
 
 ## summarize individual f(ROH) values (overall and length-specific) for comparisons
 OUT <- NULL
@@ -44,7 +67,7 @@ dat <- as.data.frame(OUT)
 for(c in c(5:9)){
   dat[,c] <- as.numeric(dat[,c])
 }
-colnames(dat) <- c('method','id','covg','ests','froh','froh.1','froh.2','froh.3','froh.4')
+colnames(dat) <- c('method','id','covg','hmm','froh','froh.1','froh.2','froh.3','froh.4')
 
 for(m in unique(dat$method)){
   sub <- dat[dat$method == m,]
@@ -102,7 +125,5 @@ for(m in unique(dat$method)){
     }
     dev.off()
 }
-
-
 
 

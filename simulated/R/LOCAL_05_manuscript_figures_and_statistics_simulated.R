@@ -2657,11 +2657,13 @@ for(d in demos){
     ## --- 95% CIs are comically small, may need to calculate a different way?
     k <- 1
     while(k == 1){
-      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals_separate_method_plots_95CIs.pdf'), width = 8, height = 5.5)
+      pdf(paste0('../figures/',d,'/',figure.ct,'_',d,'_',h,'_fROH_by_length_bins_indivlines_',n,'_relative_vals_separate_method_plots_95CIs.pdf'), 
+          width = 8, height = 5.5)
+      par(mar = c(5.1, 5.1, 4.1, 2.1))
       figure.ct <- figure.ct + 1
 
-      ymin <- -0.5
-      ymax <- 0.5
+      ymin <- -0.55
+      ymax <- 0.55
       ln.alph <- 0.5
       pt.alph <- 1
       diff <- 0.15
@@ -2678,7 +2680,7 @@ for(d in demos){
            xaxt = 'n', main = 'Genotypes', xlab = 'ROH length bin', 
            ylab = substitute(paste('Called ',italic('F')[ROH],' - True ',italic('F')[ROH])),
            cex.axis = text.size, cex.lab = text.size, yaxt = 'n')
-      axis(2, at = c(-0.1, 0, 0.1, 0.2), cex.axis = text.size)
+      axis(2, at = c(-0.5, -0.25, 0, 0.25, 0.5), cex.axis = text.size)
       axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = text.size)
       abline(h = 0, lty = 2)
 
@@ -2715,7 +2717,7 @@ for(d in demos){
            xaxt = 'n', main = 'Likelihoods', xlab = 'ROH length bin', 
            ylab = substitute(paste('Called ',italic('F')[ROH],' - True ',italic('F')[ROH])),
            cex.axis = text.size, cex.lab = text.size, yaxt  = 'n')
-      axis(2, at = c(-0.1, 0, 0.1, 0.2), cex.axis = text.size)
+      axis(2, at = c(-0.5, -0.25, 0, 0.25, 0.5), cex.axis = text.size)
       axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = text.size)
       abline(h = 0, lty = 2)
 
@@ -2747,7 +2749,7 @@ for(d in demos){
            xaxt = 'n', main = 'PLINK', xlab = 'ROH length bin', 
            ylab = substitute(paste('Called ',italic('F')[ROH],' - True ',italic('F')[ROH])),
            cex.axis = text.size, cex.lab = text.size, yaxt = 'n')
-      axis(2, at = c(-0.1, 0, 0.1, 0.2), cex.axis = text.size)
+      axis(2, at = c(-0.5, -0.25, 0, 0.25, 0.5), cex.axis = text.size)
       axis(1, at = c(2,3,4,5), labels = c('Short','Intermediate','Long','Very long'), cex.axis = text.size)
       abline(h = 0, lty = 2)
 
@@ -4012,7 +4014,6 @@ for(d in demos){
     i <- i+1
   }
   ##### 3. Calculate some stats for comparing true vs. called f(ROH) relationships across methods #####
-  ##### !!! pick up here !!! #####
   sets <- cbind(c('GT_defaults','GT_vtrained','PL_defaults','PL_vtrained'), c(4:7))
   for(r in 1:nrow(sets)){
     colm <- as.numeric(sets[r,2])
