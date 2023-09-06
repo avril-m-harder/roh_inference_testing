@@ -91,7 +91,7 @@ for(m in unique(dat$method)){
         points(c(x, x+1), 
               c(sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[1], 'froh'],
                 sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[2], 'froh']),
-              col = alpha('black', 1), pch = 19, cex = 0.75)
+              col = alpha('black', 1), pch = 16, cex = 0.75)
       }
       x <- x+2
     }
@@ -117,7 +117,7 @@ for(m in unique(dat$method)){
           points(c(x, x+1), 
                  c(sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[1], l],
                    sub[sub$id == i & sub$covg == c & sub$ests == unique(sub$ests)[2], l]),
-                 col = alpha('black', 1), pch = 19, cex = 0.75)
+                 col = alpha('black', 1), pch = 16, cex = 0.75)
         }
         x <- x+2
       }
@@ -126,4 +126,86 @@ for(m in unique(dat$method)){
     dev.off()
 }
 
+##### Mirror Fig. 6 but for Viterbi vs. defaults (line plot per method x ROH length bin) #####
+xmin <- 0.85
+xmax <- 5.15
+ymin <- 0
+ymax <- 0.3
+txt.size <- 1.25
+bg.alph <- 0.2
+offset <- 0.05
+lwd <- 2
+pt.cex <- 1
+err.width <- 0.1
+
+variables <- as.data.frame(cbind(c('GT','PL'),
+                                 c(gt.def.col, pl.def.col),
+                                 c(gt.vit.col, pl.vit.col)))
+colnames(variables) <- c('method','def.col','vit.col')
+
+bins <- cbind(bin.names, c(1:4), c(6:9))
+
+for(r in 1:nrow(variables)){
+  sub.dat <- dat[dat$method == variables$method[r],]
+  sub.dat$covg <- as.numeric(sub.dat$covg)
+  def.col <- variables$def.col[r]
+  vit.col <- variables$vit.col[r]
+  method <- variables$method[r]
+  
+  pdf(paste0('../figures/',method,'_viterbi_vs_default_fROH_by_length_bins_indivlines_95_CIs.pdf'), width = 4.75, height = 6)
+  par(mfrow = c(1,1), mar = c(5.1, 4.6, 4.1, 2.1))
+  
+  for(b in 1:nrow(bins)){
+    colm <- as.numeric(bins[b,3])
+    
+    plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
+         xaxt = 'n', main = bins[b,1], xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
+         cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
+    axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
+    axis(2, at = seq(0, ymax, 0.05), labels = c('0.0','','0.1','','0.2','','0.3'), cex.axis = txt.size)
+    x <- 1
+    
+    for(i in unique(dat$id)){
+      ## default
+      temp <- sub.dat[sub.dat$id == i & sub.dat$hmm == 'default',]
+      temp <- temp[order(temp$covg),]
+      lines(c(1:5), temp[,colm], col = alpha(def.col, bg.alph))
+      ## viterbi
+      temp <- sub.dat[sub.dat$id == i & sub.dat$hmm == 'vtrained',]
+      temp <- temp[order(temp$covg),]
+      lines(c(1:5), temp[,colm], col = alpha(vit.col, bg.alph))
+    }
+    OUT <- NULL
+    for(c in sort(unique(sub.dat$covg))){
+      save <- c(c, 
+                mean(sub.dat[sub.dat$covg == c & sub.dat$hmm == 'default', colm]), 
+                sd(sub.dat[sub.dat$covg == c & sub.dat$hmm == 'default', colm])/sqrt(15),
+                mean(sub.dat[sub.dat$covg == c & sub.dat$hmm == 'vtrained', colm]), 
+                sd(sub.dat[sub.dat$covg == c & sub.dat$hmm == 'vtrained', colm])/sqrt(15))
+      OUT <- rbind(OUT, save)
+    }
+    OUT <- as.data.frame(OUT)
+    colnames(OUT) <- c('covg','def.mean','def.se','vit.mean','vit.se')
+    write.csv(OUT, paste0('../output/',method,'_empirical_bin',bins[b,2],'.csv'), row.names = FALSE)
+    
+    ## 95% CIs
+    lines(c(1:5)-offset, OUT$def.mean, col = def.col, lwd = lwd)
+    points(c(1:5)-offset, OUT$def.mean, col = def.col, pch = 16, cex = pt.cex)
+    suppressWarnings(arrows(x0 = c(1:5)-offset, x1 = c(1:5)-offset, y0 = (OUT$def.mean - OUT$def.se*1.96),
+           y1 = (OUT$def.mean + OUT$def.se*1.96),
+           lwd = lwd, col = def.col, code=3, angle=90, length=err.width))
+    
+    lines(c(1:5)+offset, OUT$vit.mean, col = vit.col, lwd = lwd)
+    points(c(1:5)+offset, OUT$vit.mean, col = vit.col, pch = 16, cex = pt.cex)
+    suppressWarnings(arrows(x0 = c(1:5)+offset, x1 = c(1:5)+offset, y0 = (OUT$vit.mean - OUT$vit.se*1.96),
+           y1 = (OUT$vit.mean + OUT$vit.se*1.96),
+           lwd = lwd, col = vit.col, code=3, angle=90, length=err.width))
+    
+    if(b == 4){
+      legend('topright', legend = c('Default','Viterbi-trained'), col = c(def.col, vit.col), pch = 16, lwd = lwd,
+             inset = 0.02, bty = 'n', cex = txt.size)
+    }
+  }
+  dev.off()
+}
 
