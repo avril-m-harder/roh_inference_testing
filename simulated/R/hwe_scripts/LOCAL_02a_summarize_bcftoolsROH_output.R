@@ -4,7 +4,7 @@
 
 library(scales)
 
-setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/bcftools_output/')
+setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/bcftools_output/hwe_filtered/')
 
 ## get filenames of GT-only and PL results
 fns <- list.files(pattern = 'RG_ONLY')
@@ -21,7 +21,7 @@ for(f in fns){
   demo <- comps[1]
   method <- comps[2]
   covg <- comps[3]
-  hmm <- comps[4]
+  hmm <- comps[6]
   ## read in data
   dat <- read.table(f)
   dat <- dat[,-1]

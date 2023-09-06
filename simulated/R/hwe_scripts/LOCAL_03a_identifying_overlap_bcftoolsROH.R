@@ -1,19 +1,19 @@
 `%notin%` <- Negate(`%in%`)
 
-setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/')
+setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/bcftools_output/hwe_filtered/')
 
 ##### Read in all ROH-calling results #####
-res <- read.table('bcftools_output/bcftoolsROH_all_coordinates.txt', header = TRUE)
+res <- read.table('bcftoolsROH_all_coordinates.txt', header = TRUE)
 
 ##### Loop over demographic scenarios #####
-true.fns <- list.files(path = 'slim_true_data/', pattern = 'roh_coords')
+true.fns <- list.files(path = '../../slim_true_data/', pattern = 'roh_coords')
 
 for(t in true.fns){
   demo <- unlist(strsplit(t, split = '_'))[1]
   demo.res <- res[res$demo == demo,]
 
   ##### Read in known/true heterozygosity + ROH information #####
-  true.rohs <- read.table(paste0('slim_true_data/',t))
+  true.rohs <- read.table(paste0('../../slim_true_data/',t))
   colnames(true.rohs) <- c('id','start','end','length','true.roh.id')
   true.rohs <- true.rohs[true.rohs$length >= 100000,] ### only keeping true ROHs >= 100 kb because that's all we're evaluating the ability to call
   chrom.len <- 30e6
@@ -90,6 +90,6 @@ for(t in true.fns){
     }
   }
   bcf.out <- as.data.frame(BCF.OUT)
-  write.table(bcf.out, paste0('bcftools_output/bcftoolsROH_',demo,'_overlap_results.txt'),
+  write.table(bcf.out, paste0('bcftoolsROH_',demo,'_overlap_results.txt'),
               sep = '\t', row.names = FALSE, quote = FALSE, col.names = FALSE)
 }
