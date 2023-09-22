@@ -19,37 +19,39 @@ lt.plink.col <- ghibli_palette('PonyoLight')[3]
 min.covg.col <- ghibli_palette('PonyoMedium')[6]
 max.covg.col <- ghibli_palette('PonyoMedium')[1]
 
-setwd('/Users/Avril/Desktop/roh_param_project/empirical_plotting_summarizing/')
+setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/empirical/data/')
 
 ##### 1A. Read in data and summary files #####
 ## tas dev chrom data
-chroms <- read.table('tasdev_assembly_data/mSarHar1.11_autosomes.txt', sep = '\t', header = TRUE)
+chroms <- read.table('mSarHar1.11_autosomes.txt', sep = '\t', header = TRUE)
 chroms <- chroms[,c(5,9)]
 colnames(chroms) <- c('chrom','length')
 chroms$cum.len <- cumsum(as.numeric(chroms$length))
 tot.len <- sum(chroms$length)
 
 ## Sample and chrom keys
-samp.key <- read.csv('../empirical_qc/sample_id_key.csv')
-chrom.key <- read.csv('../empirical_qc/chrom_key.csv')
+samp.key <- read.csv('../../../empirical_qc/sample_id_key.csv')
+chrom.key <- read.csv('../../../empirical_qc/chrom_key.csv')
 
 ## BCFtools/ROH results
-gt.res <- read.csv('bcftools_data/tasdev_GT_allcovg_levels.csv')
+gt.res <- read.csv('tasdev_GT_allcovg_levels.csv')
+gt.res <- gt.res[gt.res$ests == 'vtrained',]
 gt.res <- merge(gt.res, chrom.key, by.x = 'chrom', by.y = 'chrom.name')
-pl.res <- read.csv('bcftools_data/tasdev_PL_allcovg_levels.csv')
+pl.res <- read.csv('tasdev_PL_allcovg_levels.csv')
+pl.res <- pl.res[pl.res$ests == 'vtrained',]
 pl.res <- merge(pl.res, chrom.key, by.x = 'chrom', by.y = 'chrom.name')
 
 ## settled on default settings
-plink.res <- read.csv('plink_results_round1/PLINK_all_coordinates_DEFAULT_SETTINGS.csv')
+plink.res <- read.csv('PLINK_all_coordinates_DEFAULT_SETTINGS.csv')
 plink.res$length <- plink.res$end - plink.res$start + 1
 
 ## Individual f(ROH) values
-froh.results <- read.csv('combined_empirical_data/individual_froh_stats.csv')
+froh.results <- read.csv('individual_froh_stats.csv')
 
 
 ##### 1B. Plot histograms of ROH length distributions #####
 alph <- 0.4
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/ROH_length_histograms.pdf', width = 6, height = 5)
+pdf('../figures/ROH_length_histograms.pdf', width = 6, height = 5)
 
 ## called BCFtools Genotypes
 hist(gt.res$length, breaks = 50, xlab = 'Called ROH length (Mb)', main = 'BCFtools Genotypes - empirical data', xaxt = 'n')
@@ -67,7 +69,7 @@ hist(plink.res$length, breaks = 50, xlab = 'Called ROH length (Mb)', main = 'PLI
 hist(plink.res$length, breaks = 100, xlab = 'Called ROH length', main = 'PLINK - empirical data', xlim = c(1e5, 1e6))
 
 ## combined
-hist(gt.res$length, breaks = 100, xlab = 'True ROH length (kb)', main = 'True empirical data', xlim = c(1e5, 1e6), 
+hist(gt.res$length, breaks = 100, xlab = 'True ROH length (kb)', main = 'Empirical data', xlim = c(1e5, 1e6), 
      border = 'transparent', col = 'transparent', xaxt = 'n')
   axis(1, at = c(0, 2.5e5, 5e5, 7.5e5, 1e6), labels = c(0, 250, 500, 750, 1000))
   hist(plink.res$length, breaks = 100, add = TRUE, col = alpha(plink.col, alph))
@@ -101,14 +103,14 @@ plot(density(pl.res$length), xlim = c(1e5, 5e5), xaxt = 'n', xlab = 'ROH length 
 dev.off()
 
 ##### 1C. Plot cumulative f(ROH) for each sample #####
-# pdf('../manuscript/r_scripts_AMH/figures_output/empirical/cumulative_fROH_figures_empirical.pdf', width = 8, height = 6)
+# pdf('../figures/cumulative_fROH_figures_empirical.pdf', width = 8, height = 6)
 
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/cumulative_fROH_figures_empirical.pdf', width = 20, height = 12)
+pdf('../figures/cumulative_fROH_figures_empirical.pdf', width = 20, height = 12)
 par(mfrow = c(3, 5))
 
 ## Genotypes
 for(c in unique(sort(gt.res$covg))){
-  plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, max(froh.results[froh.results$covg == c, 'gt.froh'])), 
+  plot(0, 0, col = 'transparent', xlim = c(1e5, 6e6), ylim = c(0, max(froh.results[froh.results$covg == c, 'gt.froh'])), 
        main = paste0('Empirical: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
   for(i in unique(gt.res$id)){
@@ -122,7 +124,7 @@ for(c in unique(sort(gt.res$covg))){
 
 ## Likelihoods
 for(c in unique(sort(pl.res$covg))){
-  plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, max(froh.results[froh.results$covg == c, 'pl.froh'])), 
+  plot(0, 0, col = 'transparent', xlim = c(1e5, 6e6), ylim = c(0, max(froh.results[froh.results$covg == c, 'pl.froh'])), 
        main = paste0('Empirical: BCFtools Likelihoods - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
   for(i in unique(pl.res$id)){
@@ -136,7 +138,7 @@ for(c in unique(sort(pl.res$covg))){
 
 ## PLINK
 for(c in unique(sort(plink.res$covg))){
-  plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, max(froh.results[froh.results$covg == c, 'plink.froh'])), 
+  plot(0, 0, col = 'transparent', xlim = c(1e5, 6e6), ylim = c(0, max(froh.results[froh.results$covg == c, 'plink.froh'])), 
        main = paste0('Empirical: PLINK - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
   for(i in unique(plink.res$id)){
@@ -150,60 +152,58 @@ for(c in unique(sort(plink.res$covg))){
 
 dev.off()
 
-# pdf('../manuscript/r_scripts_AMH/figures_output/empirical/cumulative_fROH_figures_empirical_uniformyaxis.pdf', width = 8, height = 6)
-
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/cumulative_fROH_figures_empirical_uniformyaxis.pdf', width = 20, height = 12)
-par(mfrow = c(3,5))
-
-pt.cex <- 0.2
-alph <- 0.4
-
-## Genotypes
-for(c in unique(sort(gt.res$covg))){
-  plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, 0.42), 
-       main = paste0('Empirical: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
-  axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
-  for(i in unique(gt.res$id)){
-    sub <- gt.res[gt.res$id == i & gt.res$covg == c,]
-    sub <- sub[order(sub$length),]
-    sub$cumlen <- cumsum(sub$length)
-    sub$cumfroh <- sub$cumlen / tot.len
-    lines(sub$length, sub$cumfroh, col = alpha(gt.col, alph))
-    points(sub$length, sub$cumfroh, col = gt.col, cex = pt.cex)
-  }
-}
-
-## Likelihoods
-for(c in unique(sort(pl.res$covg))){
-  plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, 0.42), 
-       main = paste0('Empirical: BCFtools Likelihoods - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
-  axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
-  for(i in unique(pl.res$id)){
-    sub <- pl.res[pl.res$id == i & pl.res$covg == c,]
-    sub <- sub[order(sub$length),]
-    sub$cumlen <- cumsum(sub$length)
-    sub$cumfroh <- sub$cumlen / tot.len
-    lines(sub$length, sub$cumfroh, col = alpha(pl.col, alph))
-    points(sub$length, sub$cumfroh, col = pl.col, cex = pt.cex)
-  }
-}
-
-## PLINK
-for(c in unique(sort(plink.res$covg))){
-  plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, 0.42), 
-       main = paste0('Empirical: PLINK - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
-  axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
-  for(i in unique(plink.res$id)){
-    sub <- plink.res[plink.res$id == i & plink.res$covg == c,]
-    sub <- sub[order(sub$length),]
-    sub$cumlen <- cumsum(sub$length)
-    sub$cumfroh <- sub$cumlen / tot.len
-    lines(sub$length, sub$cumfroh, col = alpha(plink.col, alph))
-    points(sub$length, sub$cumfroh, col = plink.col, cex = pt.cex)
-  }
-}
-
-dev.off()
+# pdf('../figures/cumulative_fROH_figures_empirical_uniformyaxis.pdf', width = 20, height = 12)
+# par(mfrow = c(3,5))
+# 
+# pt.cex <- 0.2
+# alph <- 0.4
+# 
+# ## Genotypes
+# for(c in unique(sort(gt.res$covg))){
+#   plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, 0.42), 
+#        main = paste0('Empirical: BCFtools Genotypes - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+#   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+#   for(i in unique(gt.res$id)){
+#     sub <- gt.res[gt.res$id == i & gt.res$covg == c,]
+#     sub <- sub[order(sub$length),]
+#     sub$cumlen <- cumsum(sub$length)
+#     sub$cumfroh <- sub$cumlen / tot.len
+#     lines(sub$length, sub$cumfroh, col = alpha(gt.col, alph))
+#     points(sub$length, sub$cumfroh, col = gt.col, cex = pt.cex)
+#   }
+# }
+# 
+# ## Likelihoods
+# for(c in unique(sort(pl.res$covg))){
+#   plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, 0.42), 
+#        main = paste0('Empirical: BCFtools Likelihoods - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+#   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+#   for(i in unique(pl.res$id)){
+#     sub <- pl.res[pl.res$id == i & pl.res$covg == c,]
+#     sub <- sub[order(sub$length),]
+#     sub$cumlen <- cumsum(sub$length)
+#     sub$cumfroh <- sub$cumlen / tot.len
+#     lines(sub$length, sub$cumfroh, col = alpha(pl.col, alph))
+#     points(sub$length, sub$cumfroh, col = pl.col, cex = pt.cex)
+#   }
+# }
+# 
+# ## PLINK
+# for(c in unique(sort(plink.res$covg))){
+#   plot(0, 0, col = 'transparent', xlim = c(1e5, 7.5e6), ylim = c(0, 0.42), 
+#        main = paste0('Empirical: PLINK - ', c, 'X'), xlab = 'ROH length (Mb)', ylab = 'Cumulative f(ROH)', xaxt = 'n')
+#   axis(1, at = c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6), labels = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
+#   for(i in unique(plink.res$id)){
+#     sub <- plink.res[plink.res$id == i & plink.res$covg == c,]
+#     sub <- sub[order(sub$length),]
+#     sub$cumlen <- cumsum(sub$length)
+#     sub$cumfroh <- sub$cumlen / tot.len
+#     lines(sub$length, sub$cumfroh, col = alpha(plink.col, alph))
+#     points(sub$length, sub$cumfroh, col = plink.col, cex = pt.cex)
+#   }
+# }
+# 
+# dev.off()
 
 
 ##### 2. Plotting f(ROH) by length bins, individual lines #####
@@ -212,14 +212,14 @@ b2 <- 1e6
 b3 <- 2e6
 
 ymin <- 0
-ymax <- 0.15
+ymax <- 0.3
 xmin <- 0.85
 xmax <- 5.15
 alph <- 0.3
 
 k <- 1
 while(k == 1){
-  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/empirical/fROH_by_length_bins_indivlines.pdf'), width = 12, height = 12)
+  pdf(paste0('../figures/fROH_by_length_bins_indivlines.pdf'), width = 12, height = 12)
   par(mfrow = c(3,4))
   
   ## GT
@@ -460,7 +460,11 @@ b2 <- 1e6
 b3 <- 2e6
 
 ymin <- 0
-ymax <- 0.15
+ymax <- 0.2
+ymax.1 <- 0.3
+ymax.2 <- 0.175
+ymax.3 <- 0.15
+ymax.4 <- 0.05
 xmin <- 0.85
 xmax <- 5.15
 bg.alph <- 0.25
@@ -472,7 +476,7 @@ pt.cex <- 1.5
 
 k <- 1
 while(k == 1){
-  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/empirical/fROH_by_length_bins_indivlines.pdf'), width = 4.75, height = 6)
+  pdf(paste0('../figures/fROH_by_length_bins_indivlines.pdf'), width = 4.75, height = 6)
   par(mfrow = c(1,1), mar = c(5.1, 4.6, 4.1, 2.1))
   
   ## GT
@@ -533,7 +537,7 @@ while(k == 1){
   }
   
   ## Bin 1 plot
-  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
+  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax.1), 
        xaxt = 'n', main = 'Short ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
        cex.axis = txt.size, cex.lab = txt.size)
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
@@ -558,7 +562,7 @@ while(k == 1){
   }
   OUT <- as.data.frame(OUT)
   colnames(OUT) <- c('covg','gt.mean','gt.se','pl.mean','pl.se','plink.mean','plink.se')
-  write.csv(OUT, '../manuscript/r_scripts_AMH/tables_output/empirical_bin1.csv')
+  write.csv(OUT, 'empirical_bin1.csv')
   
   ## SEs
   # lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
@@ -602,7 +606,7 @@ while(k == 1){
          col = c(gt.col, pl.col, plink.col), cex = txt.size, pt.cex = pt.cex)
   
   ## Bin 2 plot
-  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
+  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax.2), 
        xaxt = 'n', main = 'Intermediate ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
        cex.axis = txt.size, cex.lab = txt.size)
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
@@ -627,7 +631,7 @@ while(k == 1){
   }
   OUT <- as.data.frame(OUT)
   colnames(OUT) <- c('covg','gt.mean','gt.se','pl.mean','pl.se','plink.mean','plink.se')
-  write.csv(OUT, '../manuscript/r_scripts_AMH/tables_output/empirical_bin2.csv')
+  write.csv(OUT, 'empirical_bin2.csv')
   
   ## SEs
   # lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
@@ -668,7 +672,7 @@ while(k == 1){
          lwd = lwd, col = plink.col, code=3, angle=90, length=err.width)
   
   ## Bin 3 plot
-  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
+  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax.3), 
        xaxt = 'n', main = 'Long ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
        cex.axis = txt.size, cex.lab = txt.size)
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
@@ -693,7 +697,7 @@ while(k == 1){
   }
   OUT <- as.data.frame(OUT)
   colnames(OUT) <- c('covg','gt.mean','gt.se','pl.mean','pl.se','plink.mean','plink.se')
-  write.csv(OUT, '../manuscript/r_scripts_AMH/tables_output/empirical_bin3.csv')
+  write.csv(OUT, 'empirical_bin3.csv')
   
   ## SEs  
   # lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
@@ -734,7 +738,7 @@ while(k == 1){
          lwd = lwd, col = plink.col, code=3, angle=90, length=err.width)
   
   ## Bin 4 plot
-  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), 
+  plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax.4), 
        xaxt = 'n', main = 'Very long ROHs', xlab = 'Coverage', ylab = substitute(paste(italic('F')[ROH])),
        cex.axis = txt.size, cex.lab = txt.size)
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
@@ -759,7 +763,7 @@ while(k == 1){
   }
   OUT <- as.data.frame(OUT)
   colnames(OUT) <- c('covg','gt.mean','gt.se','pl.mean','pl.se','plink.mean','plink.se')
-  write.csv(OUT, '../manuscript/r_scripts_AMH/tables_output/empirical_bin4.csv')
+  write.csv(OUT, 'empirical_bin4.csv')
   
   ## SEs
   # lines(c(1:5)-offset, OUT$gt.mean, col = gt.col, lwd = lwd)
@@ -805,7 +809,7 @@ while(k == 1){
   dev.off()
   
   ### plots for stats comps of methods in SI
-  pdf(paste0('../manuscript/r_scripts_AMH/figures_output/empirical/fROH_by_length_bins_SI_method_comp_plot.pdf'), width = 5, height = 6)
+  pdf(paste0('../figures/fROH_by_length_bins_SI_method_comp_plot.pdf'), width = 5, height = 6)
   par(mfrow = c(1,1), mar = c(5.1, 4.6, 4.1, 2.1))
   
   offset <- 0.2
@@ -1014,18 +1018,18 @@ pt.size <- 1.5
 err.wid <- 0.05
 txt.size <- 1.25
 ymin <- 0.075
-ymax <- 0.425
+ymax <- 0.6
 xmin <- 0.85
 xmax <- 5.15
 
 k <- 1
 while(k == 1){
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/empirical_coverage_vs_fROH_indivlines.pdf', width = 10, height = 4)
+pdf('../figures/empirical_coverage_vs_fROH_indivlines.pdf', width = 10, height = 4)
 par(mfrow=c(1,3))
-plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = substitute(paste(italic('F')[ROH])), 
      xaxt = 'n', xlab = 'Coverage', main = 'Genotypes - empirical', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n') 
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
   for(i in unique(froh.results$num.id)){
     temp <- froh.results[froh.results$num.id == i,]
     temp <- temp[order(temp$covg),]
@@ -1034,10 +1038,10 @@ plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)',
     points(c(1:5), c(temp$gt.froh), pch = 19, col = gt.col)
   }  
 
-plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = substitute(paste(italic('F')[ROH])), 
        xaxt = 'n', xlab = 'Coverage', main = 'Genotypes - empirical', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n') 
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
   for(i in unique(froh.results$num.id)){
     temp <- froh.results[froh.results$num.id == i,]
     temp <- temp[order(temp$covg),]
@@ -1046,11 +1050,11 @@ plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)',
     points(c(1:5), c(temp$pl.froh), pch = 19, col = pl.col)
   }  
   
-plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = substitute(paste(italic('F')[ROH])), 
        xaxt = 'n', xlab = 'Coverage', main = 'Genotypes - empirical', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
-    for(i in unique(froh.results$num.id)){
+  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
+  for(i in unique(froh.results$num.id)){
     temp <- froh.results[froh.results$num.id == i,]
     temp <- temp[order(temp$covg),]
     
@@ -1059,8 +1063,8 @@ plot(0,0, xlim = c(xmin,xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)',
   }  
 
 ### background individual lines + means and 95% CIs
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/empirical_coverage_vs_fROH_indivlines_95CIs.pdf', width = 10, height = 4)
-par(mfrow=c(1,3))
+pdf('../figures/empirical_coverage_vs_fROH_indivlines_95CIs.pdf', width = 10, height = 4)
+par(mfrow=c(1,3), mar = c(5.1, 4.6, 4.1, 2.1))
 OUT <- NULL
 for(c in sort(unique(froh.results$covg))){
   save <- c(c, 
@@ -1071,13 +1075,13 @@ for(c in sort(unique(froh.results$covg))){
 }
 OUT <- as.data.frame(OUT)
 colnames(OUT) <- c('covg','mean.pl','se.pl','mean.gt','se.gt','mean.plink','se.plink')
-write.csv(OUT, '../manuscript/r_scripts_AMH/tables_output/covg_fROH_means_SEs_empirical.csv')
+write.csv(OUT, 'covg_fROH_means_SEs_empirical.csv')
 
 ## GT 
-plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = substitute(paste(italic('F')[ROH])), 
      xaxt = 'n', xlab = 'Coverage', main = 'Genotypes', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
   for(i in unique(froh.results$num.id)){
     temp <- froh.results[froh.results$num.id == i,]
     temp <- temp[order(temp$covg),]
@@ -1091,10 +1095,10 @@ plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)',
          lwd = lwd, col = gt.col, code=3, angle=90, length= err.wid)
 
 ## PL 
-plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = substitute(paste(italic('F')[ROH])), 
      xaxt = 'n', xlab = 'Coverage', main = 'Likelihoods', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
   for(i in unique(froh.results$num.id)){
     temp <- froh.results[froh.results$num.id == i,]
     temp <- temp[order(temp$covg),]
@@ -1107,10 +1111,10 @@ plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)',
          lwd = lwd, col = pl.col, code=3, angle=90, length= err.wid)
 
 ## PLINK 
-plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
+plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = substitute(paste(italic('F')[ROH])), 
      xaxt = 'n', xlab = 'Coverage', main = 'PLINK', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
   axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
   for(i in unique(froh.results$num.id)){
     temp <- froh.results[froh.results$num.id == i,]
     temp <- temp[order(temp$covg),]
@@ -1126,7 +1130,7 @@ plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)',
 dev.off()
 
 ### background individual lines + means and 83% CIs
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/empirical_coverage_vs_fROH_indivlines_83CIs.pdf', width = 10, height = 4)
+pdf('../figures/empirical_coverage_vs_fROH_indivlines_83CIs.pdf', width = 10, height = 4)
 par(mfrow=c(1,3))
 OUT <- NULL
 for(c in sort(unique(froh.results$covg))){
@@ -1143,7 +1147,7 @@ colnames(OUT) <- c('covg','mean.pl','se.pl','mean.gt','se.gt','mean.plink','se.p
 plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
      xaxt = 'n', xlab = 'Coverage', main = 'Genotypes', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
 axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
 for(i in unique(froh.results$num.id)){
   temp <- froh.results[froh.results$num.id == i,]
   temp <- temp[order(temp$covg),]
@@ -1160,7 +1164,7 @@ arrows(x0 = c(1:5), x1 = c(1:5), y0 = c(OUT$mean.gt - OUT$se.gt*1.37),
 plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
      xaxt = 'n', xlab = 'Coverage', main = 'Likelihoods', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
 axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
 for(i in unique(froh.results$num.id)){
   temp <- froh.results[froh.results$num.id == i,]
   temp <- temp[order(temp$covg),]
@@ -1176,7 +1180,7 @@ arrows(x0 = c(1:5), x1 = c(1:5), y0 = c(OUT$mean.pl - OUT$se.pl*1.37),
 plot(0,0, xlim = c(xmin, xmax), ylim = c(ymin, ymax), ylab = 'f(ROH)', 
      xaxt = 'n', xlab = 'Coverage', main = 'PLINK', cex.axis = txt.size, cex.lab = txt.size, yaxt = 'n')
 axis(1, at = c(1,2,3,4,5), labels = c('5X','10X','15X','30X','50X'), cex.axis = txt.size)
-axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4), labels = c('0.0','0.1','0.2','0.3','0.4'), cex.axis = txt.size)
+axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = c('0.0','0.1','0.2','0.3','0.4','0.5','0.6'), cex.axis = txt.size)
 for(i in unique(froh.results$num.id)){
   temp <- froh.results[froh.results$num.id == i,]
   temp <- temp[order(temp$covg),]
@@ -1195,148 +1199,211 @@ k <- k+1
 }
 
 
+##### 4. Correlation plots #####
+### Within each scenario, within each method, calculate among true + coverages
+alph <- 0.7
+pt.size <- 0.6
+colors <- c(gt.col,pl.col,plink.col)
 
-##### 99. Plotting individual called ROHs for all 3 analyses and coverage levels #####
-## set up data for plotting
-gt.chrom.plots <- gt.res
-pl.chrom.plots <- pl.res
-plink.chrom.plots <- plink.res
-## plot gap
-gap <- 100e6
-plot.tot.len <- tot.len + 5*gap
-
-gt.chrom.plots$plot.start <- gt.chrom.plots$start
-gt.chrom.plots$plot.end <- gt.chrom.plots$end
-for(c in c(1:5)){
-  gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'plot.start'] <- gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'start'] + chroms$cum.len[c-1] + gap*(c-1)
-  gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'plot.end'] <- gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'end'] + chroms$cum.len[c-1] + gap*(c-1 )
+## Functions for pairs plotting
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 1/strwidth(txt)
+  text(0.5, 0.5, txt, cex = 1.5)
 }
-pl.chrom.plots$plot.start <- pl.chrom.plots$start
-pl.chrom.plots$plot.end <- pl.chrom.plots$end
-for(c in c(1:5)){
-  pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'plot.start'] <- pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'start'] + chroms$cum.len[c-1] + gap*(c-1)
-  pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'plot.end'] <- pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'end'] + chroms$cum.len[c-1] + gap*(c-1 )
-}
-plink.chrom.plots$plot.start <- plink.chrom.plots$start
-plink.chrom.plots$plot.end <- plink.chrom.plots$end
-for(c in c(1:5)){
-  plink.chrom.plots[plink.chrom.plots$chrom == c, 'plot.start'] <- plink.chrom.plots[plink.chrom.plots$chrom == c, 'start'] + chroms$cum.len[c-1] + gap*(c-1)
-  plink.chrom.plots[plink.chrom.plots$chrom == c, 'plot.end'] <- plink.chrom.plots[plink.chrom.plots$chrom == c, 'end'] + chroms$cum.len[c-1] + gap*(c-1 )
+onetoone_line <- function(x,y,...){
+  abline(a = 0, b = 1, lty = 2, col = 'grey30')
+  points(x, y, ...)
 }
 
-wid <- 3 ## line widths in plot ~ or ~
-hit <- 0.1 ## polygon height
-
-## plot all chromosomes
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/individual_true_and_called_ROHs_across_all_chromosomes.pdf', width = 15, height = 7)
-par(mar = c(5.1, 5.1, 4.1, 2.1))
-
-for(i in unique(pl.chrom.plots$id)){
-  sub.pl <- pl.chrom.plots[pl.chrom.plots$id == i,]
-  sub.gt <- gt.chrom.plots[gt.chrom.plots$id == i,]
-  sub.pk <- plink.chrom.plots[plink.chrom.plots$id == i,]
+## Within methods, across coverages
+pdf('../figures/empirical_cors_across_covgs_within_methods.pdf', width = 6, height = 5.5)
+col <- 1
+for(m in c(3, 4, 5)){
+  OUT <- NULL
+  method <- gsub('.froh', '', colnames(froh.results)[m])
+  sub <- froh.results[,c(1:2,m)]
+  for(i in unique(sub$num.id)){
+    temp <- sub[sub$num.id == i,]
+    save <- c(i, temp[temp$covg == 5, 3],
+              temp[temp$covg == 10, 3],
+              temp[temp$covg == 15, 3],
+              temp[temp$covg == 30, 3],
+              temp[temp$covg == 50, 3])
+    OUT <- rbind(OUT, save)
+  }
+  out <- as.data.frame(OUT)
+  colnames(out) <- c('id','5X','10X','15X','30X','50X')
   
-  plot(0,0, xlim = c(1, plot.tot.len), ylim = c(0, 15), col = 'transparent', yaxt = 'n', xlab = '', ylab = '', main = i, xaxt = 'n', bty = 'n')
-    lines(x = c(-1e9, 4e9), y = c(5.5, 5.5), lty = 2)
-    lines(x = c(-1e9, 4e9), y = c(10.5, 10.5), lty = 2)
-    axis(2, at = c(1:15), labels = c('5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
-    mtext('PLINK', side = 2, line = 3, at = 13)
-    mtext('Genotypes only', side = 2, line = 3, at = 8)
-    mtext('Genotype\nlikelihoods', side = 2, line = 3, at = 3)
-    for(c in c(1:6)){
-      lines(x = c((chroms$cum.len[c] + (gap * (c-1)) - chroms$length[c] + 1), (chroms$cum.len[c] + (gap * (c-1)))), y = c(0.5,0.5))
-    }
-    for(c in c(1:6)){
-      text(x = ((chroms$cum.len[c] + (gap * (c-1))) - chroms$length[c]/2), y = 0, labels = c)
-    }
-    
-  y <- 1
-  for(c in c(5, 10, 15, 30, 50)){
-    temp <- sub.pl[sub.pl$covg == c,]
-    if(nrow(temp) > 0){
-      for(r in 1:nrow(temp)){
-        polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-                col = pl.col, border = NA)
-      }
-    }
-    y <- y+1
-  }
-  for(c in c(5, 10, 15, 30, 50)){
-    temp <- sub.gt[sub.gt$covg == c,]
-    if(nrow(temp) > 0){
-      for(r in 1:nrow(temp)){
-        polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-                col = gt.col, border = NA)
-      }
-    }
-    y <- y+1
-  }
-  for(c in c(5, 10, 15, 30, 50)){
-    temp <- sub.pk[sub.pk$covg == c,]
-    if(nrow(temp) > 0){
-      for(r in 1:nrow(temp)){
-        polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-                col = plink.col, border = NA)
-      }
-    }
-    y <- y+1
-  }
+  pairs(out[,which(colnames(out) != 'id')], pch = 16, col = alpha(colors[col], alph), 
+        upper.panel = panel.cor, lower.panel = onetoone_line, cex = pt.size,
+        gap=0, row1attop = FALSE, main = method, font.labels = 2)
+  
+  col <- col+1
 }
 dev.off()
 
-## just plot first 10 Mb of chromosome 1
-pdf('../manuscript/r_scripts_AMH/figures_output/empirical/individual_true_and_called_ROHs_across_chromosome_1_10Mb_window.pdf', width = 15, height = 7)
-par(mar = c(5.1, 5.1, 4.1, 2.1))
-
-for(i in unique(pl.chrom.plots$id)){
-  sub.pl <- pl.chrom.plots[pl.chrom.plots$id == i,]
-  sub.gt <- gt.chrom.plots[gt.chrom.plots$id == i,]
-  sub.pk <- plink.chrom.plots[plink.chrom.plots$id == i,]
+## Within methods, across coverages
+pdf('../figures/empirical_cors_across_methods_within_covgs.pdf', width = 6, height = 5.5)
+col <- 1
+for(c in c(5, 10, 15, 30, 50)){
+  sub <- froh.results[froh.results$covg == c,]
   
-  plot(0,0, xlim = c(1, 10e6), ylim = c(0, 15), col = 'transparent', yaxt = 'n', xlab = '', ylab = '', main = i, xaxt = 'n', bty = 'n')
-  lines(x = c(-1e9, 4e9), y = c(5.5, 5.5), lty = 2)
-  lines(x = c(-1e9, 4e9), y = c(10.5, 10.5), lty = 2)
-  axis(2, at = c(1:15), labels = c('5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
-  mtext('PLINK', side = 2, line = 3, at = 13)
-  mtext('Genotypes only', side = 2, line = 3, at = 8)
-  mtext('Genotype\nlikelihoods', side = 2, line = 3, at = 3)
-  for(c in c(1:6)){
-    lines(x = c((chroms$cum.len[c] + (gap * (c-1)) - chroms$length[c] + 1), (chroms$cum.len[c] + (gap * (c-1)))), y = c(0.5,0.5))
-  }
-  for(c in c(1:6)){
-    text(x = ((chroms$cum.len[c] + (gap * (c-1))) - chroms$length[c]/2), y = 0, labels = c)
-  }
+  pairs(sub[,c(3:5)], pch = 16, col = alpha('springgreen4', alph), 
+        upper.panel = panel.cor, lower.panel = onetoone_line, cex = pt.size,
+        gap=0, row1attop = FALSE, main = paste0(c,'X'), font.labels = 2, 
+        labels = c('BCFtools\nGenotypes','BCFtools\nLikelihoods','PLINK'))
   
-  y <- 1
-  for(c in c(5, 10, 15, 30, 50)){
-    temp <- sub.pl[sub.pl$covg == c,]
-    if(nrow(temp) > 0){
-      for(r in 1:nrow(temp)){
-        polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-                col = pl.col, border = NA)
-      }
-    }
-    y <- y+1
-  }
-  for(c in c(5, 10, 15, 30, 50)){
-    temp <- sub.gt[sub.gt$covg == c,]
-    if(nrow(temp) > 0){
-      for(r in 1:nrow(temp)){
-        polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-                col = gt.col, border = NA)
-      }
-    }
-    y <- y+1
-  }
-  for(c in c(5, 10, 15, 30, 50)){
-    temp <- sub.pk[sub.pk$covg == c,]
-    if(nrow(temp) > 0){
-      for(r in 1:nrow(temp)){
-        polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
-                col = plink.col, border = NA)
-      }
-    }
-    y <- y+1
-  }
 }
 dev.off()
+
+
+# ##### 99. Plotting individual called ROHs for all 3 analyses and coverage levels #####
+# ## set up data for plotting
+# gt.chrom.plots <- gt.res
+# pl.chrom.plots <- pl.res
+# plink.chrom.plots <- plink.res
+# ## plot gap
+# gap <- 100e6
+# plot.tot.len <- tot.len + 5*gap
+# 
+# gt.chrom.plots$plot.start <- gt.chrom.plots$start
+# gt.chrom.plots$plot.end <- gt.chrom.plots$end
+# for(c in c(1:5)){
+#   gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'plot.start'] <- gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'start'] + chroms$cum.len[c-1] + gap*(c-1)
+#   gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'plot.end'] <- gt.chrom.plots[gt.chrom.plots$chrom.num == c, 'end'] + chroms$cum.len[c-1] + gap*(c-1 )
+# }
+# pl.chrom.plots$plot.start <- pl.chrom.plots$start
+# pl.chrom.plots$plot.end <- pl.chrom.plots$end
+# for(c in c(1:5)){
+#   pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'plot.start'] <- pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'start'] + chroms$cum.len[c-1] + gap*(c-1)
+#   pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'plot.end'] <- pl.chrom.plots[pl.chrom.plots$chrom.num == c, 'end'] + chroms$cum.len[c-1] + gap*(c-1 )
+# }
+# plink.chrom.plots$plot.start <- plink.chrom.plots$start
+# plink.chrom.plots$plot.end <- plink.chrom.plots$end
+# for(c in c(1:5)){
+#   plink.chrom.plots[plink.chrom.plots$chrom == c, 'plot.start'] <- plink.chrom.plots[plink.chrom.plots$chrom == c, 'start'] + chroms$cum.len[c-1] + gap*(c-1)
+#   plink.chrom.plots[plink.chrom.plots$chrom == c, 'plot.end'] <- plink.chrom.plots[plink.chrom.plots$chrom == c, 'end'] + chroms$cum.len[c-1] + gap*(c-1 )
+# }
+# 
+# wid <- 3 ## line widths in plot ~ or ~
+# hit <- 0.1 ## polygon height
+# 
+# ## plot all chromosomes
+# pdf('../figures/individual_true_and_called_ROHs_across_all_chromosomes.pdf', width = 15, height = 7)
+# par(mar = c(5.1, 5.1, 4.1, 2.1))
+# 
+# for(i in unique(pl.chrom.plots$id)){
+#   sub.pl <- pl.chrom.plots[pl.chrom.plots$id == i,]
+#   sub.gt <- gt.chrom.plots[gt.chrom.plots$id == i,]
+#   sub.pk <- plink.chrom.plots[plink.chrom.plots$id == i,]
+#   
+#   plot(0,0, xlim = c(1, plot.tot.len), ylim = c(0, 15), col = 'transparent', yaxt = 'n', xlab = '', ylab = '', main = i, xaxt = 'n', bty = 'n')
+#     lines(x = c(-1e9, 4e9), y = c(5.5, 5.5), lty = 2)
+#     lines(x = c(-1e9, 4e9), y = c(10.5, 10.5), lty = 2)
+#     axis(2, at = c(1:15), labels = c('5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
+#     mtext('PLINK', side = 2, line = 3, at = 13)
+#     mtext('Genotypes only', side = 2, line = 3, at = 8)
+#     mtext('Genotype\nlikelihoods', side = 2, line = 3, at = 3)
+#     for(c in c(1:6)){
+#       lines(x = c((chroms$cum.len[c] + (gap * (c-1)) - chroms$length[c] + 1), (chroms$cum.len[c] + (gap * (c-1)))), y = c(0.5,0.5))
+#     }
+#     for(c in c(1:6)){
+#       text(x = ((chroms$cum.len[c] + (gap * (c-1))) - chroms$length[c]/2), y = 0, labels = c)
+#     }
+#     
+#   y <- 1
+#   for(c in c(5, 10, 15, 30, 50)){
+#     temp <- sub.pl[sub.pl$covg == c,]
+#     if(nrow(temp) > 0){
+#       for(r in 1:nrow(temp)){
+#         polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+#                 col = pl.col, border = NA)
+#       }
+#     }
+#     y <- y+1
+#   }
+#   for(c in c(5, 10, 15, 30, 50)){
+#     temp <- sub.gt[sub.gt$covg == c,]
+#     if(nrow(temp) > 0){
+#       for(r in 1:nrow(temp)){
+#         polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+#                 col = gt.col, border = NA)
+#       }
+#     }
+#     y <- y+1
+#   }
+#   for(c in c(5, 10, 15, 30, 50)){
+#     temp <- sub.pk[sub.pk$covg == c,]
+#     if(nrow(temp) > 0){
+#       for(r in 1:nrow(temp)){
+#         polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+#                 col = plink.col, border = NA)
+#       }
+#     }
+#     y <- y+1
+#   }
+# }
+# dev.off()
+# 
+# ## just plot first 10 Mb of chromosome 1
+# pdf('../figures/individual_true_and_called_ROHs_across_chromosome_1_10Mb_window.pdf', width = 15, height = 7)
+# par(mar = c(5.1, 5.1, 4.1, 2.1))
+# 
+# for(i in unique(pl.chrom.plots$id)){
+#   sub.pl <- pl.chrom.plots[pl.chrom.plots$id == i,]
+#   sub.gt <- gt.chrom.plots[gt.chrom.plots$id == i,]
+#   sub.pk <- plink.chrom.plots[plink.chrom.plots$id == i,]
+#   
+#   plot(0,0, xlim = c(1, 10e6), ylim = c(0, 15), col = 'transparent', yaxt = 'n', xlab = '', ylab = '', main = i, xaxt = 'n', bty = 'n')
+#   lines(x = c(-1e9, 4e9), y = c(5.5, 5.5), lty = 2)
+#   lines(x = c(-1e9, 4e9), y = c(10.5, 10.5), lty = 2)
+#   axis(2, at = c(1:15), labels = c('5X','10X','15X','30X','50X','5X','10X','15X','30X','50X','5X','10X','15X','30X','50X'), las = 2)  
+#   mtext('PLINK', side = 2, line = 3, at = 13)
+#   mtext('Genotypes only', side = 2, line = 3, at = 8)
+#   mtext('Genotype\nlikelihoods', side = 2, line = 3, at = 3)
+#   for(c in c(1:6)){
+#     lines(x = c((chroms$cum.len[c] + (gap * (c-1)) - chroms$length[c] + 1), (chroms$cum.len[c] + (gap * (c-1)))), y = c(0.5,0.5))
+#   }
+#   for(c in c(1:6)){
+#     text(x = ((chroms$cum.len[c] + (gap * (c-1))) - chroms$length[c]/2), y = 0, labels = c)
+#   }
+#   
+#   y <- 1
+#   for(c in c(5, 10, 15, 30, 50)){
+#     temp <- sub.pl[sub.pl$covg == c,]
+#     if(nrow(temp) > 0){
+#       for(r in 1:nrow(temp)){
+#         polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+#                 col = pl.col, border = NA)
+#       }
+#     }
+#     y <- y+1
+#   }
+#   for(c in c(5, 10, 15, 30, 50)){
+#     temp <- sub.gt[sub.gt$covg == c,]
+#     if(nrow(temp) > 0){
+#       for(r in 1:nrow(temp)){
+#         polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+#                 col = gt.col, border = NA)
+#       }
+#     }
+#     y <- y+1
+#   }
+#   for(c in c(5, 10, 15, 30, 50)){
+#     temp <- sub.pk[sub.pk$covg == c,]
+#     if(nrow(temp) > 0){
+#       for(r in 1:nrow(temp)){
+#         polygon(x = c(temp$plot.start[r], temp$plot.end[r], temp$plot.end[r], temp$plot.start[r]), y = c(y-hit, y-hit, y+hit, y+hit),
+#                 col = plink.col, border = NA)
+#       }
+#     }
+#     y <- y+1
+#   }
+# }
+# dev.off()
