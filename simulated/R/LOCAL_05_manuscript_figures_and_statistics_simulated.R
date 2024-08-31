@@ -1,3 +1,7 @@
+## Purpose: Conducts all downstream analyses and generates corresponding figures for the manuscript using results from all methods and coverage levels.
+## This script is intended to be run after all other scripts have been run and the necessary data files have been generated.
+## The script will generate figures and statistics for each demographic scenario and method (GT, PL, PLINK) and coverage level.
+
 ##### Code for analyzing simulated data
 library(scales)
 library(grDevices)
@@ -31,8 +35,11 @@ setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/
 true.fns <- list.files(path = 'slim_true_data/', pattern = 'true_roh_coords')
 demos <- do.call(rbind, strsplit(true.fns, split = '_'))[,1]
 
+dir.create('../figures/', showWarnings = F)
+dir.create('../figures/pdfs', showWarnings = F)
+
 for(d in demos){
-  dir.create(paste0('../figures/',d), showWarnings = FALSE)
+  dir.create(paste0('../figures/',d), showWarnings = F)
   scen.name <- demo.names[demo.names[,1] == d, 2]
   for(h in c('vtrained')){
     print(paste0(d,' - ',h))
@@ -3735,7 +3742,7 @@ for(d in demos){
     xmin <- 1.25e7
     xmax <- 2.0e7
 
-    pdf(paste0('/Users/Avril/Desktop/',d,'_read_dat_sample.pdf'), width = 15, height = 7)
+    pdf(paste0('../figures/pdfs/',d,'_read_dat_sample.pdf'), width = 15, height = 7)
     par(mar = c(5.1, 5.1, 4.1, 2.1))
     for(i in 26){
       sub.pl <- bcf.pl.res[bcf.pl.res$id == i,]
@@ -4313,7 +4320,7 @@ while(k == 1){
 }
 
 ##### Fig. 4 - Diff between true and called f(ROH) by length bin at 15X coverage #####
-pdf('/Users/Avril/Desktop/fROH_by_length_bins.pdf', width = 5, height = 4)
+pdf('../figures/pdfs/fROH_by_length_bins.pdf', width = 5, height = 4)
 colors <- cbind(c('GT','PL','PLINK'), c(gt.col, pl.col, plink.col))
 
   for(d in c('large-1000','small','bottle','decline')){
@@ -4447,7 +4454,7 @@ lims <- cbind(c('large-1000','small','bottle','decline'),
               c(9, 8, 8, 8),
               c(4.5, 5, 6, 8))
 
-pdf('/Users/Avril/Desktop/test.pdf', width = 4.5, height = 4.5)
+pdf('../figures/pdfs/test.pdf', width = 4.5, height = 4.5)
 for(d in c('large-1000','small','bottle','decline')){
   dat <- read.csv(paste0('3_methods_results/',d,'_lumping_data_by_bins.csv'))
   
@@ -4527,7 +4534,7 @@ onetoone_line <- function(x,y,...){
 }
 
 ## Large
-pdf('/Users/Avril/Desktop/large_all_covgs_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/large_all_covgs_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(m in c(4, 5, 6)){
   OUT <- NULL
@@ -4554,7 +4561,7 @@ for(m in c(4, 5, 6)){
 dev.off()
 
 ## Small
-pdf('/Users/Avril/Desktop/small_all_covgs_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/small_all_covgs_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(m in c(4, 5, 6)){
   OUT <- NULL
@@ -4581,7 +4588,7 @@ for(m in c(4, 5, 6)){
 dev.off()
 
 ## Bottle
-pdf('/Users/Avril/Desktop/bottle_all_covgs_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/bottle_all_covgs_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(m in c(4, 5, 6)){
   OUT <- NULL
@@ -4608,7 +4615,7 @@ for(m in c(4, 5, 6)){
 dev.off()
 
 ## Decline
-pdf('/Users/Avril/Desktop/decline_all_covgs_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/decline_all_covgs_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(m in c(4, 5, 6)){
   OUT <- NULL
@@ -4635,7 +4642,7 @@ for(m in c(4, 5, 6)){
 dev.off()
 
 ## Large
-pdf('/Users/Avril/Desktop/large_all_methods_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/large_all_methods_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(c in c(5, 10, 15, 30, 50)){
   sub <- lrg.dat[lrg.dat$covg == c,]
@@ -4648,7 +4655,7 @@ for(c in c(5, 10, 15, 30, 50)){
 dev.off()
 
 ## Small
-pdf('/Users/Avril/Desktop/small_all_methods_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/small_all_methods_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(c in c(5, 10, 15, 30, 50)){
   sub <- sml.dat[sml.dat$covg == c,]
@@ -4661,7 +4668,7 @@ for(c in c(5, 10, 15, 30, 50)){
 dev.off()
 
 ## Bottle
-pdf('/Users/Avril/Desktop/bottle_all_methods_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/bottle_all_methods_corr.pdf', width = 6, height = 5.5)
 for(c in c(5, 10, 15, 30, 50)){
   sub <- bot.dat[bot.dat$covg == c,]
   
@@ -4673,7 +4680,7 @@ for(c in c(5, 10, 15, 30, 50)){
 dev.off()
 
 ## Decline
-pdf('/Users/Avril/Desktop/decline_all_methods_corr.pdf', width = 6, height = 5.5)
+pdf('../figures/pdfs/decline_all_methods_corr.pdf', width = 6, height = 5.5)
 col <- 1
 for(c in c(5, 10, 15, 30, 50)){
   sub <- dec.dat[dec.dat$covg == c,]
@@ -4682,5 +4689,330 @@ for(c in c(5, 10, 15, 30, 50)){
         upper.panel = panel.cor, lower.panel = onetoone_line, cex = pt.size, cex.labels = 1.75,
         gap=0, row1attop = FALSE, main = paste0('large - ',c,'X'), font.labels = 2,
         labels = c('True','BCFtools\nLikelihoods','BCFtools\nGenotypes','PLINK'))
+}
+dev.off()
+
+#####
+##### SI Fig 17 - Mean Heterozygosity across diferent scenarios #####
+
+### set colors
+bt.col <- ghibli_palette("MarnieMedium1")[4]
+lg.col <- ghibli_palette("MononokeMedium")[5]
+sm.col <- ghibli_palette("MononokeMedium")[3]
+dc.col <- ghibli_palette("MarnieMedium2")[6]
+
+
+htz.ids <- data.frame(id = character(), mean.htz = numeric(), scenario = character())
+
+sim.sites <- 30e6
+
+##### 99. Getting individual true Heterozigozity for all scenarios #####
+for(d in demo.names[,1]){
+  
+  vcf <- read.vcfR(paste0('data/slim_true_data/', 'finaltasdev_', d, '_51663.vcf'))
+  gts <- extract.gt(vcf)
+  
+  gts.htz <- gts[,colnames(gts) %notin% c("i33","i48")]
+  gts.htz[gts.htz=='0/0'] <- 0
+  gts.htz[is.na(gts.htz)] <- 0
+  gts.htz[gts.htz=='0|0'] <- 0
+  gts.htz[gts.htz=='1/1'] <- 0
+  gts.htz[gts.htz=='1|1'] <- 0
+  gts.htz[gts.htz=='2|2'] <- 0
+  gts.htz[gts.htz=='0/1'] <- 1
+  gts.htz[gts.htz=='1/0'] <- 1
+  gts.htz[gts.htz=='0|1'] <- 1
+  gts.htz[gts.htz=='1|0'] <- 1
+  gts.htz[gts.htz=='2|1'] <- 1
+  gts.htz[gts.htz=='1|2'] <- 1
+  
+  
+  mode(gts.htz) <- "numeric"
+  
+  colmeans <- colSums(gts.htz, na.rm = TRUE)/sim.sites
+  
+  mean.htz <- data.frame(id = names(colmeans), mean.htz = unname(colmeans), scenario = d)
+  
+  htz.ids <- rbind(htz.ids, mean.htz)
+}
+
+text.size <- 1.25
+shrink <- 2000 ## higher # here ==> narrower x-direction spread for points
+alph <- 0.4
+poly.alph <- 0.5
+false.pos.y.lim <- 0.2
+percentile <- 50
+low.q <- (100-percentile)/100/2
+hi.q <- 1 - (100-percentile)/100/2
+diff <- 0.5 ## distance between GT and PL/PLINK
+OUT <- NULL ## for storing means
+
+pdf(paste0('figures/pdfs/mean_heterozigozity_individual_finaltasdev.pdf'), width = 8, height = 6)
+
+par(mar = c(3.1,6.1,2.1,2.1))
+plot(htz.ids$scenario, htz.ids$mean.htz, ylim = c(0, 6e-05),xlim = c(0.75,4.25),
+     xlab = '', ylab = '', col = 'transparent',
+     cex.axis = text.size, cex.lab = text.size, xaxt = 'n', yaxt = 'n')
+
+title(ylab = "Mean heterozigozity", cex.lab = text.size,
+      line = 4.5)
+
+axis(2, at = seq(0, 1e-04, 2e-05), cex.axis = text.size, las = 1)
+
+x <- 1
+
+for(n in seq(1:length(demo.names[,1]))){
+  
+  c <- demo.names[n,1]
+  
+  axis(1, at = n, labels = demo.names[n,2], cex.axis = text.size)
+  
+  sn.col <- switch(c, "bottle" = bt.col, "decline" = dc.col, "small" = sm.col, "large-2000" = lg.col, "large-1000" = lg.col)
+  temp <- htz.ids[htz.ids$scenario == c,]
+  f <- sample(c(-100:100), length(unique(temp$id)))
+  f <- f/shrink+x
+  
+  polygon(x = c(x-diff/2, x+diff/2, x+diff/2, x-diff/2), y = c(quantile(temp$mean.htz, probs = c(low.q, hi.q))[1],
+                                                               quantile(temp$mean.htz, probs = c(low.q, hi.q))[1],
+                                                               quantile(temp$mean.htz, probs = c(low.q, hi.q))[2],
+                                                               quantile(temp$mean.htz, probs = c(low.q, hi.q))[2]),
+          col = alpha(sn.col, poly.alph), border = NA)
+  
+  lines(x = c(x-diff/2, x+diff/2), y = c(median(temp$mean.htz, na.rm = TRUE), median(temp$mean.htz, na.rm = TRUE)),
+        pch = 16, col = sn.col, lwd = 2)
+  points(f, temp$mean.htz, pch = 16, col = alpha(sn.col, alph), cex = 0.5) ## add individual points
+  OUT <- rbind(OUT, c(x, mean(temp$mean.htz), 1))
+  x <- x+1
+}
+
+dev.off()
+
+
+#####
+##### SI Fig 18 - Scatter Plot False Negative vs False positive #####
+
+demos <- c('large-1000','small','bottle','decline')
+
+all.true.v.called <- data.frame('id'=character(),'covg'=numeric(),'total.call.len'=numeric(),'n.called'=numeric(),'tot.true.len'=numeric(),'n.true'=numeric(),'tp'=numeric(), 'scenario'=character(), tool=character())
+
+for(d in demos){
+  pl.df <- read.csv(paste0(data.dir, 'bcftools_output/false_pos_neg_rates_',d,'_vtrained_PL.csv'))
+  pl.df$scenario <- d
+  pl.df$tool <- "PL"
+  gt.df <- read.csv(paste0(data.dir, 'bcftools_output/false_pos_neg_rates_',d,'_vtrained_GT.csv'))
+  gt.df$scenario <- d
+  gt.df$tool <- "GT"
+  plink.df <- read.csv(paste0(data.dir, 'plink_output/false_pos_neg_rates_',d,'_vtrained_PLINK.csv'))[-c(3:10)]
+  plink.df$scenario <- d
+  plink.df$tool <- "PLINK"
+  
+  all.true.v.called <- rbind(all.true.v.called, pl.df, gt.df, plink.df)
+}
+
+all.true.v.called$scenario <- factor(all.true.v.called$scenario, levels=c('large-1000','small','bottle','decline'))
+all.true.v.called$tool <- factor(all.true.v.called$tool, levels=c('PLINK','PL','GT'))
+
+seq.depth <- c(5, 10, 15, 30, 50)
+
+max.x <- max(all.true.v.called$false.pos.rate)
+fig.numbers <- c(1:20)
+i <- 1
+
+pdf('../figures/pdfs/scatter_false-neg_vs_false-pos_all.pdf', width = 20, height = 20, family = "sans")
+par(mfrow=c(5,4))
+for( c in seq.depth ) {
+  for( d in demos ) {
+    plot(1, 1, col = 'transparent', xlim = c(0, max.x), ylim = c(0, 1),
+         main = paste0(c, 'X', d), xlab = 'False Positive', ylab = 'False negative',)
+    plot.df <- all.true.v.called[all.true.v.called$covg==c & all.true.v.called$scenario==d,]
+    
+    #
+    gt.df <- plot.df[plot.df$tool=='GT',]
+    points(gt.df$false.pos.rate, gt.df$false.neg.rate, col = gt.col, pch=16)
+    
+    #
+    pl.df <- plot.df[plot.df$tool=='PL',]
+    points(pl.df$false.pos.rate, pl.df$false.neg.rate, col = pl.col, pch=16)
+    
+    #
+    plink.df <- plot.df[plot.df$tool=='PLINK',]
+    points(plink.df$false.pos.rate, plink.df$false.neg.rate, col = plink.col, pch=16)
+    
+    mtext(paste0(LETTERS[i], ")"), side=3, adj = 0, cex=1, at = -0.065)
+    i <- i + 1
+  }
+
+}
+
+legend(x=c(0.15,0.35),y=c(0.7,0.9), legend = c("GT", "PL", "PLINK"), col = c(gt.col, pl.col, plink.col), pch = 16, inset = c(0.1, 0.1), cex = 0.3)
+
+dev.off()
+
+#####
+##### SI Fig 19 - True vs Called FROH colorized by coverage #####
+
+covg.cols <- c("#F29D6D", "#226061", "#828231", "#FACCFA", "#011959")
+names(covg.cols) <- c('5','10','15','30','50')
+
+### Set layout
+pdf(paste0('../figures/pdfs/all_true_vs_called_fROH.pdf'), width = 12, height = 10)
+layout.matrix <- matrix(c(1,4,7,10,2,5,8,11,3,6,9,12), nrow = 3, ncol = 4)
+layout.matrix <- matrix(seq(1,12), nrow = 3, ncol = 4)
+
+layout(mat = layout.matrix)
+
+froh.stats.all <- data.frame("id"=character(0),"covg"=numeric(0),"true.froh"=numeric(0),"pl.froh"=numeric(0),"gt.froh"=numeric(0),"plink.froh"=numeric(0))
+
+for(d in demos){
+  froh.stats <- read.csv(paste0('3_methods_results/',d,'_true_vs_called_froh_data.csv'), header = TRUE)
+  froh.stats$scenario <- d
+  froh.stats.all <- rbind(froh.stats.all, froh.stats)
+  
+
+## unique colors for each method
+  pl.pal <- colorRampPalette(c(lt.pl.col, max.covg.col))
+  # pl.pal <- colorRampPalette(c(pl.col, max.covg.col))
+  pl.cols <- pl.pal(5)
+  col <- 1
+  for(c in sort(unique(froh.stats$covg))){
+    froh.stats[froh.stats$covg == c, 'pl.temp.col'] <- pl.cols[col]
+    col <- col+1
+  }
+  # gt.pal <- colorRampPalette(c(lt.gt.col, max.covg.col))
+  gt.pal <- colorRampPalette(c(gt.col, max.covg.col))
+  gt.cols <- gt.pal(5)
+  col <- 1
+  for(c in sort(unique(froh.stats$covg))){
+    froh.stats[froh.stats$covg == c, 'gt.temp.col'] <- gt.cols[col]
+    col <- col+1
+  }
+  # plink.pal <- colorRampPalette(c(lt.plink.col, max.covg.col))
+  plink.pal <- colorRampPalette(c(plink.col, max.covg.col))
+  plink.cols <- plink.pal(5)
+  col <- 1
+  for(c in sort(unique(froh.stats$covg))){
+    froh.stats[froh.stats$covg == c, 'plink.temp.col'] <- plink.cols[col]
+    col <- col+1
+  }
+  
+  ## Unique color for each coverage level
+  col <- 1
+  for(c in sort(unique(froh.stats$covg))){
+    froh.stats[froh.stats$covg == c, 'covg.temp.col'] <- covg.cols[col]
+    col <- col+1
+  }
+  
+  
+  
+  wid <- 2
+  alph <- 0.4
+  txt.size <- 1.5
+  poly.alph = 0.25
+  
+  new.dat <- data.frame(true.froh=c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]))) ## new data for prediction
+  
+  par(mar = c(5.1, 4.6, 4.1, 2.1))
+
+  ## calculate y-lim values based on 95% CIs
+  lo.y <- min(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh)
+  hi.y <- max(froh.stats$pl.froh, froh.stats$gt.froh, froh.stats$plink.froh)
+  for(c in unique(froh.stats$covg)){
+    mod <- lm(froh.stats[froh.stats$covg == c, 'pl.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+    new.vals <- predict(mod, newdata = new.dat, interval = 'confidence', level = 0.95)
+    new.vals <- new.vals[order(new.vals[,1]),]
+    lo.y <- min(lo.y, min(new.vals[,2]))
+    hi.y <- max(hi.y, max(new.vals[,3]))
+  }
+  for(c in unique(froh.stats$covg)){
+    mod <- lm(froh.stats[froh.stats$covg == c, 'gt.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+    new.vals <- predict(mod, newdata = new.dat, interval = 'confidence', level = 0.95)
+    new.vals <- new.vals[order(new.vals[,1]),]
+    lo.y <- min(lo.y, min(new.vals[,2]))
+    hi.y <- max(hi.y, max(new.vals[,3]))
+  }
+  for(c in unique(froh.stats$covg)){
+    mod <- lm(froh.stats[froh.stats$covg == c, 'plink.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+    new.vals <- predict(mod, newdata = new.dat, interval = 'confidence', level = 0.95)
+    new.vals <- new.vals[order(new.vals[,1]),]
+    lo.y <- min(lo.y, min(new.vals[,2]))
+    hi.y <- max(hi.y, max(new.vals[,3]))
+  }
+  
+  
+  x.lim <- c(0, 1)
+  y.lim <- c(0, 1)
+
+  
+  ## GT
+  plot(froh.stats$true.froh, froh.stats$gt.froh, pch = 16, col = 'transparent', main = 'Genotypes only', sub= d,
+       xlab = substitute(paste('True ',italic('F')[ROH])), ylab = substitute(paste('Called ',italic('F')[ROH])), 
+       cex.axis = txt.size, cex.lab = txt.size, asp = 1,
+       xlim = x.lim, ylim = y.lim)
+  abline(0,1, lty = 2)
+  points(froh.stats$true.froh, froh.stats$gt.froh, pch = 16, col = alpha(froh.stats$covg.temp.col, alph))
+  for(c in unique(froh.stats$covg)){
+    mod <- lm(froh.stats[froh.stats$covg == c, 'gt.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+    new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+    new.vals <- new.vals[order(new.vals[,1]),]
+    ## CI polygon
+    polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]),
+                  sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+            y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA,
+            col = alpha(froh.stats[froh.stats$covg == c, 'covg.temp.col'][1], poly.alph))
+    lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid,
+          col = alpha(froh.stats[froh.stats$covg == c, 'covg.temp.col'][1]))
+  }
+  if(d == 'large-1000'){
+    legend('topleft', col = covg.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0, bty = 'n', cex = txt.size)
+  }
+  
+  ## PL
+  plot(froh.stats$true.froh, froh.stats$pl.froh, pch = 16, col = 'transparent', main = 'Genotype likelihoods',
+       xlab = substitute(paste('True ',italic('F')[ROH])), ylab = substitute(paste('Called ',italic('F')[ROH])), 
+       cex.axis = txt.size, cex.lab = txt.size, asp = 1,
+       xlim = x.lim, ylim = y.lim)
+  abline(0,1, lty = 2)
+  points(froh.stats$true.froh, froh.stats$pl.froh, pch = 16, col = alpha(froh.stats$covg.temp.col, alph))
+  for(c in unique(froh.stats$covg)){
+    mod <- lm(froh.stats[froh.stats$covg == c, 'pl.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+    new.vals <- predict(mod, newdata = new.dat, interval = 'confidence', level = 0.95)
+    new.vals <- new.vals[order(new.vals[,1]),]
+    
+    ## CI polygon
+    polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]),
+                  sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+            y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA,
+            col = alpha(froh.stats[froh.stats$covg == c, 'covg.temp.col'][1], poly.alph))
+    lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid,
+          col = alpha(froh.stats[froh.stats$covg == c, 'covg.temp.col'][1]))
+    
+  }
+  if(d == 'large-1000'){
+    legend('topleft', col = covg.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0, bty = 'n', cex = txt.size)
+  }
+  
+  ## PLINK
+  plot(froh.stats$true.froh, froh.stats$plink.froh, pch = 16, col = 'transparent', main = 'PLINK',
+       xlab = substitute(paste('True ',italic('F')[ROH])), ylab = substitute(paste('Called ',italic('F')[ROH])), 
+       cex.axis = txt.size, cex.lab = txt.size, asp = 1,
+       xlim = x.lim, ylim = y.lim)
+  abline(0,1, lty = 2)
+  points(froh.stats$true.froh, froh.stats$plink.froh, pch = 16, col = alpha(froh.stats$plink.temp.col, alph))
+  for(c in unique(froh.stats$covg)){
+    mod <- lm(froh.stats[froh.stats$covg == c, 'plink.froh'] ~ froh.stats[froh.stats$covg == c, 'true.froh'])
+    new.vals <- predict(mod, newdata = new.dat, interval = 'confidence')
+    new.vals <- new.vals[order(new.vals[,1]),]
+    ## CI polygon
+    polygon(x = c(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]),
+                  sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3], decreasing = TRUE)),
+            y = c(new.vals[,2], sort(new.vals[,3], decreasing = TRUE)), border = NA,
+            col = alpha(froh.stats[froh.stats$covg == c, 'covg.temp.col'][1], poly.alph))
+    lines(sort(froh.stats[!duplicated(froh.stats[,c(1,3)]), 3]), new.vals[,1], lwd = wid,
+          col = alpha(froh.stats[froh.stats$covg == c, 'covg.temp.col'][1]))
+  }
+  if(d == 'large-1000'){
+    legend('topleft', col = covg.cols, legend = c('5X','10X','15X','30X','50X'), lwd = wid, inset = 0, bty = 'n', cex = txt.size)
+  }
+
 }
 dev.off()

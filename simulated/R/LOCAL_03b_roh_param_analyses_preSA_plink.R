@@ -1,3 +1,8 @@
+## Purpose: This script reads in PLINK output files and summarizes the data.
+## The script then writes a file with summary statistics and ROH coordinates for all identified ROHs.
+## The output file will contain the following columns: id, covg, phwh, phwm, phws, phzd, phzg, phwt, phzs, phzk, len, true.len, true.roh.id, called.roh.id, n.snps, overlap.start, overlap.end
+## The script also writes a file with individual-level f(ROH) values for each individual in the dataset.
+
 library(scales)
 library(grDevices)
 `%notin%` <- Negate(`%in%`)
