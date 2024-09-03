@@ -1,3 +1,6 @@
+## Purpose: This script reads in bcftools/ROH output files and summarizes the data.
+## The script then writes a file with summary statistics and ROH coordinates for all identified ROHs.
+
 ## Nomenclature note: 'true' ROHs are ROHs that were identified using sample FASTA files output from SLiM.
 ## 'called' ROHs are ROHs identified by bcftools/ROH from simulated reads aligned to the reference FASTA
 ## using various population sizes and coverage levels.

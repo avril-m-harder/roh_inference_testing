@@ -1,3 +1,7 @@
+## Purpose: This script reads in bcftools/ROH output files and true ROH coordinates.
+## The script then identifies overlap between true and called ROHs and writes a file with the results.
+## The output file will contain the following columns: method, covg, HMM, id, len, true.len, true.roh.id, called.roh.id, num.called.snps, roh.call.quality
+
 `%notin%` <- Negate(`%in%`)
 
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/')

@@ -1,3 +1,6 @@
+## Purpose: This script reads in PLINK output files and summarizes the data.
+## The script then writes a file with summary statistics and ROH coordinates for all identified ROHs.
+
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/plink_output/')
 fns <- list.files(path = 'plink_round2/', pattern = 'hom')
 

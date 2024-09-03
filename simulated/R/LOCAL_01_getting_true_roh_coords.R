@@ -1,3 +1,7 @@
+## Purpose: This script reads in SLiM VCF files and extracts true ROH coordinates based on the VCF data. 
+# The script then calculates the fraction of the genome in ROH for each individual and saves the results to a file. 
+#The script also generates histograms of the fraction of the genome in ROH for each demographic scenario and length bins for each demographic scenario.
+
 setwd('/Users/Avril/Documents/roh_param_project/roh_inference_testing/simulated/data/slim_true_data/')
 library(ape)
 library(scales)

@@ -1,3 +1,8 @@
+## Purpose: Evaluate the effects of Viterbi training on ROH-calling accuracy
+## Input: ROH-calling results from bcftools ROH
+## Output: Plots of true vs. called f(ROH) values, correlation coefficients between true and called f(ROH) values, and histograms of the ratio of true:called ROHs
+
+
 library(scales)
 library(ghibli)
 library(TeachingDemos)
